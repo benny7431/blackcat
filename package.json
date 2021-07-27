@@ -42,7 +42,8 @@
     "ytdl-core": "^4.9.0"
   },
   "scripts": {
-    "start": "bash bootstrap.sh"
+    "start": "bash bootstrap.sh",
+    "test": "bash bootstrap.sh test"
   },
   "devDependencies": {
     "add-dependencies": "^1.1.0",
