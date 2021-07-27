@@ -1,0 +1,46 @@
+{
+  "name": "Discord black cat bot",
+  "description": "在自己的伺服器上運行Black cat",
+  "repository": "https://github.com/wolf-yuan-6115/blackcat",
+  "logo": "https://blackcat-web.vercel.app/boticon.png",
+  "keywords": ["blackcat", "discord"],
+  "website": "https://blackcatbot.tk",
+  "env": {
+    "TOKEN": {
+      "description": "Discord機器人Token"
+    },
+    "PREFIX": {
+      "description": "Discord機器人指令前綴"
+    },
+    "MONGO_DB_URL": {
+      "description": "Mongo DB 連線 URI"
+    },
+    "WEBHOOK_ID": {
+      "description": "Discord Webhook ID"
+    },
+    "WEBHOOK_SECRET": {
+      "description": "Discord webhook secret"
+    },
+    "CLIENT_SECRET": {
+      "description": "Discord client secret, 用於Oauth2驗證"
+    },
+    "ENCODE_KEY": {
+      "description": "Oauth2 token解密/加密金鑰, 長度必須為24個字元",
+      "value": "aaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "PM2_SECRET": {
+      "description": "Pm2.io 連線 secret"
+    },
+    "PM2_PUBLIC": {
+      "description": "Pm2.io 連線 public"
+    },
+    "HEROKU_API_KEY": {
+      "description": "Heroku API金鑰"
+    },
+    "HEROKU_APP_ID": {
+      "description": "Heroku App名稱或ID"
+    }
+  },
+  "stack": "container",
+  "success_url": "/"
+}

@@ -1,0 +1,51 @@
+{
+  "name": "blackcat",
+  "version": "13.1.0",
+  "description": "Discord black cat music bot",
+  "main": "index.js",
+  "author": "Wolf yuan",
+  "private": true,
+  "homepage": "https://blackcatbot.tk",
+  "engines": {
+    "node": "<=14.16.1",
+    "npm": "7.x"
+  },
+  "dependencies": {
+    "@discordjs/opus": "^0.5.3",
+    "@pm2/io": "^5.0.0",
+    "bufferutil": "^4.0.3",
+    "cookie-parser": "^1.4.5",
+    "discord-buttons": "^4.0.0",
+    "discord-together": "^1.1.22",
+    "discord.js": "^12.5.3",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-rate-limit": "^5.3.0",
+    "express-ws": "^5.0.2",
+    "ffmpeg-static": "^4.4.0",
+    "helmet": "^4.6.0",
+    "heroku-restarter": "^1.2.1",
+    "libsodium-wrappers": "^0.7.9",
+    "lyrics-finder": "^21.7.0",
+    "node-fetch": "^2.6.1",
+    "node-os-utils": "^1.3.5",
+    "pidusage": "^2.0.21",
+    "pm2": "^5.1.0",
+    "prism-media": "^1.3.1",
+    "quickmongo": "^3.0.2",
+    "sodium": "^3.0.2",
+    "soundcloud-scraper": "^5.0.0",
+    "string-progressbar": "^1.0.4",
+    "tweetnacl": "^1.0.3",
+    "utf-8-validate": "^5.0.5",
+    "youtube-sr": "^4.1.7",
+    "ytdl-core": "^4.9.0"
+  },
+  "scripts": {
+    "start": "bash bootstrap.sh"
+  },
+  "devDependencies": {
+    "add-dependencies": "^1.1.0",
+    "eslint": "^7.31.0"
+  }
+}

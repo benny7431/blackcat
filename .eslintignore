@@ -1,0 +1,19 @@
+# IDE, cloud server config
+.idea/
+.github/
+.circleci/
+
+# test file
+test/
+
+# note
+notes/
+
+# shell script
+shell/
+
+# web server
+web/
+
+# temp
+temp/
