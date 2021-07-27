@@ -7,11 +7,24 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  docker:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - uses: satackey/action-docker-layer-caching@v0.0.11
       continue-on-error: true
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag blackcat:$(date +%s)
+    - name: Build Docker image
+      run: docker build . --file Dockerfile --tag blackcat:latest
+    - name: Run test script
+      run: docker run -it --rm --name test-container blackcat:latest bash bootstrap.sh test
+  check-syntax:
+    runs-on: ubuntu-latest
+    needs: docker
+    if: ${{ always() && (needs.docker.result == 'failure') }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: "14.16.1"
+    - name: Test syntax
+      run: bash bootstrap.sh test
