@@ -38,16 +38,23 @@
 </a>
 
 ### 使用終端機部署
-```sh
-# 建立一個應用程式
-heroku create <Your own app name>
-# 新增git remote
-heroku git:remote -a <Your app name>
-# 設定部署方式為容器
-heroku stack:set container
-# 部署程式
-git push heroku main
-```
+
+- 新增一個新的應用程式
+  - ```sh
+    heroku create <Your own app name>
+    ```
+- 將Heroku git remote新增到git中
+  - ```sh
+    heroku git:remote -a <Your app name>
+    ```
+- 將部署方式設定成容器(Docker container)
+  - ```sh
+    heroku stack:set container
+    ```
+- 部署程式
+  - ```sh
+    git push heroku main
+    ```
 
 **請確認所有環境變數已經設置完成!**
 
@@ -61,26 +68,45 @@ git push heroku main
 
 ## 自行託管
 
+### 使用Docker
+> 自行託管時建議使用
+
+- 建立一個新的Docker image
+  - ```sh
+    docker build -t blackcat:latest .
+    ```
+    > 此程序可能會執行較久，請等待
+- 啟動Container
+  - ```sh
+    docker build -d \
+      -e TOKEN="Discord 機器人token" \
+      -e PREFIX="Discord 機器人指令前綴" \
+      -e MONGO_DB_URL="Mongo DB連線URI" \
+      -e WEBHOOK_ID="Discord webhook ID" \
+      -e WEBHOOK_SECRET="Discord webhook secret" \
+      -e CLIENT_SECRET="Discord client secret" \
+      -e PM2_SECRET="Pm2.io connection secret" \
+      -e PM2_PUBLIC="Pm2.io connection public" \
+      -e ENCODE_KEY="Token加密/解密金鑰, 24個字元長" \
+      --name blackcatbot blackcat:latest
+    ```
+
+***
+
 ### 使用Node.js
 > 不建議，可能會發生錯誤
 >
 > 使用Windows環境可能會在安裝時發生錯誤，建議使用Ubuntu
 
-```sh
-# 安裝所需套件
-npm install
-```
-將 `.env.example` 裡的變數填寫完畢並重新命名該檔案成 `.env`
-
-```sh
-# 啟動機器人
-node index.js
-```
-
-***
-
-### 使用Docker
-> 目前不支援
+- 安裝所需套件
+  - ```sh
+    npm install
+    ```
+- 將 `.env.example` 裡的變數填寫完畢並重新命名該檔案成 `.env`
+- 啟動機器人
+  - ```sh
+    node index.js
+    ```
 
 # 👨‍💻 貢獻
 
@@ -91,4 +117,5 @@ node index.js
 # 💳 作者及版權
 
 建立基礎: [evobot](https://github.com/eritislami/evobot/)
-由Wolf yuan變更
+
+由Wolf yuan翻譯及更改
