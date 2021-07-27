@@ -8,15 +8,9 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Cache Docker build
-      uses: actions/cache@v1
-      with:
-        path: /var/lib/docker
-        key: ${{ runner.OS }}-cache-${{ hashFiles('**/Dockerfile') }}
-        restore-keys: |
-          ${{ runner.OS }}-cache-
+    - uses: satackey/action-docker-layer-caching@v0.0.11
+      continue-on-error: true
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag blackcat:$(date +%s)
