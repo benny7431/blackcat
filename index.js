@@ -388,9 +388,9 @@ client.ws.on("INTERACTION_CREATE", async int => {
   }
 });
 
-app.get("", (req, res) => {
-  res.sendFile(join(__dirname, "static", "index.html"))
-})
+app.get("/", (req, res) => {
+  res.sendFile(join(__dirname, "static", "200.html"))
+});
 
 app.ws("/api/ws/test", (ws) => {
   ws.on("message", msg => {
