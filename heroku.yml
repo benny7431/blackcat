@@ -1,6 +1,4 @@
 build:
-  config:
-    DEBIAN_FRONTEND: "noninteractive"
   docker:
     web: "Dockerfile"
 run:
