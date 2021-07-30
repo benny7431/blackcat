@@ -33,7 +33,7 @@
 
 ### 使用按鈕部署
 
-<a href="https://heroku.com/deploy">
+<a href="https://heroku.com/deploy" target="_blank">
   <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
 </a>
 
@@ -71,6 +71,7 @@
 ### 使用Docker
 > 自行託管時建議使用
 
+- 將 `example.env` 裡的變數填寫完畢並重新命名該檔案成 `.env`
 - 建立一個新的Docker image
   - ```sh
     docker build -t blackcat:latest .
@@ -78,31 +79,20 @@
     > 此程序可能會執行較久，請等待
 - 啟動Container
   - ```sh
-    docker build -d \
-      -e TOKEN="Discord 機器人token" \
-      -e PREFIX="Discord 機器人指令前綴" \
-      -e MONGO_DB_URL="Mongo DB連線URI" \
-      -e WEBHOOK_ID="Discord webhook ID" \
-      -e WEBHOOK_SECRET="Discord webhook secret" \
-      -e CLIENT_SECRET="Discord client secret" \
-      -e PM2_SECRET="Pm2.io connection secret" \
-      -e PM2_PUBLIC="Pm2.io connection public" \
-      -e ENCODE_KEY="Token加密/解密金鑰, 24個字元長" \
+    docker run -d -p 8080:8080 \
       --name blackcatbot blackcat:latest
     ```
 
 ***
 
 ### 使用Node.js
-> 不建議，可能會發生錯誤
->
 > 使用Windows環境可能會在安裝時發生錯誤，建議使用Ubuntu
 
 - 安裝所需套件
   - ```sh
     npm install
     ```
-- 將 `.env.example` 裡的變數填寫完畢並重新命名該檔案成 `.env`
+- 將 `example.env` 裡的變數填寫完畢並重新命名該檔案成 `.env`
 - 啟動機器人
   - ```sh
     node index.js

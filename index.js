@@ -18,6 +18,7 @@ const
 
 const PREFIX = process.env.PREFIX;
 let bootStart = Date.now();
+let clientOauth;
 
 const client = new Discord.Client({
   allowedMentions: { parse: ["users", "roles"], repliedUser: true },
@@ -106,6 +107,7 @@ client.on("ready", async () => {
   delete bootStart;
   client.log(null, `Using FFmpeg engine \`${require("prism-media").FFmpeg.getInfo().version}\``, true, "info");
   client.user.setPresence({ activity: { name: `b.help | ${client.guilds.cache.size}個伺服器`, type: "STREAMING", url: "https://youtube.com/watch?v=lK-i-Ak0EAE" }, status: "dnd" });
+  clientOauth = await client.fetchApplication();
 });
 
 db.on("ready", () => {
@@ -528,7 +530,7 @@ app.use(require("cookie-parser")());
 app.get("/api/auth/login", function(req, res) {
   if (!req.query.code) return res.status(302).send({ token: null });
   const data = {
-    client_id: "848006097197334568",
+    client_id: clientOauth.id,
     client_secret: process.env.CLIENT_SECRET,
     grant_type: "authorization_code",
     redirect_uri: "https://app.blackcatbot.tk/callback/",
