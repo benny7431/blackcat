@@ -100,5 +100,5 @@ dist
 # DynamoDB Local files
 .dynamodb/
 
+# Tern ports
 .tern-port
-package-lock.json
