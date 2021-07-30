@@ -1,5 +1,4 @@
 FROM heroku/heroku:20
-SHELL ["/bin/bash", "-c"]
 
 WORKDIR /home
 COPY . .
