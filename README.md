@@ -12,6 +12,7 @@
 # ⚒️ 設定
 
 環境變數:
+
 | 名稱 | 註解 |
 | :---: | :---: |
 | `TOKEN` | Discord 機器人 Token |
@@ -33,9 +34,7 @@
 
 ### 使用按鈕部署
 
-<a href="https://heroku.com/deploy" target="_blank">
-  <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
-</a>
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ### 使用終端機部署
 
