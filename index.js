@@ -44,33 +44,33 @@ client.log = async function(message, msgContent, system, type) {
   const webhook = new Discord.WebhookClient(process.env.WEBHOOK_ID, process.env.WEBHOOK_SECRET);
   let content = null;
   if (system) {
-    content = `(Black cat)[System] ${msgContent}`;
+    content = `[System] ${msgContent}`;
   } else {
-    content = `(Black cat)[${message.guild.name}(${message.guild.id})]/${message.author.username} ${msgContent}`;
+    content = `[${message.guild.name}(${message.guild.id})]/${message.author.username} ${msgContent}`;
   }
   switch (type) {
     case "info":
       webhook.send(content, {
-        username: "Black cat log [Info]",
-        avatarURL: "https://blackcatbot.tk/info.png"
+        username: "Black cat log",
+        avatarURL: "https://blackcatbot.tk/assets/info.png"
       });
       break;
     case "warn":
       webhook.send(content, {
-        username: "Black cat log [Warn]",
-        avatarURL: "https://blackcatbot.tk/warn.png"
+        username: "Black cat log",
+        avatarURL: "https://blackcatbot.tk/assets/warn.png"
       });
       break;
     case "error":
       webhook.send(content, {
-        username: "Black cat log [Error]",
-        avatarURL: "https://blackcatbot.tk/error.png"
+        username: "Black cat log",
+        avatarURL: "https://blackcatbot.tk/assets/error.png"
       });
       break;
     default:
       webhook.send(content, {
-        username: "Black cat log [Info]",
-        avatarURL: "https://blackcatbot.tk/info.png"
+        username: "Black cat log",
+        avatarURL: "https://blackcatbot.tk/assets/info.png"
       });
       break;
   }
