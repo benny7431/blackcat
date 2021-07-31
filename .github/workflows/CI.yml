@@ -14,10 +14,14 @@ jobs:
     - name: Cache npm packages
       uses: actions/cache@v2
       with:
-        path: "**/node_modules"
+        path: |
+          **/node_modules
+          ~/.npm
         key: ${{ runner.os }}-node-14.16.1-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
+    - name: Install latest npm
+      run: npm install npm -g
     - name: Install packages to generate lock file
       run: npm install
     - name: Commit modified lock file
@@ -53,10 +57,14 @@ jobs:
     - name: Cache npm packages
       uses: actions/cache@v2
       with:
-        path: "**/node_modules"
-        key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+        path: |
+          **/node_modules
+          ~/.npm
+        key: ${{ runner.os }}-node-14.16.1-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-node-${{ matrix.node-version }}
+          ${{ runner.os }}-node-
+    - name: Install latest npm
+      run: npm install npm -g
     - name: Install packages
       run: npm install
     - name: Test syntax
