@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const { MessageButton } = require("discord-buttons")
+const { MessageButton } = require("discord-buttons");
 
 module.exports = {
   name: "help",
@@ -28,7 +28,7 @@ module.exports = {
     if (message.slash.raw) {
       helpEmbed.addField("\u200B",
         "[➕ 加入支援伺服器](https://blackcatbot.tk/discord)\n\n" +
-        "[➕ 再邀請一次機器人](https://blackcatbot.tk/blackcat)")
+        "[➕ 再邀請一次機器人](https://blackcatbot.tk/blackcat)");
       return message.slash.sendEmbed(helpEmbed);
     } else return message.channel.send({
       embed: helpEmbed,

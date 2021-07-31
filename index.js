@@ -14,7 +14,7 @@ const
   RateLimit = require("express-rate-limit"),
   { readdirSync } = require("fs"),
   { DiscordTogether } = require("discord-together"),
-  { join } = require("path")
+  { join } = require("path");
 
 const PREFIX = process.env.PREFIX;
 let bootStart = Date.now();
@@ -76,7 +76,7 @@ client.log = async function(message, msgContent, system, type) {
   }
 };
 
-const app = express()
+const app = express();
 const limiter = RateLimit({
   windowMs: 60 * 60 * 1000,
   max: 100,
@@ -96,7 +96,7 @@ const cooldowns = new Discord.Collection();
 SoundCloud.keygen()
   .then(key => {
     client.scKey = key;
-    client.log(null, `Fetched SoundCloud key \`${key}\``, true, "info")
+    client.log(null, `Fetched SoundCloud key \`${key}\``, true, "info");
   })
   .catch(console.error);
 
@@ -391,7 +391,7 @@ client.ws.on("INTERACTION_CREATE", async int => {
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(join(__dirname, "static", "200.html"))
+  res.sendFile(join(__dirname, "static", "200.html"));
 });
 
 app.ws("/api/ws/test", (ws) => {
@@ -460,7 +460,7 @@ app.get("/api/status", function(req, res) {
 });
 
 app.get("/loaderio-3cfcf9891b2ae7e544b9d6cdd3220394", (req, res) => {
-  res.send("loaderio-3cfcf9891b2ae7e544b9d6cdd3220394")
+  res.send("loaderio-3cfcf9891b2ae7e544b9d6cdd3220394");
 });
 
 app.get("/api/exist", async function(req, res) {
@@ -546,7 +546,7 @@ app.get("/api/auth/login", function(req, res) {
     })
     .then(res => res.json())
     .then(json => {
-      let text = `${json.token_type} ${json.access_token}`
+      let text = `${json.token_type} ${json.access_token}`;
       let iv = crypto.randomBytes(16);
       let cipher = crypto.createCipheriv("aes-256-cbc", Buffer.from(process.env.ENCODE_KEY), iv);
       let encrypted = cipher.update(text);
@@ -697,7 +697,7 @@ app.get("/api/skip", async function(req, res) {
 });
 
 app.use((req, res) => {
-  res.status(404).sendFile(join(__dirname, "static", "404.html"))
+  res.status(404).sendFile(join(__dirname, "static", "404.html"));
 });
 
 app.use(io.expressErrorHandler());

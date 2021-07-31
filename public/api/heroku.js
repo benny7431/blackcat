@@ -1,4 +1,4 @@
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
 module.exports = async function(req, res) {
   if (req.body.resource !== "build") {
     return res.end();
@@ -24,5 +24,5 @@ module.exports = async function(req, res) {
     })
     .catch(() => {
       res.status(500).end();
-    })
-}
+    });
+};

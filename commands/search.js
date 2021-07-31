@@ -37,18 +37,18 @@ module.exports = {
         options.push(new MessageMenuOption()
           .setLabel(`[${index + 1}]`)
           .setDescription(song.title.length > 50 ? `${song.title.substr(0, 47)}...` : song.title)
-          .setValue(index + 1))
+          .setValue(index + 1));
       });
       options.push(new MessageMenuOption()
         .setLabel("取消")
-        .setValue("cancel"))
+        .setValue("cancel"));
       let menu = new MessageMenu()
         .setID("searchMenu")
         .setPlaceholder(`${search}的搜尋結果`)
         .addOptions(...options);
       let select = new MessageActionRow().addComponent(menu);
 
-      const filter = (interaction) => interaction.clicker.id === message.author.id
+      const filter = (interaction) => interaction.clicker.id === message.author.id;
       let resultsMessage = await message.channel.send("<:music_search:827735016254734346> ┃ 搜尋結果:", {
         components: select
       });
