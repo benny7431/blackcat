@@ -15,7 +15,7 @@ module.exports = {
     const ytdl = require("ytdl-core");
     
     try {
-      let testSong = await ytdl.getInfo("https://youtu.be/lK-i-Ak0EAE")
+      let testSong = await ytdl.getInfo("https://youtu.be/lK-i-Ak0EAE");
     } catch (e) {
       let headers = {
         "Accept": "application/vnd.heroku+json; version=3",

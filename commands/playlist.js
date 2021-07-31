@@ -134,7 +134,7 @@ module.exports = {
       .setThumbnail(playlist.thumbnail.url);
     if (sent) sent.edit({
       embed: playlistEmbed
-    })
+    });
     else message.slash.editEmbed(embed);
 
     if (!serverQueue) message.client.queue.set(message.guild.id, queueConstruct);
