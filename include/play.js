@@ -92,8 +92,8 @@ module.exports = {
     let ytdlStream;
     try {
       ytdlStream = await ytdl(queue.current.url, ytdlOptions);
-    } catch (e) {
-      message.client.log(message, e, false, "error");
+    } catch (error) {
+      message.client.log(message, error.message, false, "error");
       let errorMsg = null;
       if (error.message.includes("404") || error.message.includes("id")) {
         errorMsg = "❌ ┃ 找不到影片";
