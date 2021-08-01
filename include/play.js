@@ -1,6 +1,6 @@
 const ytdl = require("ytdl-core");
 const Discord = require("discord.js");
-const { opus, FFmpeg } = require("prism-media")
+const { opus, FFmpeg } = require("prism-media");
 const { MessageButton, MessageActionRow } = require("discord-buttons");
 const { canModifyQueue } = require("../util/Util");
 
@@ -92,15 +92,15 @@ module.exports = {
     let ytdlStream;
     try {
       ytdlStream = await ytdl(queue.current.url, ytdlOptions);
-    } catch (e) {
-      message.client.log(message, e, false, "error");
+    } catch (error) {
+      message.client.log(message, error.message, false, "error");
       let errorMsg = null;
       if (error.message.includes("404") || error.message.includes("id")) {
         errorMsg = "❌ ┃ 找不到影片";
       } else if (error.message.includes("private") || error.message.includes("403")) {
         errorMsg = "❌ ┃ 無法播放私人影片";
       } else if (error.message.includes("429")) {
-        if (message.slash.raw) message.slash.send("❌ ┃ 發生Youtube API錯誤，機器人將會自動重新啟動...")
+        if (message.slash.raw) message.slash.send("❌ ┃ 發生Youtube API錯誤，機器人將會自動重新啟動...");
         else message.channel.send("❌ ┃ 發生Youtube API錯誤，機器人將會自動重新啟動...").catch(console.error);
 
         if (process.env.HEROKU_API_KEY && process.env.HEROKU_APP_ID) require("heroku-restarter")(process.env["HEROKU_API_KEY"], process.env["HEROKU_APP_ID"]).restart();
