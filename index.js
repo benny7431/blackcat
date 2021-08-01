@@ -20,16 +20,24 @@ const PREFIX = process.env.PREFIX;
 let bootStart = Date.now();
 let clientOauth;
 
+const intents = new DIscord.Intents([
+  "GUILDS",
+  "GUILD_MEMBERS",
+  "GUILD_BANS",
+  "GUILD_INTEGRATIONS",
+  "GUILD_WEBHOOKS",
+  "GUILD_INVITES",
+  "GUILD_VOICE_STATES",
+  "GUILD_MESSAGES",
+  "GUILD_MESSAGE_REACTIONS",
+  "GUILD_MESSAGE_TYPING",
+  "DIRECT_MESSAGES",
+])
 const client = new Discord.Client({
   allowedMentions: { parse: ["users", "roles"], repliedUser: true },
   restTimeOffset: 0,
   disableMentions: "everyone",
-  presence: {
-    status: "dnd",
-    activity: {
-      name: "啟動中..."
-    }
-  }
+  intents: intents
 });
 const db = new mongo.Database(process.env.MONGO_DB_URL, "blackcat");
 require("discord-buttons")(client);
@@ -106,7 +114,14 @@ client.on("ready", async () => {
   client.log(null, `Black cat ready, boot took ${Date.now() - bootStart}ms`, true, "info");
   delete bootStart;
   client.log(null, `Using FFmpeg engine \`${require("prism-media").FFmpeg.getInfo().version}\``, true, "info");
-  client.user.setPresence({ activity: { name: `b.help | ${client.guilds.cache.size}個伺服器`, type: "STREAMING", url: "https://youtube.com/watch?v=lK-i-Ak0EAE" }, status: "dnd" });
+  client.user.setPresence({
+    activities: [{
+      name: `b.help | ${client.guilds.cache.size}個伺服器`,
+      type: "STREAMING",
+      url: "https://youtube.com/watch?v=lK-i-Ak0EAE"
+    }],
+    status: "dnd"
+  });
   clientOauth = await client.fetchApplication();
 });
 
