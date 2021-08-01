@@ -12,10 +12,7 @@ module.exports = {
   execute(message) {
     const queue = message.client.queue.get(message.guild.id);
 
-    if (!queue) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 目前沒有任何歌曲正在播放!");
-      else return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!").catch(console.error);
-    }
+    if (!queue) return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!").catch(console.error);
     if (!canModifyQueue(message.member)) return;
 
     try {
@@ -27,10 +24,8 @@ module.exports = {
       } catch (e) {
         console.log(e);
       }
-      if (message.slash.raw) return message.slash.send("<:stop:827734840891015189> ┃ 停止播放歌曲時發生錯誤, 已強制停止音樂");
-      else return queue.textChannel.send("<:stop:827734840891015189> ┃ 停止播放歌曲停止播放歌曲時發生錯誤, 已強制停止音樂").catch(console.error);
+      return queue.textChannel.send("<:stop:827734840891015189> ┃ 停止播放歌曲停止播放歌曲時發生錯誤, 已強制停止音樂").catch(console.error);
     }
-    if (message.slash.raw) message.slash.send("<:stop:827734840891015189> ┃ 停止播放歌曲");
-    else queue.textChannel.send("<:stop:827734840891015189> ┃ 停止播放歌曲").catch(console.error);
+    queue.textChannel.send("<:stop:827734840891015189> ┃ 停止播放歌曲").catch(console.error);
   }
 };

@@ -22,10 +22,11 @@ module.exports = {
       .setTitle("刪除訊息成功!")
       .setDescription(`🚮 ┃ 成功刪除了${args[0]}則訊息!`)
       .setColor("#5865F2");
-    const sent = await message.channel.send(embed).catch(console.error);
+    const sent = await message.channel.send({
+      embeds: [embed]
+    }).catch(console.error);
     setTimeout(function() {
       sent.delete().catch(console.error);
     }, 3000);
-    return;
   }
 };

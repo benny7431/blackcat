@@ -12,8 +12,7 @@ module.exports = {
   execute(message) {
     const queue = message.client.queue.get(message.guild.id);
     if (!queue) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 目前沒有任何歌曲正在播放!");
-      else return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!").catch(console.error);
+      return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!").catch(console.error);
     }
     if (!canModifyQueue(message.member)) return;
 
@@ -24,7 +23,6 @@ module.exports = {
     }
     queue.songs = songs;
     message.client.queue.set(message.guild.id, queue);
-    if (message.slash.raw) return message.slash.send("🔀 ┃ 隨機排序播放清單");
-    else return queue.textChannel.send("🔀 ┃ 隨機排序播放清單").catch(console.error);
+    return queue.textChannel.send("🔀 ┃ 隨機排序播放清單").catch(console.error);
   }
 };

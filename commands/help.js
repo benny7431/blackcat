@@ -1,5 +1,4 @@
-const { MessageEmbed } = require("discord.js");
-const { MessageButton } = require("discord-buttons");
+const { MessageEmbed, MessageButton, MessageActionRow } = require("discord.js");
 
 module.exports = {
   name: "help",
@@ -19,12 +18,14 @@ module.exports = {
       .setColor("#5865F2");
     let discordBtn = new MessageButton()
       .setLabel("加入支援伺服器")
-      .setStyle("url")
+      .setStyle("LINK")
       .setURL("https://blackcatbot.tk/discord");
     let inviteBtn = new MessageButton()
       .setLabel("邀請機器人")
-      .setStyle("url")
+      .setStyle("LINK")
       .setURL("https://blackcatbot.tk/blackcat");
+    let buttonRow = new MessageActionRow()
+      .addComponents(discordBtn, inviteBtn);
     if (message.slash.raw) {
       helpEmbed.addField("\u200B",
         "[➕ 加入支援伺服器](https://blackcatbot.tk/discord)\n\n" +
@@ -32,7 +33,7 @@ module.exports = {
       return message.slash.sendEmbed(helpEmbed);
     } else return message.channel.send({
       embed: helpEmbed,
-      buttons: [inviteBtn, discordBtn]
+      components: [buttonRow]
     }).catch(console.error);
   }
 };

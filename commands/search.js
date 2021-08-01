@@ -1,5 +1,4 @@
-const { MessageEmbed } = require("discord.js");
-const { MessageMenu, MessageMenuOption, MessageActionRow } = require("discord-buttons");
+const { MessageSelectMenu, MessageActionRow } = require("discord.js");
 const YouTube = require("youtube-sr").default;
 
 module.exports = {
@@ -19,10 +18,8 @@ module.exports = {
     ]
   },
   async execute(message, args) {
-    if (!args.length)
-      return message.channel.send("❌ ┃ 請輸入歌曲名稱").catch(console.error);
-    if (!message.member.voice.channel)
-      return message.channel.send("❌ ┃ 你必須先加入一個語音頻道!").catch(console.error);
+    if (!args.length) return message.channel.send("❌ ┃ 請輸入歌曲名稱").catch(console.error);
+    if (!message.member.voice.channel) return message.channel.send("❌ ┃ 你必須先加入一個語音頻道!").catch(console.error);
 
     const search = args.join(" ");
 
@@ -34,30 +31,37 @@ module.exports = {
         type: "video"
       });
       results.map((song, index) => {
-        options.push(new MessageMenuOption()
-          .setLabel(`[${index + 1}]`)
-          .setDescription(song.title.length > 50 ? `${song.title.substr(0, 47)}...` : song.title)
-          .setValue(index + 1));
+        options.push({
+          label: `[${index + 1}]`,
+          description: song.title.length > 50 ? `${song.title.substr(0, 47)}...` : song.title,
+          value: (index + 1).toString()
+        });
       });
-      options.push(new MessageMenuOption()
-        .setLabel("取消")
-        .setValue("cancel"));
-      let menu = new MessageMenu()
-        .setID("searchMenu")
+      options.push({
+        label: "取消",
+        value: "cancel"
+      });
+      let menu = new MessageSelectMenu()
+        .setCustomId("searchMenu")
         .setPlaceholder(`${search}的搜尋結果`)
         .addOptions(...options);
-      let select = new MessageActionRow().addComponent(menu);
+      let component = new MessageActionRow()
+        .addComponents(menu);
 
       const filter = (interaction) => interaction.clicker.id === message.author.id;
       let resultsMessage = await message.channel.send("<:music_search:827735016254734346> ┃ 搜尋結果:", {
-        components: select
+        components: [component]
       });
       try {
-        let collector = resultsMessage.createMenuCollector(filter, { max: 1, time: 30000, errors: ["time"] });
+        let collector = resultsMessage.createMessageComponentCollector(filter, {
+          max: 1,
+          time: 30000,
+          errors: ["time"]
+        });
 
         let choiceIndex = null;
         collector.on("collect", async (choice) => {
-          choice.reply.defer();
+          choice.defer();
           switch (choice.values[0]) {
             case "1":
               choiceIndex = 1;

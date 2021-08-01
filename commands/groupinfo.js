@@ -31,6 +31,8 @@ module.exports = {
       `閒置: ${idle}\n`+
       `請勿打擾: ${dnd}\n`+
       `離線: ${offline}`);
-    return message.channel.send(embed);
+    return message.channel.send({
+      embeds: [embed]
+    });
   }
 };

@@ -26,36 +26,15 @@ module.exports = {
     const { channel } = message.member.voice;
 
     const serverQueue = message.client.queue.get(message.guild.id);
-    if (serverQueue)
-      if (serverQueue.songs[0].type === "radio") {
-        if (message.slash.raw) return message.slash.send("❌ ┃ 你不能在連結至電台的狀態下播放其他歌曲!");
-        else return message.channel.send("❌ ┃ 你不能在連結至電台的狀態下播放其他歌曲!").catch(console.error);
-      }
-    if (!channel) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 你要先加入一個語音頻道...不然我要在哪的房間放收音機呢？");
-      else return message.channel.send("❌ ┃ 你要先加入一個語音頻道...不然我要在哪的房間放收音機呢？").catch(console.error);
-    }
-    if (serverQueue && channel !== message.guild.me.voice.channel) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 你必須跟我在同一個頻道裡面!");
-      else return message.channel.send("❌ ┃ 你必須跟我在同一個頻道裡面!").catch(console.error);
-    }
+    if (!channel) return message.channel.send("❌ ┃ 你要先加入一個語音頻道...不然我要在哪的房間放收音機呢？").catch(console.error);
+    if (serverQueue && channel !== message.guild.me.voice.channel) return message.channel.send("❌ ┃ 你必須跟我在同一個頻道裡面!").catch(console.error);
 
-    if (!args.length) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 請輸入歌曲名稱或網址");
-      else return message.channel.send("❌ ┃ 請輸入歌曲名稱或網址").catch(console.error);
-    }
+    if (!args.length) return message.channel.send("❌ ┃ 請輸入歌曲名稱或網址").catch(console.error);
 
-    if (!channel.joinable) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 無法連接到語音頻道!因為我沒有權限加入你在的房間!").catch(console.error);
-      else return message.channel.send("❌ ┃ 無法連接到語音頻道!因為我沒有權限加入你在的房間!").catch(console.error);
-    }
-    if (!channel.speakable) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!");
-      else return message.channel.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!");
-    }
+    if (!channel.joinable) return message.channel.send("❌ ┃ 無法連接到語音頻道!因為我沒有權限加入你在的房間!").catch(console.error);
+    if (!channel.speakable) return message.channel.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!");
 
-    if (message.slash.raw) message.slash.send("<:music_search:827735016254734346> ┃ 搜尋中...\n> `" + args.join(" ") + "`");
-    else message.channel.send("<:music_search:827735016254734346> ┃ 搜尋中...\n> `" + args.join(" ") + "`").catch(console.error);
+    message.channel.send("<:music_search:827735016254734346> ┃ 搜尋中...\n> `" + args.join(" ") + "`").catch(console.error);
 
     const search = args.join(" ");
     const playlistPattern = /^.*(list=)([^#\&\?]*).*/gi;
@@ -111,8 +90,7 @@ module.exports = {
         } else {
           errorMsg = "❌ ┃ 發生了未知的錯誤，此錯誤已被紀錄";
         }
-        if (message.slash.raw) return message.slash.send(errorMsg);
-        else return message.channel.send(errorMsg).catch(console.error);
+        return message.channel.send(errorMsg).catch(console.error);
       }
     } else {
       try {
@@ -144,8 +122,7 @@ module.exports = {
         } else {
           errorMsg = "❌ ┃ 發生了未知的錯誤，此錯誤已被紀錄";
         }
-        if (message.slash.raw) return message.slash.send(errorMsg);
-        else return message.channel.send(errorMsg).catch(console.error);
+        return message.channel.send(errorMsg).catch(console.error);
       }
     }
 
@@ -156,7 +133,9 @@ module.exports = {
         .setTitle(`<:music_add:827734890924867585> ┃ 我已經把${song.title}加入播放清單了!`)
         .setThumbnail(song.thumbnail);
 
-      return serverQueue.textChannel.send(embed).catch(console.error);
+      return serverQueue.textChannel.send({
+        embeds: [embed]
+      }).catch(console.error);
     }
 
     queueConstruct.songs.push(song);
@@ -171,8 +150,7 @@ module.exports = {
       console.error(error);
       message.client.queue.delete(message.guild.id);
       await channel.leave();
-      if (message.slash.raw) return message.slash.send(`❌ ┃ 無法加入語音頻道...原因: ${error.message}`);
-      else return message.channel.send(`❌ ┃ 無法加入語音頻道...原因: ${error.message}`).catch(console.error);
+      return message.channel.send(`❌ ┃ 無法加入語音頻道...原因: ${error.message}`).catch(console.error);
     }
   }
 };

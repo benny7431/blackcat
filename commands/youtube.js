@@ -1,5 +1,4 @@
-const { MessageEmbed } = require("discord.js");
-const { MessageButton } = require("discord-buttons");
+const { MessageEmbed, MessageButton, MessageActionRow } = require("discord.js");
 
 module.exports = {
   name: "youtube",
@@ -19,13 +18,15 @@ module.exports = {
         return sent.edit({ embed });
       });
     let button = new MessageButton()
-      .setStyle("url")
+      .setStyle("LINK")
       .setLabel("點我加入")
       .setURL(invite.code);
+    let component = new MessageActionRow()
+      .addComponents(button);
     embed.setDescription("成功創建頻道!");
     return sent.edit({
-      button,
-      embed
+      embeds: [embed],
+      component: [component]
     });
   }
 };

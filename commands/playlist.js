@@ -25,33 +25,13 @@ module.exports = {
     const { channel } = message.member.voice;
 
     const serverQueue = message.client.queue.get(message.guild.id);
-    if (serverQueue)
-      if (serverQueue.songs[0].type === "radio") {
-        if (message.slash.raw) return message.slash.send("❌ ┃ 你不能在連結至電台的狀態下播放其他歌曲!");
-        else return message.channel.send("❌ ┃ 你不能在連結至電台的狀態下播放其他歌曲!").catch(console.error);
-      }
-    if (serverQueue && channel !== message.guild.me.voice.channel) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 你必須跟我在同一個頻道裡面!");
-      else return message.channel.send("❌ ┃ 你必須跟我在同一個頻道裡面!").catch(console.error);
-    }
+    if (serverQueue && channel !== message.guild.me.voice.channel) return message.channel.send("❌ ┃ 你必須跟我在同一個頻道裡面!").catch(console.error);
 
-    if (!args.length) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 請輸入播放清單名稱或網址!");
-      else return message.channel.send("❌ ┃ 請輸入播放清單名稱或網址!").catch(console.error);
-    }
-    if (!channel) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 你要先加入一個語音頻道...不然我要在哪的房間放收音機呢？");
-      else return message.channel.send("❌ ┃ 你要先加入一個語音頻道...不然我要在哪的房間放收音機呢？").catch(console.error);
-    }
+    if (!args.length) return message.channel.send("❌ ┃ 請輸入播放清單名稱或網址!").catch(console.error)
+    if (!channel) return message.channel.send("❌ ┃ 你要先加入一個語音頻道...不然我要在哪的房間放收音機呢？").catch(console.error);
 
-    if (!channel.joinable) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 無法連接到語音頻道!因為我沒有權限加入你在的房間!").catch(console.error);
-      else return message.channel.send("❌ ┃ 無法連接到語音頻道!因為我沒有權限加入你在的房間!").catch(console.error);
-    }
-    if (!channel.speakable) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!");
-      else return message.channel.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!");
-    }
+    if (!channel.joinable) return message.channel.send("❌ ┃ 無法連接到語音頻道!因為我沒有權限加入你在的房間!").catch(console.error);
+    if (!channel.speakable) return message.channel.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!");
 
     const search = args.join(" ");
     const pattern = /^.*(youtu.be\/|list=)([^#\&\?]*).*/gi;
@@ -81,9 +61,9 @@ module.exports = {
       .setTitle("正在讀取播放清單, 請稍等...")
       .setColor("#5865F2");
 
-    let sent = null;
-    if (message.slash.raw) message.slash.sendEmbed(playlistEmbed);
-    else sent = await message.channel.send(playlistEmbed);
+    let sent = await message.channel.send({
+      embeds: [playlistEmbed]
+    });
 
     if (urlValid) {
       try {
@@ -91,8 +71,7 @@ module.exports = {
         videos = await playlist.fetch();
       } catch (error) {
         console.error(error);
-        if (message.slash.raw) return message.slash.send("❌ ┃ 沒有找到播放清單");
-        else return message.channel.send("❌ ┃ 沒有找到播放清單").catch(console.error);
+        return message.channel.send("❌ ┃ 沒有找到播放清單").catch(console.error);
       }
     } else {
       try {
@@ -104,8 +83,7 @@ module.exports = {
         videos = await playlist.fetch();
       } catch (error) {
         console.error(error);
-        if (message.slash.raw) return message.slash.send("❌ ┃ 沒有找到播放清單...");
-        else return message.channel.send("❌ ┃ 沒有找到播放清單...").catch(console.error);
+        return message.channel.send("❌ ┃ 沒有找到播放清單...").catch(console.error);
       }
     }
 
@@ -132,10 +110,9 @@ module.exports = {
       .setDescription(`\n<:music_add:827734890924867585> ┃ 已新增${playlist.videoCount}首歌`)
       .setColor("#5865F2")
       .setThumbnail(playlist.thumbnail.url);
-    if (sent) sent.edit({
-      embed: playlistEmbed
+    sent.edit({
+      embeds: [playlistEmbed]
     });
-    else message.slash.editEmbed(embed);
 
     if (!serverQueue) message.client.queue.set(message.guild.id, queueConstruct);
 

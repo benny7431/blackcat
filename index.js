@@ -18,9 +18,8 @@ const
 
 const PREFIX = process.env.PREFIX;
 let bootStart = Date.now();
-let clientOauth;
 
-const intents = new DIscord.Intents([
+const intents = new Discord.Intents([
   "GUILDS",
   "GUILD_MEMBERS",
   "GUILD_BANS",
@@ -40,7 +39,6 @@ const client = new Discord.Client({
   intents: intents
 });
 const db = new mongo.Database(process.env.MONGO_DB_URL, "blackcat");
-require("discord-buttons")(client);
 global.fetch = require("node-fetch");
 client.login(process.env.TOKEN);
 client.together = new DiscordTogether(client);
@@ -122,7 +120,6 @@ client.on("ready", async () => {
     }],
     status: "dnd"
   });
-  clientOauth = await client.fetchApplication();
 });
 
 db.on("ready", () => {
@@ -141,7 +138,7 @@ for (const file of commandFiles) {
 }
 console.log("All commands are loaded.");
 
-client.on("message", async (message) => {
+client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
   if (!message.guild) return;
 
@@ -215,7 +212,14 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 });
 
 client.on("guildCreate", async guild => {
-  client.user.setPresence({ activity: { name: `b.help | ${client.guilds.cache.size}個伺服器`, type: "STREAMING", url: "https://youtube.com/watch?v=lK-i-Ak0EAE" }, status: "dnd" });
+  client.user.setPresence({
+    activities: [{
+      name: `b.help | ${client.guilds.cache.size}個伺服器`,
+      type: "STREAMING",
+      url: "https://youtube.com/watch?v=lK-i-Ak0EAE"
+    }],
+    status: "dnd"
+  });
   if (!guild.systemChannel) return;
   const embed = new Discord.MessageEmbed()
     .setTitle("感謝邀請Black cat")
@@ -233,177 +237,23 @@ client.on("guildCreate", async guild => {
 });
 
 client.on("guildDelete", guild => {
-  client.user.setPresence({ activity: { name: `b.help | ${client.guilds.cache.size}個伺服器`, type: "STREAMING", url: "https://youtube.com/watch?v=lK-i-Ak0EAE" }, status: "dnd" });
+  client.user.setPresence({
+    activities: [{
+      name: `b.help | ${client.guilds.cache.size}個伺服器`,
+      type: "STREAMING",
+      url: "https://youtube.com/watch?v=lK-i-Ak0EAE"
+    }],
+    status: "dnd"
+  });
   client.log(null, `Leave ${guild.name}`, true, "info");
 });
 
-client.ws.on("INTERACTION_CREATE", async int => {
-  if (int.type !== 2) return;
-
-  let guild = await client.guilds.fetch(int.guild_id).catch(error => {
-    console.log(error);
-    return client.api.interactions(int.id, int.token).callback.post({
-      data: {
-        type: 4,
-        data: {
-          content: "請在伺服器中執行指令!",
-          flags: 64
-        }
-      }
-    });
+client.on("interactionCreate", interaction => {
+  if (!interaction.isCommand()) return;
+  interaction.reply({
+    content: "由於新版API上線，斜線指令目前暫停使用"
   });
-  let channel = guild.channels.cache.get(int.channel_id);
-  if (!channel) return client.api.interactions(int.id, int.token).callback.post({
-    data: {
-      type: 4,
-      data: {
-        content: "請邀請機器人!Black cat需要邀請機器人後才可以使用斜線指令!",
-        flags: 64
-      }
-    }
-  });
-  let member = await guild.members.fetch(int.member.user.id).catch(error => {
-    console.log(error);
-    return client.api.interactions(int.id, int.token).callback.post({
-      data: {
-        type: 4,
-        data: {
-          content: "請在伺服器中執行指令!",
-          flags: 64
-        }
-      }
-    });
-  });
-  let author = member.user;
-  let createdTimestamp = Date.now();
-  const message = {
-    channel,
-    guild,
-    author,
-    client,
-    content: null,
-    member,
-    createdTimestamp,
-    slash: {
-      send: function(content) {
-        client.api.interactions(int.id, int.token).callback.post({
-          data: {
-            type: 4,
-            data: {
-              content: content
-            }
-          }
-        }).catch(console.error);
-      },
-      sendEmbed: function(embed) {
-        client.api.interactions(int.id, int.token).callback.post({
-          data: {
-            type: 4,
-            data: {
-              embeds: [embed]
-            }
-          }
-        }).catch(console.error);
-      },
-      edit: function(content) {
-        client.api.webhooks(client.user.id, int.token).messages("@original").patch({
-          data: {
-            content: content
-          }
-        }).catch(console.error);
-      },
-      editEmbed: function(embed) {
-        client.api.webhooks(client.user.id, int.token).messages("@original").patch({
-          data: {
-            embeds: [embed]
-          }
-        }).catch(console.error);
-      },
-      delete: function() {
-        client.api.webhooks(client.user.id, int.token).messages("@original").delete().catch(console.error);
-      },
-      raw: int
-    }
-  };
-
-  try {
-    if (!int.guild_id) return client.api.interactions(int.id, int.token).callback.post({
-      data: {
-        type: 4,
-        data: {
-          content: "請在伺服器中執行指令!",
-          flags: 64
-        }
-      }
-    });
-    else if (!message.channel.permissionsFor("848006097197334568").has("SEND_MESSAGES")) return client.api.interactions(int.id, int.token).callback.post({
-      data: {
-        type: 4,
-        data: {
-          content: "沒有權限在此頻道發送訊息!",
-          flags: 64
-        }
-      }
-    });
-  } catch (e) {
-    console.log(e.message);
-  }
-
-  let args = [];
-  if (int.data.options) {
-    const contents = [];
-    int.data.options.forEach(arg => {
-      contents.push(arg.value);
-    });
-    message.content = `b.${int.data.name} ${contents.join(" ")}`;
-    args = contents;
-  }
-
-  const commandName = int.data.name.toLowerCase();
-
-  const command =
-    client.commands.get(commandName) ||
-    client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
-
-  if (!command) return;
-
-  if (!cooldowns.has(command.name)) {
-    cooldowns.set(command.name, new Discord.Collection());
-  }
-
-  const now = Date.now();
-  const timestamps = cooldowns.get(command.name);
-  const cooldownAmount = (command.cooldown || 1) * 1000;
-
-  if (timestamps.has(message.author.id)) {
-    const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
-
-    if (now < expirationTime) {
-      const timeLeft = (expirationTime - now) / 1000;
-      return message.channel.send(`🕒 請等待${Math.ceil(timeLeft.toFixed(1))}秒後再使用${command.name}指令!!!`);
-    }
-  }
-
-  timestamps.set(message.author.id, now);
-  setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
-
-  if (!command.slashReply) await client.api.interactions(int.id, int.token).callback.post({
-    data: {
-      type: 4,
-      data: {
-        content: "正在處理..."
-      }
-    }
-  });
-
-  try {
-    command.execute(message, args);
-  } catch (error) {
-    console.error(error);
-    message.channel.send(`❌ ┃ 執行時出現錯誤:${error.message}`).catch(console.error);
-    message.client.log(message, `${error.message} (Command:${command.name})`, false, "error");
-  }
-});
+})
 
 app.get("/", (req, res) => {
   res.sendFile(join(__dirname, "static", "200.html"));
@@ -545,7 +395,7 @@ app.use(require("cookie-parser")());
 app.get("/api/auth/login", function(req, res) {
   if (!req.query.code) return res.status(302).send({ token: null });
   const data = {
-    client_id: clientOauth.id,
+    client_id: client.application.id,
     client_secret: process.env.CLIENT_SECRET,
     grant_type: "authorization_code",
     redirect_uri: "https://app.blackcatbot.tk/callback/",

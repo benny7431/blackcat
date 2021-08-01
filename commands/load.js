@@ -9,23 +9,11 @@ module.exports = {
   async execute(message, args) {
     const { channel } = message.member.voice;
 
-    if (!channel) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 你要先加入一個語音頻道...不然我要在哪的房間放收音機呢？");
-      else return message.channel.send("❌ ┃ 你要先加入一個語音頻道...不然我要在哪的房間放收音機呢？").catch(console.error);
-    }
+    if (!channel) return message.channel.send("❌ ┃ 你要先加入一個語音頻道...不然我要在哪的房間放收音機呢？").catch(console.error);
 
-    if (!channel.joinable) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 無法連接到語音頻道!因為我沒有權限加入你在的房間!").catch(console.error);
-      else return message.channel.send("❌ ┃ 無法連接到語音頻道!因為我沒有權限加入你在的房間!").catch(console.error);
-    }
-    if (!channel.speakable) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!");
-      else return message.channel.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!");
-    }
-    if (serverQueue && channel !== message.guild.me.voice.channel) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 你必須跟我在同一個頻道裡面!");
-      else return message.channel.send("❌ ┃ 你必須跟我在同一個頻道裡面!").catch(console.error);
-    }
+    if (!channel.joinable) return message.channel.send("❌ ┃ 無法連接到語音頻道!因為我沒有權限加入你在的房間!").catch(console.error);
+    if (!channel.speakable) return message.channel.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!");
+    if (serverQueue && channel !== message.guild.me.voice.channel) return message.channel.send("❌ ┃ 你必須跟我在同一個頻道裡面!").catch(console.error);
 
     const serverQueue = message.client.queue.get(message.guild.id);
     const queueConstruct = {
@@ -63,7 +51,7 @@ module.exports = {
       try {
         queueConstruct.connection = await channel.join();
         await queueConstruct.connection.voice.setSelfDeaf(true);
-      await message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
+        await message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
         play(queueConstruct.songs[0], message);
       } catch (error) {
         console.error(error);

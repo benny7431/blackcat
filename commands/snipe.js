@@ -9,6 +9,8 @@ module.exports = {
       .setTitle("回復訊息功能已經移除")
       .setDescription("為了保護用戶隱私權，我不會繼續保存被刪除後的訊息")
       .setColor("#5865F2");
-    return message.channel.send(embed);
+    return message.channel.send({
+      embeds: [embed]
+    });
   }
 };

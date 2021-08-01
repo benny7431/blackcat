@@ -29,22 +29,18 @@ module.exports = {
     ];
     const randomAnswer = answer[Math.floor(Math.random() * answer.length)];
     const question = args.join(" ");
-    if (!args.length) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 你要問我什麼呢?");
-      else return message.channel.send("❌ ┃ 你要問我什麼呢?");
-    }
+    if (!args.length) return message.channel.send("❌ ┃ 你要問我什麼呢?");
 
     const embed = new MessageEmbed()
       .setTitle("問答!")
       .setDescription(`❓ ┃ ${question}的答案...`)
       .setColor("#5865F2");
-    let sent = null;
-    if (message.slash.raw) message.slash.sendEmbed(embed);
-    else sent = await message.channel.send(embed);
+    let sent = await message.channel.send({
+      embeds: [embed]
+    });
     embed.setDescription(`❓ ┃ 對於${question}我的回答是${randomAnswer}`);
-    setTimeout(function() {
-      if (sent) sent.edit({ embed });
-      else message.slash.editEmbed(embed);
-    }, 2000);
+    setTimeout(() => sent.edit({
+      embeds: [embed]
+    }), 2000);
   }
 };

@@ -30,16 +30,18 @@ module.exports = {
           .setTitle(`${message.author.username}的Gay指數`)
           .setDescription(`🏳️‍🌈 ┃ 你的Gay指數是${gay}\n\n${bar}`)
           .setColor("#5865F2");
-        if (message.slash.raw) return message.slash.sendEmbed(embed);
-        else return message.channel.send(embed).catch(console.error);
+        return message.channel.send({
+          embeds: [embed]
+        }).catch(console.error);
       }
     } else {
       const embed = new MessageEmbed()
         .setTitle(`${message.author.username}的Gay指數`)
         .setDescription(`🏳️‍🌈 ┃ 你的Gay指數是${gay}\n\n${bar}`)
         .setColor("#5865F2");
-      if (message.slash.raw) return message.slash.sendEmbed(embed);
-      else return message.channel.send(embed).catch(console.error);
+      return message.channel.send({
+        embeds: [embed]
+      }).catch(console.error);
     }
   }
 };

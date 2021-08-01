@@ -49,7 +49,8 @@ module.exports = {
       .addField("<:music:825646714404077569> ┃ 音樂播放狀態", `有${message.client.queue.size}個伺服器正在播放音樂`)
       .setColor("#5865F2");
 
-    if (message.slash.raw) return message.slash.sendEmbed(embed);
-    else return message.channel.send(embed);
+    return message.channel.send({
+      embeds: [embed]
+    });
   }
 };

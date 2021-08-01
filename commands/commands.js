@@ -43,8 +43,9 @@ module.exports = {
           "`b.commands util` 工具指令\n" +
           "`b.commands other` 其他指令")
         .setColor("#5865F2");
-      if (message.slash.raw) return message.slash.sendEmbed(embed);
-      else return message.channel.send(embed).catch(console.error);
+      return message.channel.send({
+        embeds: [embed]
+      }).catch(console.error);
     }
     if (args[0] === "music") {
       embed = new MessageEmbed()
@@ -105,7 +106,8 @@ module.exports = {
     } else {
       return message.channel.send("❌ ┃ 請輸入正確的指令類別!").catch(console.error);
     }
-    if (message.slash.raw) return message.slash.sendEmbed(embed);
-    else message.channel.send(embed).catch(console.error);
+    return message.channel.send({
+      embeds: [embed]
+    }).catch(console.error);
   }
 };

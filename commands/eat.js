@@ -40,15 +40,15 @@ module.exports = {
       .setTitle("享用食物...")
       .setDescription(`🍽️ ┃ 正在吃${food}`)
       .setColor("#5865F2");
-    let sent;
-    if (message.slash.raw) message.slash.sendEmbed(embed);
-    else sent = await message.channel.send(embed).catch(console.error);
+    let sent = await message.channel.send({
+      embeds: [embed]
+    }).catch(console.error);
     const timeout = getRandomNum(2000, 10000);
     embed.setDescription(`🍽️ ┃ 對於${food}我的評價是:${respone[getRandomNum(0, respone.length)]}`);
     setTimeout(function() {
-      if (sent) sent.edit({ embed }).catch(console.error);
-      else message.slash.editEmbed(embed);
+      sent.edit({
+        embeds: [embed]
+      }).catch(console.error);
     }, timeout);
-    return;
   }
 };

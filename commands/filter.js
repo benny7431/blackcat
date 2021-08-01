@@ -74,18 +74,9 @@ module.exports = {
       "treble": "treble=g=5",
       "subboost": "asubboost"
     };
-    if (!queue) {
-      if (message.slash.raw) message.slash.send("❌ ┃ 現在沒有人在播放音樂欸030");
-      else return message.channel.send("❌ ┃ 現在沒有人在播放音樂欸030").catch(console.error);
-    }
-    if (!args.length) {
-      if (message.slash.raw) message.slash.send("❌ ┃ 請輸入動作(add/remove/clear)");
-      else return message.channel.send("❌ ┃ 請輸入動作(add/remove/clear)").catch(console.error);
-    }
-    if (!args[1]) {
-      if (message.slash.raw) message.slash.send("❌ ┃ 請輸入音樂音效(bassboost/8D/nightcore/vaporwave/surrounding/terble/subboost)");
-      else return message.channel.send("❌ ┃ 請輸入音樂音效(bassboost/8D/nightcore/vaporwave/surrounding/terble/subboost)").catch(console.error);
-    }
+    if (!queue) return message.channel.send("❌ ┃ 現在沒有人在播放音樂欸030").catch(console.error);
+    if (!args.length) return message.channel.send("❌ ┃ 請輸入動作(add/remove/clear)").catch(console.error);
+    if (!args[1]) return message.channel.send("❌ ┃ 請輸入音樂音效(bassboost/8D/nightcore/vaporwave/surrounding/terble/subboost)").catch(console.error);
     const filter = filters[args[1]];
     let newFilter = [];
     let error = false;
@@ -129,7 +120,6 @@ module.exports = {
         msg = `✅ ┃ 成功移除音樂音效${args[1]}, 重新播放歌曲將會套用目前設定!`;
       }
     }
-    if (message.slash.raw) message.slash.send(msg);
-    else message.channel.send(msg).catch(console.error);
+    message.channel.send(msg).catch(console.error);
   }
 };

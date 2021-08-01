@@ -29,27 +29,27 @@ module.exports = {
         .setTitle("骰子!")
         .setDescription("🎲 ┃ 你得到了...")
         .setColor("#5865F2");
-      let sent = null;
-      if (message.slash.raw) message.slash.sendEmbed(embed);
-      else sent = await message.channel.send(embed);
+      let sent = await message.channel.send({
+        embeds: [embed]
+      });
       setTimeout(function() {
-        embed.setDescription(`🎲 ┃ 你得到了${getRandomNum(1, Number(args[0]))}!`);
-        if (sent) sent.edit({ embed }).catch(console.error);
-        else message.slash.editEmbed(embed);
+       sent.edit({
+         embeds: [embed]
+       }).catch(console.error);
       }, 2000);
-      return;
     } else {
       const embed = new MessageEmbed()
         .setTitle("骰子!")
         .setDescription("🎲 ┃ 你得到了...")
         .setColor("#5865F2");
-      let sent = null;
-      if (message.slash.raw) message.slash.sendEmbed(embed);
-      else sent = await message.channel.send(embed);
+      let sent = await message.channel.send({
+        embeds: [embed]
+      });
       setTimeout(function() {
         embed.setDescription(`🎲 ┃ 你得到了${getRandomNum(1, 6)}!`);
-        if (sent) sent.edit({ embed }).catch(console.error);
-        else message.slash.editEmbed(embed);
+        sent.edit({
+          embeds: [embed]
+        }).catch(console.error);
       }, 2000);
       return;
     }

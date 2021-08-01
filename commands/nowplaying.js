@@ -13,10 +13,7 @@ module.exports = {
   slashReply: true,
   execute(message) {
     const queue = message.client.queue.get(message.guild.id);
-    if (!queue) {
-      if (message.slash.raw) message.slash.send("❌ ┃ 現在沒有人在播放音樂欸030");
-      return message.channel.send("❌ ┃ 現在沒有人在播放音樂欸030").catch(console.error);
-    }
+    if (!queue) return message.channel.send("❌ ┃ 現在沒有人在播放音樂欸030").catch(console.error);
     const song = queue.current;
     const seek = (queue.connection.dispatcher.streamTime - queue.connection.dispatcher.pausedTime) / 1000;
     const left = song.duration - seek;
@@ -35,7 +32,8 @@ module.exports = {
 
     if (song.duration > 0) nowPlaying.setFooter("還剩下" + new Date(left * 1000).toISOString().substr(11, 8));
 
-    if (message.slash.raw) return message.slash.sendEmbed(nowPlaying);
-    else return message.channel.send(nowPlaying).catch(console.error);
+    return message.channel.send({
+      embeds: [nowPlaying]
+    }).catch(console.error);
   }
 };

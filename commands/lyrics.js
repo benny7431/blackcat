@@ -32,9 +32,9 @@ module.exports = {
       .setTitle(`📃 ┃ ${songtitle}歌詞`)
       .setDescription("🔄 ┃ 正在尋找歌詞...")
       .setColor("#5865F2");
-    let lyricsmessage = null;
-    if (message.slash.raw) message.slash.sendEmbed(lyricsEmbed);
-    else lyricsmessage = await message.channel.send(lyricsEmbed);
+    let lyricsmessage = await message.channel.send({
+      embeds: [lyricsEmbed]
+    });
 
     try {
       lyrics = await lyricsFinder(songtitle, "");
@@ -46,7 +46,8 @@ module.exports = {
 
     if (lyricsEmbed.description.length > 2048)
       lyricsEmbed.description = `${lyricsEmbed.description.substr(0, 2000)}...`;
-    if (message.slash.raw) return message.slash.editEmbed(lyricsEmbed);
-    else return lyricsmessage.edit(lyricsEmbed).catch(console.error);
+    return lyricsmessage.edit({
+      embeds: [lyricsEmbed]
+    }).catch(console.error);
   }
 };

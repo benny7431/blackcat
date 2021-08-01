@@ -12,15 +12,11 @@ module.exports = {
   slashReply: true,
   execute(message) {
     const queue = message.client.queue.get(message.guild.id);
-    if (!queue) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 目前沒有任何歌曲正在播放");
-      else return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放").catch(console.error);
-    }
+    if (!queue) return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放").catch(console.error);
     if (!canModifyQueue(message.member)) return;
 
     queue.playing = true;
     queue.connection.dispatcher.end();
-    if (message.slash.raw) return message.slash.send("<:skip:827734282318905355> ┃ 跳過目前歌曲");
-    else queue.textChannel.send("<:skip:827734282318905355> ┃ 跳過目前歌曲").catch(console.error);
+    queue.textChannel.send("<:skip:827734282318905355> ┃ 跳過目前歌曲").catch(console.error);
   }
 };

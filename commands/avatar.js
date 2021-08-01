@@ -21,7 +21,8 @@ module.exports = {
         size: 4096
       }))
       .setColor("#5865F2");
-    if (message.slash.raw) return message.slash.sendEmbed(embed);
-    else return message.channel.send(embed).catch(console.error);
+    return message.channel.send({
+      embeds: [embed]
+    }).catch(console.error);
   }
 };

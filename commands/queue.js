@@ -1,5 +1,4 @@
 const { MessageEmbed } = require("discord.js");
-const { MessageButton } = require("discord-buttons");
 
 module.exports = {
   name: "queue",
@@ -15,17 +14,20 @@ module.exports = {
     if (!serverQueue) return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!").catch(console.error);
     let currentPage = 0;
     const embeds = generateQueueEmbed(message, serverQueue.songs);
-    const queueEmbed = await message.channel.send(
-      `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
-      embeds[currentPage]
-    );
+    const queueEmbed = await message.channel.send({
+      content: `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
+      embeds: [currentPage]
+    });
     await queueEmbed.react("<:left:828163434674651136>");
     await queueEmbed.react("<:cancel_fill:828163722253041674>");
     await queueEmbed.react("<:right:828163370603118622>");
 
     const filter = (reaction, user) => ["left", "cancel_fill", "right"].includes(reaction.emoji.name) && user.id === message.author.id;
     try {
-      let collector = queueEmbed.createReactionCollector(filter, { time: 60000, errors: ["time"] });
+      let collector = queueEmbed.createReactionCollector(filter, {
+        time: 60000,
+        errors: ["time"]
+      });
 
       collector.on("collect", async (reaction) => {
         if (reaction.emoji.name === "right") {
