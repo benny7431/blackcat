@@ -117,32 +117,25 @@ class Player {
     if (this.queue.filter.length !== 0) encoderArgs = encoderArgs.concat(["-af", queue.filter.join(",")]);
     else encoderArgs.push("-af", "bass=g=2.5");
 
-    let ytdlStream;
-    try {
-      ytdlStream = await ytdl(url, {
-        highWaterMark: 1 << 20
-      });
-    } catch (error) {
-      this.emit("ytdlError", error.message);
-      return;
-    }
+    let ytdlStream = await ytdl(url, {
+      highWaterMark: 1 << 20
+    });
+    this.queue.converter.ffmpeg = new FFmpeg({
+      args: encoderArgs
+    });
     this.queue.volume = new VolumeTransformer({
       type: "s16le",
       volume: 0.6
     });
-    let opusStream = ytdlStream
-      .pipe(new FFmpeg({
-        args: encoderArgs
-      }))
-      .pipe(this.queue.volume)
-      .pipe(new opus.Encoder({
-        rate: 48000,
-        channels: 2,
-        frameSize: 960,
-      }));
-    opusStream.on("close", () => {
-      opusStream.destroy();
+    this.queue.converter.opus = new opus.Encoder({
+      rate: 48000,
+      channels: 2,
+      frameSize: 960
     });
+    let opusStream = ytdlStream
+      .pipe(this.queue.converter.ffmpeg)
+      .pipe(this.queue.converter.volume)
+      .pipe(this.queue.converter.opus);
     this._playStream(opusStream);
   }
 
@@ -152,7 +145,8 @@ class Player {
    * @param {Readable} stream Stream to play
    */
   async _playStream(stream) {
-    let queue = this.queue, song = queue.songs[0];
+    let queue = this.queue,
+      song = queue.songs[0];
     queue.current = queue.songs[0];
     let source = voice.createAudioResource(stream, {
       inputType: voice.StreamType.Opus
@@ -212,16 +206,13 @@ class Player {
       components: [playControl, volumeControl]
     });
 
-    const filter = (reaction, user) => user.id !== message.client.user.id;
     let collector = playingMessage.createMessageComponentCollector();
-
     collector.on("collect", async btn => {
       const member = btn.member;
       if (!canModifyQueue(member)) return btn.reply({
         content: "❌ ┃ 請加入語音頻道!",
         ephemeral: true
       });
-      else await btn.defer({ephemeral: true});
 
       switch (btn.customId) {
         case "skip":
@@ -313,11 +304,6 @@ class Player {
         case "stop":
           queue.songs = [];
           queue.textChannel.send("<:stop:827734840891015189> ┃ 歌曲停止!")
-            .then(sent => {
-              setTimeout(function() {
-                sent.delete().catch(console.error);
-              }, 3000);
-            })
             .catch(console.error);
           try {
             this.stop();
@@ -333,7 +319,6 @@ class Player {
       setTimeout(function() {
         playingMessage.delete().catch(console.error);
       }, 500);
-      message.client.log(message, "Music ended", false, "info");
     });
 
     this.queue.connection.once(voice.VoiceConnectionStatus.Idle, () => {
@@ -343,7 +328,10 @@ class Player {
         queue.songs.push(lastSong);
       } else if (!queue.repeat) {
         queue.songs.shift();
-        module.exports.play(this.queue.songs[0], message);
+      }
+      if (!queue.songs.length) {
+        this.queue.audioPlayer.stop();
+
       }
       this._getStream(this.queue.songs[0].url);
     });

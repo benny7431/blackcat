@@ -53,15 +53,17 @@ module.exports = {
       songs: [],
       loop: false,
       repeat: false,
-      volume: 80,
+      volume: 60,
       playing: true,
       filter: [],
       current: null,
-      previous: null,
-      stream: null,
       player: null,
       audioPlayer: null,
-      volume: null
+      converter: {
+        ffmpeg: null,
+        opus: null,
+        volume: null
+      }
     };
 
     let songInfo = null;
