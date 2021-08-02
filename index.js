@@ -47,7 +47,10 @@ client.commands = new Discord.Collection();
 client.prefix = PREFIX;
 client.queue = new Map();
 client.log = async function(message, msgContent, system, type) {
-  const webhook = new Discord.WebhookClient(process.env.WEBHOOK_ID, process.env.WEBHOOK_SECRET);
+  const webhook = new Discord.WebhookClient({
+    id: process.env.WEBHOOK_ID,
+    token: process.env.WEBHOOK_SECRET
+  });
   let content = null;
   if (system) {
     content = `[System] ${msgContent}`;

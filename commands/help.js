@@ -32,7 +32,7 @@ module.exports = {
         "[➕ 再邀請一次機器人](https://blackcatbot.tk/blackcat)");
       return message.slash.sendEmbed(helpEmbed);
     } else return message.channel.send({
-      embed: helpEmbed,
+      embeds: [helpEmbed],
       components: [buttonRow]
     }).catch(console.error);
   }

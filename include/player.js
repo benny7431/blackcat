@@ -2,6 +2,7 @@ const Discord = require("discord.js")
 const voice = require("@discordjs/voice");
 const ytdl = require("ytdl-core");
 const { opus, FFmpeg, VolumeTransformer } = require("prism-media");
+const { canModifyQueue } = require("../util/Util")
 
 class Player {
   /**
@@ -9,30 +10,30 @@ class Player {
    * @param {Client} client Discord.js Client
    */
   constructor(queue, client) {
-    super();
     this.queue = queue;
+    this.client = client;
   }
 
   /**
    * Connect to channel
    * @param {VoiceChannel} channel Voice channel to connect
    */
-  connect(channel) {
-    this.queue.connection = voice.joinVoiceChannel({
+  async connect(channel) {
+    this.queue.connection = await voice.joinVoiceChannel({
       channelId: channel.id,
       guildId: channel.guild.id,
       adapterCreator: channel.guild.voiceAdapterCreator,
     });
-    _createPlayer()
-    connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
+    this._createPlayer(channel)
+    this.queue.connection.on(voice.VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
       try {
         await Promise.race([
-          entersState(connection, VoiceConnectionStatus.Signalling, 5000),
-          entersState(connection, VoiceConnectionStatus.Connecting, 5000),
+          entersState(connection, voice.VoiceConnectionStatus.Signalling, 5000),
+          entersState(connection, voice.VoiceConnectionStatus.Connecting, 5000),
         ]);
       } catch (error) {
-        client.queue.delete(connection.guild.id);
-        connection.destroy();
+        this.client.queue.delete(connection.guild.id);
+        this.queue.connection.destroy();
       }
     });
   }
@@ -64,7 +65,7 @@ class Player {
    * @param {Number} volume Volume
    */
   setVolume(volume) {
-    this.volume.setVolumeLogarithmic(volume);
+    this.queue.volume.setVolumeLogarithmic(volume);
   }
 
   /**
@@ -78,12 +79,11 @@ class Player {
    * Stop player
    */
   stop() {
-    client.queue.delete(connection.guild.id);
-    connection.destroy();
+    this.client.queue.delete(connection.guild.id);
+    this.queue.connection.destroy();
   }
 
   /** Create player
-   * @private
    * @param {VoiceChannel} channel Voice channel that will subscribe player
    */
   _createPlayer(channel) {
@@ -91,10 +91,10 @@ class Player {
       behaviors: {
         noSubscriber: voice.NoSubscriberBehavior.Pause,
       },
-    }); 
-    channel.subscribe(queue.audioPlayer);
+    });
+    this.queue.connection.subscribe(this.queue.audioPlayer);
 
-    queue.AudioPlayer.on("error", error => {
+    this.queue.audioPlayer.on("error", error => {
       console.log(error.message);
       this.emit("error");
       this.queue.connection.destroy();
@@ -104,10 +104,9 @@ class Player {
 
   /**
    * Get audio stream
-   * @private
    * @param {String} url YouTube video URL
    */
-  _getStream(url) {
+  async _getStream(url) {
     let encoderArgs = [
       "-analyzeduration", "0",
       "-loglevel", "0",
@@ -127,7 +126,7 @@ class Player {
       this.emit("ytdlError", error.message);
       return;
     }
-    this.volume = new VolumeTransformer({
+    this.queue.volume = new VolumeTransformer({
       type: "s16le",
       volume: 0.6
     });
@@ -144,7 +143,7 @@ class Player {
     opusStream.on("close", () => {
       opusStream.destroy();
     });
-    _playStream(opusStream);
+    this._playStream(opusStream);
   }
 
   /**
@@ -152,7 +151,7 @@ class Player {
    * @private
    * @param {Readable} stream Stream to play
    */
-  _playStream(stream) {
+  async _playStream(stream) {
     let queue = this.queue, song = queue.songs[0];
     queue.current = queue.songs[0];
     let source = voice.createAudioResource(stream, {
@@ -165,7 +164,7 @@ class Player {
       .setTitle("開始播放歌曲!")
       .setDescription(
         `<:music:825646714404077569> ┃ 正在播放 [${song.title}](${song.url})` +
-        "\n\n[在網頁上控制](https://app.blackcatbot.tk/?server=" + message.guild.id + ")")
+        "\n\n[在網頁上控制](https://app.blackcatbot.tk/?server=" + this.queue.textChannel.guild.id + ")")
       .setThumbnail(song.thumbnail)
       .setFooter(`由${song.by}點播`);
 
@@ -200,13 +199,13 @@ class Player {
       .setEmoji("827734683340111913")
       .setCustomId("vol_down")
     let playControl = new Discord.MessageActionRow()
-      .addComponent(skipBtn)
-      .addComponent(pauseBtn)
-      .addComponent(stopBtn);
+      .addComponents(skipBtn)
+      .addComponents(pauseBtn)
+      .addComponents(stopBtn);
     let volumeControl = new Discord.MessageActionRow()
-      .addComponent(voldownBtn)
-      .addComponent(muteBtn)
-      .addComponent(volupBtn);
+      .addComponents(voldownBtn)
+      .addComponents(muteBtn)
+      .addComponents(volupBtn);
 
     let playingMessage = await queue.textChannel.send({
       embeds: [embed],
@@ -222,9 +221,9 @@ class Player {
         content: "❌ ┃ 請加入語音頻道!",
         ephemeral: true
       });
-      else await btn.defer();
+      else await btn.defer({ephemeral: true});
 
-      switch (btn.id) {
+      switch (btn.customId) {
         case "skip":
           queue.playing = true;
           this.skip();
@@ -264,7 +263,7 @@ class Player {
         case "mute":
           if (queue.volume <= 0) {
             queue.volume = 60;
-            this.volume.setVolumeLogarithmic(60 / 100);
+            this.queue.volume.setVolumeLogarithmic(60 / 100);
             queue.textChannel.send("<:vol_up:827734772889157722> ┃ 解除靜音音樂")
               .then(sent => {
                 setTimeout(function() {
@@ -274,7 +273,7 @@ class Player {
               .catch(console.error);
           } else {
             queue.volume = 0;
-            this.volume.setVolumeLogarithmic(0);
+            this.queue.volume.setVolumeLogarithmic(0);
             queue.textChannel.send("<:mute:827734384606052392> ┃ 靜音音樂")
               .then(sent => {
                 setTimeout(function() {
@@ -288,7 +287,7 @@ class Player {
         case "vol_down":
           if (queue.volume - 10 <= 0) queue.volume = 0;
           else queue.volume = queue.volume - 10;
-          this.volume.setVolumeLogarithmic(queue.volume / 100);
+          this.queue.volume.setVolumeLogarithmic(queue.volume / 100);
           queue.textChannel.send(`<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${queue.volume}%`)
             .then(sent => {
               setTimeout(function() {
@@ -301,7 +300,7 @@ class Player {
         case "vol_up":
           if (queue.volume + 10 >= 100) queue.volume = 100;
           else queue.volume = queue.volume + 10;
-          this.volume.setVolumeLogarithmic(queue.volume / 100);
+          this.queue.volume.setVolumeLogarithmic(queue.volume / 100);
           queue.textChannel.send(`<:vol_up:827734772889157722> ┃ 音量上升，目前音量: ${queue.volume}%`)
             .then(sent => {
               setTimeout(function() {
@@ -337,7 +336,7 @@ class Player {
       message.client.log(message, "Music ended", false, "info");
     });
 
-    connection.once(voice.VoiceConnectionStatus.Idle, () => {
+    this.queue.connection.once(voice.VoiceConnectionStatus.Idle, () => {
       collector.stop();
       if (queue.loop) {
         let lastSong = this.queue.songs.shift();

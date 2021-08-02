@@ -60,7 +60,8 @@ module.exports = {
       previous: null,
       stream: null,
       player: null,
-      audioPlayer: null
+      audioPlayer: null,
+      volume: null
     };
 
     let songInfo = null;
@@ -145,10 +146,10 @@ module.exports = {
     message.client.queue.set(message.guild.id, queueConstruct);
 
     try {
-      queue.player = new Player(queueConstruct, message.client);
-      queue.player.connect(channel);
+      queueConstruct.player = new Player(queueConstruct, message.client);
+      queueConstruct.player.connect(channel);
       await message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
-      queue.player.play(queueConstruct.songs[0]);
+      queueConstruct.player.play(queueConstruct.songs[0]);
     } catch (error) {
       console.error(error);
       message.client.queue.delete(message.guild.id);
