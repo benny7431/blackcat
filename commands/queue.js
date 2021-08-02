@@ -24,7 +24,8 @@ module.exports = {
 
     const filter = (reaction, user) => ["left", "cancel_fill", "right"].includes(reaction.emoji.name) && user.id === message.author.id;
     try {
-      let collector = queueEmbed.createReactionCollector(filter, {
+      let collector = queueEmbed.createReactionCollector({
+        filter,
         time: 60000,
         errors: ["time"]
       });
@@ -73,7 +74,7 @@ function generateQueueEmbed(message, queue) {
     const info = current.map((track) => `${++j} - [${track.title}](${track.url})`).join("\n");
     const embed = new MessageEmbed()
       .setTitle("播放清單")
-      .setColor("#5865F2")
+      .setColor("BLURPLE")
       .setDescription(`**正在播放 - [${queue[0].title}](${queue[0].url})**\n\n${info}`)
       .setTimestamp();
     embeds.push(embed);

@@ -47,7 +47,7 @@ module.exports = {
       .addField("<:ram:825348875132731432> ┃ 記憶體資訊", `**機器人:** ${memBot} MB, **主機:** ${memUsed}/${memTotal} GB (${memPercent}%)`)
       .addField("<:servers:825537523065159710> ┃ 伺服器數量", `${message.client.guilds.cache.size}個伺服器`)
       .addField("<:music:825646714404077569> ┃ 音樂播放狀態", `有${message.client.queue.size}個伺服器正在播放音樂`)
-      .setColor("#5865F2");
+      .setColor("BLURPLE");
 
     return message.channel.send({
       embeds: [embed]

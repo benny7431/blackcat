@@ -42,7 +42,7 @@ module.exports = {
           "`b.commands game` 遊戲指令\n" +
           "`b.commands util` 工具指令\n" +
           "`b.commands other` 其他指令")
-        .setColor("#5865F2");
+        .setColor("BLURPLE");
       return message.channel.send({
         embeds: [embed]
       }).catch(console.error);
@@ -71,7 +71,7 @@ module.exports = {
           "`b.save` 儲存歌單\n" +
           "`b.load [ID]` 讀取歌單")
         .setFooter("<>表示必要, []表示可選")
-        .setColor("#5865F2");
+        .setColor("BLURPLE");
     } else if (args[0] === "game") {
       embed = new MessageEmbed()
         .setTitle("遊戲指令")
@@ -82,7 +82,7 @@ module.exports = {
           "`b.lucky [人]` 查看幸運指數\n" +
           "`b.question <問題>` 讓Black cat幫你選擇")
         .setFooter("<>表示必要, []表示可選")
-        .setColor("#5865F2");
+        .setColor("BLURPLE");
     } else if (args[0] === "util") {
       embed = new MessageEmbed()
         .setTitle("工具指令")
@@ -92,7 +92,7 @@ module.exports = {
           "`b.clear <數量(2~99)>` 清除訊息\n" +
           "`b.avatar [人]` 查看你的頭貼")
         .setFooter("<>表示必要, []表示可選")
-        .setColor("#5865F2");
+        .setColor("BLURPLE");
     } else if (args[0] === "other") {
       embed = new MessageEmbed()
         .setTitle("其他指令")
@@ -102,7 +102,7 @@ module.exports = {
           "`b.status` 查看現在機器人的狀態\n" +
           "`b.support <問題>` 取得支援")
         .setFooter("<>表示必要, []表示可選")
-        .setColor("#5865F2");
+        .setColor("BLURPLE");
     } else {
       return message.channel.send("❌ ┃ 請輸入正確的指令類別!").catch(console.error);
     }

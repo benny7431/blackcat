@@ -23,13 +23,13 @@ module.exports = {
         const embed = new MessageEmbed()
           .setTitle(`${message.mentions.members.first().displayName}的Gay指數`)
           .setDescription(`🏳️‍🌈 ┃ ${message.mentions.members.first().displayName}的Gay指數是${gay}\n\n${bar}`)
-          .setColor("#5865F2");
+          .setColor("BLURPLE");
         return message.channel.send(embed).catch(console.error);
       } else {
         const embed = new MessageEmbed()
           .setTitle(`${message.author.username}的Gay指數`)
           .setDescription(`🏳️‍🌈 ┃ 你的Gay指數是${gay}\n\n${bar}`)
-          .setColor("#5865F2");
+          .setColor("BLURPLE");
         return message.channel.send({
           embeds: [embed]
         }).catch(console.error);
@@ -38,7 +38,7 @@ module.exports = {
       const embed = new MessageEmbed()
         .setTitle(`${message.author.username}的Gay指數`)
         .setDescription(`🏳️‍🌈 ┃ 你的Gay指數是${gay}\n\n${bar}`)
-        .setColor("#5865F2");
+        .setColor("BLURPLE");
       return message.channel.send({
         embeds: [embed]
       }).catch(console.error);

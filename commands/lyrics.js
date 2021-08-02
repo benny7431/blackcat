@@ -31,7 +31,7 @@ module.exports = {
     var lyricsEmbed = new MessageEmbed()
       .setTitle(`📃 ┃ ${songtitle}歌詞`)
       .setDescription("🔄 ┃ 正在尋找歌詞...")
-      .setColor("#5865F2");
+      .setColor("BLURPLE");
     let lyricsmessage = await message.channel.send({
       embeds: [lyricsEmbed]
     });

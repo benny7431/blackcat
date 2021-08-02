@@ -28,7 +28,7 @@ module.exports = {
       const embed = new MessageEmbed()
         .setTitle("骰子!")
         .setDescription("🎲 ┃ 你得到了...")
-        .setColor("#5865F2");
+        .setColor("BLURPLE");
       let sent = await message.channel.send({
         embeds: [embed]
       });
@@ -41,7 +41,7 @@ module.exports = {
       const embed = new MessageEmbed()
         .setTitle("骰子!")
         .setDescription("🎲 ┃ 你得到了...")
-        .setColor("#5865F2");
+        .setColor("BLURPLE");
       let sent = await message.channel.send({
         embeds: [embed]
       });

@@ -1,5 +1,5 @@
 const ytdl = require("ytdl-core");
-const { play } = require("../include/play");
+const Player = require("../include/player");
 const { Permissions, Util } = require("discord.js");
 
 module.exports = {
@@ -28,7 +28,9 @@ module.exports = {
       filter: [],
       current: null,
       previous: null,
-      stream: null
+      stream: null,
+      player: null,
+      audioPlayer: null
     };
     const songs = await message.client.db.get(`stored.${args.length && args[0] !== "" ? args[0] : message.author.id}`);
     message.client.log(message, "Load queue", false, "info");
@@ -49,10 +51,10 @@ module.exports = {
 
     if (!serverQueue) {
       try {
-        queueConstruct.connection = await channel.join();
-        await queueConstruct.connection.voice.setSelfDeaf(true);
+        queue.player = new Player(queueConstruct, message.client);
+        queue.player.connect(channel);
         await message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
-        play(queueConstruct.songs[0], message);
+        queue.player.play(queueConstruct.songs[0]);
       } catch (error) {
         console.error(error);
         message.client.queue.delete(message.guild.id);

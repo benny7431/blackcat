@@ -1,6 +1,6 @@
-const { play } = require("../include/play");
 const ytdl = require("ytdl-core");
 const YouTube = require("youtube-sr").default;
+const Player = require("../include/player");
 const { MessageEmbed, Permissions, Util } = require("discord.js");
 
 module.exports = {
@@ -27,6 +27,7 @@ module.exports = {
 
     const serverQueue = message.client.queue.get(message.guild.id);
     if (!channel) return message.channel.send("❌ ┃ 你要先加入一個語音頻道...不然我要在哪的房間放收音機呢？").catch(console.error);
+    if (!channel) return message.channel.send("❌ ┃ 目前還不支援舞台頻道!").catch(console.error);
     if (serverQueue && channel !== message.guild.me.voice.channel) return message.channel.send("❌ ┃ 你必須跟我在同一個頻道裡面!").catch(console.error);
 
     if (!args.length) return message.channel.send("❌ ┃ 請輸入歌曲名稱或網址").catch(console.error);
@@ -57,7 +58,9 @@ module.exports = {
       filter: [],
       current: null,
       previous: null,
-      stream: null
+      stream: null,
+      player: null,
+      audioPlayer: null
     };
 
     let songInfo = null;
@@ -129,7 +132,7 @@ module.exports = {
     if (serverQueue) {
       serverQueue.songs.push(song);
       const embed = new MessageEmbed()
-        .setColor("#5865F2")
+        .setColor("BLURPLE")
         .setTitle(`<:music_add:827734890924867585> ┃ 我已經把${song.title}加入播放清單了!`)
         .setThumbnail(song.thumbnail);
 
@@ -142,10 +145,10 @@ module.exports = {
     message.client.queue.set(message.guild.id, queueConstruct);
 
     try {
-      queueConstruct.connection = await channel.join();
-      await queueConstruct.connection.voice.setSelfDeaf(true);
+      queue.player = new Player(queueConstruct, message.client);
+      queue.player.connect(channel);
       await message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
-      play(queueConstruct.songs[0], message);
+      queue.player.play(queueConstruct.songs[0]);
     } catch (error) {
       console.error(error);
       message.client.queue.delete(message.guild.id);

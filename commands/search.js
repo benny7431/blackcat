@@ -53,7 +53,8 @@ module.exports = {
         components: [component]
       });
       try {
-        let collector = resultsMessage.createMessageComponentCollector(filter, {
+        let collector = resultsMessage.createMessageComponentCollector({
+          filter,
           max: 1,
           time: 30000,
           errors: ["time"]

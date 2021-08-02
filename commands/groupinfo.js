@@ -16,7 +16,7 @@ module.exports = {
     const offline = members.filter(user => user.presence.status === "offline").size;
 
     embed.setTitle(`${message.guild.name}的資訊`);
-    embed.setColor("#5865F2");
+    embed.setColor("BLURPLE");
     embed.addField("ID", message.guild.id);
     embed.addField("擁有者", `${message.guild.owner.user.username} (<@${message.guild.owner.id}>)`);
     embed.addField("創建時間", message.guild.createdAt.toLocaleString('zh-TW', {

@@ -14,7 +14,7 @@ module.exports = {
     const embed = new MessageEmbed()
       .setTitle(`${message.author.username}殺了${message.mentions.members.size >= 1 ? message.mentions.members.first().displayName : args.join(" ")}`)
       .setDescription(`${args.join(" ")}請安息`)
-      .setColor("#5865F2");
+      .setColor("BLURPLE");
     return message.channel.send(embed).catch(console.error);
   }
 };

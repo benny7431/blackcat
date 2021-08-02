@@ -39,7 +39,7 @@ module.exports = {
     const embed = new MessageEmbed()
       .setTitle("享用食物...")
       .setDescription(`🍽️ ┃ 正在吃${food}`)
-      .setColor("#5865F2");
+      .setColor("BLURPLE");
     let sent = await message.channel.send({
       embeds: [embed]
     }).catch(console.error);

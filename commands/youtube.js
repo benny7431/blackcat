@@ -8,7 +8,7 @@ module.exports = {
   async execute(message) {
     if (!message.member.voice.channel) return message.channel.send("❌ ┃ 請加入一個語音頻道!");
     let embed = new MessageEmbed()
-      .setColor("#5865F2")
+      .setColor("BLURPLE")
       .setTitle("一起觀看YouTube")
       .setDescription("正在創建你的頻道...");
     let sent = await message.channel.send(embed);

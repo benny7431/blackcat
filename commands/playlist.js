@@ -1,6 +1,6 @@
 const { MessageEmbed, Permissions, Util } = require("discord.js");
-const { play } = require("../include/play");
 const YouTube = require("youtube-sr").default;
+const Player = require("../include/player");
 
 module.exports = {
   name: "playlist",
@@ -50,7 +50,9 @@ module.exports = {
       filter: [],
       current: null,
       previous: null,
-      stream: null
+      stream: null,
+      player: null,
+      audioPlayer: null
     };
 
     let song = null;
@@ -59,7 +61,7 @@ module.exports = {
 
     let playlistEmbed = new MessageEmbed()
       .setTitle("正在讀取播放清單, 請稍等...")
-      .setColor("#5865F2");
+      .setColor("BLURPLE");
 
     let sent = await message.channel.send({
       embeds: [playlistEmbed]
@@ -108,7 +110,7 @@ module.exports = {
       .setTitle(`${playlist.title}`)
       .setURL(playlist.url)
       .setDescription(`\n<:music_add:827734890924867585> ┃ 已新增${playlist.videoCount}首歌`)
-      .setColor("#5865F2")
+      .setColor("BLURPLE")
       .setThumbnail(playlist.thumbnail.url);
     sent.edit({
       embeds: [playlistEmbed]
@@ -118,10 +120,10 @@ module.exports = {
 
     if (!serverQueue) {
       try {
-        queueConstruct.connection = await channel.join();
-        await queueConstruct.connection.voice.setSelfDeaf(true);
+        queue.player = new Player(queueConstruct, message.client);
+        queue.player.connect(channel);
         await message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
-        play(queueConstruct.songs[0], message);
+        queue.player.play(queueConstruct.songs[0]);
       } catch (error) {
         console.error(error);
         message.client.queue.delete(message.guild.id);

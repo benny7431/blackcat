@@ -34,7 +34,7 @@ module.exports = {
     const embed = new MessageEmbed()
       .setTitle("問答!")
       .setDescription(`❓ ┃ ${question}的答案...`)
-      .setColor("#5865F2");
+      .setColor("BLURPLE");
     let sent = await message.channel.send({
       embeds: [embed]
     });

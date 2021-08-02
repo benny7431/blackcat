@@ -28,7 +28,7 @@ module.exports = {
         splitBar(song.duration == 0 ? seek : song.duration, seek, 20, "━", "🔵")[0] +
         "\n\n總長度是 " + (song.duration == 0 ? " 🔴 直播影片" : new Date(song.duration * 1000).toISOString().substr(11, 8)))
       .setThumbnail(song.thumbnail)
-      .setColor("#5865F2");
+      .setColor("BLURPLE");
 
     if (song.duration > 0) nowPlaying.setFooter("還剩下" + new Date(left * 1000).toISOString().substr(11, 8));
 

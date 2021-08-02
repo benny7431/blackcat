@@ -229,7 +229,7 @@ client.on("guildCreate", async guild => {
       "我們強烈建議您加入我們的Discord伺服器，以便接受通知\n\n" +
       "想要開始探索嗎?輸入`b.help`吧!\n" +
       "發生問題?輸入`b.support`!")
-    .setColor("#5865F2")
+    .setColor("BLURPLE")
     .setFooter("注意:斜線指令僅支援音樂指令以及部分其他指令")
     .setFooter("By lollipop dev team");
   guild.systemChannel.send(embed);

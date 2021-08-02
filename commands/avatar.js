@@ -20,7 +20,7 @@ module.exports = {
         format: "png",
         size: 4096
       }))
-      .setColor("#5865F2");
+      .setColor("BLURPLE");
     return message.channel.send({
       embeds: [embed]
     }).catch(console.error);

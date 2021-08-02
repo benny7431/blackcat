@@ -15,7 +15,7 @@ module.exports = {
       .setTitle("Black cat幫助! ⊂((・▽・))⊃")
       .setDescription("Black cat提供 **音樂/遊戲/工具**的指令喔")
       .addField("\u200B", "使用`b.commands`來查看指令", false)
-      .setColor("#5865F2");
+      .setColor("BLURPLE");
     let discordBtn = new MessageButton()
       .setLabel("加入支援伺服器")
       .setStyle("LINK")

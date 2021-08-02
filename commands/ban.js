@@ -19,7 +19,9 @@ module.exports = {
         } catch {
           return message.channel.send("❌ ┃ 找不到被標記的成員!").catch(console.error);
         }
-        member.ban({ reason: `由${message.author.username}驅逐` }.catch(console.error));
+        member.ban({
+          reason: `由${message.author.username}驅逐`
+        }.catch(console.error));
       }
     } catch (error) {
       console.log(error);

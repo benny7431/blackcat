@@ -25,7 +25,7 @@ module.exports = {
       }
       const embed = new MessageEmbed()
         .setTitle("Black cat客服")
-        .setColor("#5865F2")
+        .setColor("BLURPLE")
         .setDescription(`✅ ┃ 已聯絡客服，原因為${args.join(" ")}`)
         .setFooter(`${message.guild.id}-${process.env.HEROKU_RELEASE_VERSION}-${process.env.HEROKU_SLUG_DESCRIPTION}`);
       const owner = await message.client.users.fetch("669194742218752070");
