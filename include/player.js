@@ -19,6 +19,7 @@ class Player {
    * @param {VoiceChannel} channel Voice channel to connect
    */
   async connect(channel) {
+    this.client.log("Connecting to voice channel");
     this.queue.connection = await voice.joinVoiceChannel({
       channelId: channel.id,
       guildId: channel.guild.id,
@@ -90,12 +91,14 @@ class Player {
   stop() {
     this.client.queue.delete(this.queue.textChannel.guildId);
     this.queue.connection.destroy();
+    this.client.log("Stop player");
   }
 
   /** Create player
    * @param {VoiceChannel} channel Voice channel that will subscribe player
    */
   _createPlayer(channel) {
+    this.client.log("Create player");
     this.queue.audioPlayer = voice.createAudioPlayer({
       behaviors: {
         noSubscriber: voice.NoSubscriberBehavior.Pause,
@@ -154,6 +157,7 @@ class Player {
    * @param {Readable} stream Stream to play
    */
   async _playStream(stream) {
+    this.client.log("Start playing song");
     let queue = this.queue,
       song = queue.songs[0];
     queue.current = queue.songs[0];
@@ -330,6 +334,7 @@ class Player {
 
     queue.audioPlayer.on("stateChange", (oldState, newState) => {
       if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
+        this.client.log("Music ended");
         collector.stop();
         if (queue.loop) {
           let lastSong = this.queue.songs.shift();
@@ -338,6 +343,7 @@ class Player {
           queue.songs.shift();
         }
         if (!queue.songs.length) {
+          this.client.log("Queue ended");
           this.stop();
         }
         this.queue.audioPlayer.removeAllListeners("stateChange")

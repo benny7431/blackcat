@@ -46,16 +46,14 @@ client.db = db;
 client.commands = new Discord.Collection();
 client.prefix = PREFIX;
 client.queue = new Map();
-client.log = async function(message, msgContent, system, type) {
+client.log = async function(msgConten, type) {
   const webhook = new Discord.WebhookClient({
     id: process.env.WEBHOOK_ID,
     token: process.env.WEBHOOK_SECRET
   });
   let content = null;
   if (system) {
-    content = `[System] ${msgContent}`;
-  } else {
-    content = `[${message.guild.name}(${message.guild.id})]/${message.author.username} ${msgContent}`;
+    content = `[Black cat] ${msgContent}`;
   }
   switch (type) {
     case "info":
@@ -91,7 +89,7 @@ const limiter = RateLimit({
   max: 100,
   message: "429 Too many requests",
   onLimitReached: function(req) {
-    client.log(null, `${req.headers['x-forwarded-for']} has been rate-limited`);
+    client.log(`${req.headers['x-forwarded-for']} has been rate-limited`, "warn");
   }
 });
 app.set("trust proxy", true);
@@ -105,16 +103,16 @@ const cooldowns = new Discord.Collection();
 SoundCloud.keygen()
   .then(key => {
     client.scKey = key;
-    client.log(null, `Fetched SoundCloud key \`${key}\``, true, "info");
+    client.log(`Fetched SoundCloud key \`${key}\``, "info");
   })
   .catch(console.error);
 
 client.on("ready", async () => {
   console.log(`Logged as ${client.user.username}`);
   console.log(`Bot is in ${client.guilds.cache.size} server(s)`);
-  client.log(null, `Black cat ready, boot took ${Date.now() - bootStart}ms`, true, "info");
+  client.log(`Black cat ready, boot took ${Date.now() - bootStart}ms`, "info");
   delete bootStart;
-  client.log(null, `Using FFmpeg engine \`${require("prism-media").FFmpeg.getInfo().version}\``, true, "info");
+  client.log(`Using FFmpeg engine \`${require("prism-media").FFmpeg.getInfo().version}\``, "info");
   client.user.setPresence({
     activities: [{
       name: `b.help | ${client.guilds.cache.size}個伺服器`,
@@ -127,7 +125,7 @@ client.on("ready", async () => {
 
 db.on("ready", () => {
   console.log("Connected to DB");
-  client.log(null, "connected to DB", true, "info");
+  client.log("connected to DB", "info");
 });
 
 client.on("warn", (info) => console.log(info));
@@ -183,7 +181,7 @@ client.on("messageCreate", async (message) => {
   } catch (error) {
     console.error(error);
     message.channel.send(`❌ ┃ 執行時出現錯誤:${error.message}`).catch(console.error);
-    message.client.log(message, `${error.message} (Command:${command.name})`, false, "error");
+    message.client.log(`${error.message} (Command:${command.name})`, "error");
   }
 });
 
@@ -236,7 +234,7 @@ client.on("guildCreate", async guild => {
     .setFooter("注意:斜線指令僅支援音樂指令以及部分其他指令")
     .setFooter("By lollipop dev team");
   guild.systemChannel.send(embed);
-  client.log(null, `Joined ${guild.name}`, true, "info");
+  client.log(`Joined ${guild.name}`, "info");
 });
 
 client.on("guildDelete", guild => {
@@ -248,7 +246,7 @@ client.on("guildDelete", guild => {
     }],
     status: "dnd"
   });
-  client.log(null, `Leave ${guild.name}`, true, "info");
+  client.log(`Leave ${guild.name}`, "info");
 });
 
 client.on("interactionCreate", interaction => {
