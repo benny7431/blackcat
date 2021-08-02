@@ -25,11 +25,11 @@ class Player {
       adapterCreator: channel.guild.voiceAdapterCreator,
     });
     this._createPlayer(channel)
-    this.queue.connection.on(voice.VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
+    this.queue.connection.on(voice.VoiceConnectionStatus.Disconnected, async () => {
       try {
         await Promise.race([
-          entersState(connection, voice.VoiceConnectionStatus.Signalling, 5000),
-          entersState(connection, voice.VoiceConnectionStatus.Connecting, 5000),
+          voice.entersState(connection, voice.VoiceConnectionStatus.Signalling, 5000),
+          voice.entersState(connection, voice.VoiceConnectionStatus.Connecting, 5000),
         ]);
       } catch (error) {
         this.client.queue.delete(connection.guild.id);
@@ -50,7 +50,16 @@ class Player {
    * Skip current song
    */
   skip() {
-    this.queue.audioPlayer.stop();
+    if (this.queue.loop) {
+      let lastSong = this.queue.songs.shift();
+      this.queue.songs.push(lastSong);
+    } else if (!this.queue.repeat) {
+      this.queue.songs.shift();
+    }
+    if (!this.queue.songs.length) {
+      this.queue.audioPlayer.stop();
+    }
+    this._getStream(this.queue.songs[0].url);
   }
 
   /**
@@ -65,7 +74,7 @@ class Player {
    * @param {Number} volume Volume
    */
   setVolume(volume) {
-    this.queue.volume.setVolumeLogarithmic(volume);
+    this.queue.converter.volume.setVolumeLogarithmic(volume);
   }
 
   /**
@@ -79,7 +88,7 @@ class Player {
    * Stop player
    */
   stop() {
-    this.client.queue.delete(connection.guild.id);
+    this.client.queue.delete(this.queue.textChannel.guildId);
     this.queue.connection.destroy();
   }
 
@@ -123,7 +132,7 @@ class Player {
     this.queue.converter.ffmpeg = new FFmpeg({
       args: encoderArgs
     });
-    this.queue.volume = new VolumeTransformer({
+    this.queue.converter.volume = new VolumeTransformer({
       type: "s16le",
       volume: 0.6
     });
@@ -220,7 +229,7 @@ class Player {
           this.skip();
           queue.textChannel.send("<:skip:827734282318905355> ┃ 跳過歌曲")
             .then(sent => {
-              setTimeout(function() {
+              setTimeout(function () {
                 sent.delete().catch(console.error);
               }, 3000);
             })
@@ -233,7 +242,7 @@ class Player {
             this.pause();
             queue.textChannel.send("<:pause:827737900359745586> ┃ 歌曲暫停!")
               .then(sent => {
-                setTimeout(function() {
+                setTimeout(function () {
                   sent.delete().catch(console.error);
                 }, 3000);
               })
@@ -243,7 +252,7 @@ class Player {
             this.resume();
             queue.textChannel.send("<:play:827734196243398668> ┃ 繼續播放歌曲!")
               .then(sent => {
-                setTimeout(function() {
+                setTimeout(function () {
                   sent.delete().catch(console.error);
                 }, 3000);
               })
@@ -254,20 +263,20 @@ class Player {
         case "mute":
           if (queue.volume <= 0) {
             queue.volume = 60;
-            this.queue.volume.setVolumeLogarithmic(60 / 100);
+            this.queue.converter.volume.setVolumeLogarithmic(60 / 100);
             queue.textChannel.send("<:vol_up:827734772889157722> ┃ 解除靜音音樂")
               .then(sent => {
-                setTimeout(function() {
+                setTimeout(function () {
                   sent.delete().catch(console.error);
                 }, 3000);
               })
               .catch(console.error);
           } else {
             queue.volume = 0;
-            this.queue.volume.setVolumeLogarithmic(0);
+            this.queue.converter.volume.setVolumeLogarithmic(0);
             queue.textChannel.send("<:mute:827734384606052392> ┃ 靜音音樂")
               .then(sent => {
-                setTimeout(function() {
+                setTimeout(function () {
                   sent.delete().catch(console.error);
                 }, 3000);
               })
@@ -278,10 +287,10 @@ class Player {
         case "vol_down":
           if (queue.volume - 10 <= 0) queue.volume = 0;
           else queue.volume = queue.volume - 10;
-          this.queue.volume.setVolumeLogarithmic(queue.volume / 100);
+          this.queue.converter.volume.setVolumeLogarithmic(queue.volume / 100);
           queue.textChannel.send(`<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${queue.volume}%`)
             .then(sent => {
-              setTimeout(function() {
+              setTimeout(function () {
                 sent.delete().catch(console.error);
               }, 3000);
             })
@@ -291,10 +300,10 @@ class Player {
         case "vol_up":
           if (queue.volume + 10 >= 100) queue.volume = 100;
           else queue.volume = queue.volume + 10;
-          this.queue.volume.setVolumeLogarithmic(queue.volume / 100);
+          this.queue.converter.volume.setVolumeLogarithmic(queue.volume / 100);
           queue.textChannel.send(`<:vol_up:827734772889157722> ┃ 音量上升，目前音量: ${queue.volume}%`)
             .then(sent => {
-              setTimeout(function() {
+              setTimeout(function () {
                 sent.delete().catch(console.error);
               }, 3000);
             })
@@ -316,24 +325,24 @@ class Player {
     });
 
     collector.on("end", async () => {
-      setTimeout(function() {
-        playingMessage.delete().catch(console.error);
-      }, 500);
+      playingMessage.delete().catch(console.error);
     });
 
-    this.queue.connection.once(voice.VoiceConnectionStatus.Idle, () => {
-      collector.stop();
-      if (queue.loop) {
-        let lastSong = this.queue.songs.shift();
-        queue.songs.push(lastSong);
-      } else if (!queue.repeat) {
-        queue.songs.shift();
+    queue.audioPlayer.on("stateChange", (oldState, newState) => {
+      if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
+        collector.stop();
+        if (queue.loop) {
+          let lastSong = this.queue.songs.shift();
+          queue.songs.push(lastSong);
+        } else if (!queue.repeat) {
+          queue.songs.shift();
+        }
+        if (!queue.songs.length) {
+          this.stop();
+        }
+        this.queue.audioPlayer.removeAllListeners("stateChange")
+        this._getStream(this.queue.songs[0].url);
       }
-      if (!queue.songs.length) {
-        this.queue.audioPlayer.stop();
-
-      }
-      this._getStream(this.queue.songs[0].url);
     });
   }
 }

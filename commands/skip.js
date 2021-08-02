@@ -16,7 +16,7 @@ module.exports = {
     if (!canModifyQueue(message.member)) return;
 
     queue.playing = true;
-    queue.connection.dispatcher.end();
+    queue.player.skip();
     queue.textChannel.send("<:skip:827734282318905355> ┃ 跳過目前歌曲").catch(console.error);
   }
 };

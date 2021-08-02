@@ -17,10 +17,10 @@ module.exports = {
 
     try {
       queue.songs = [];
-      queue.connection.dispatcher.end();
+      queue.player.stop();
     } catch {
       try {
-        queue.connection.disconnect();
+        queue.connection.destroy();
       } catch (e) {
         console.log(e);
       }
