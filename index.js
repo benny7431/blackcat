@@ -190,9 +190,9 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     if (!queue) return;
     if (!queue.connection) return;
     if (!queue.songs.length || queue.songs.length === 0) return;
-    if (queue.connection.channel.members.filter(user => !user.bot).size <= 1) {
+    if (queue.channel.members.filter(user => !user.bot).size <= 1) {
       setTimeout(function() {
-        if (queue.connection.channel.members.filter(user => !user.bot).size <= 1) {
+        if (queue.channel.members.filter(user => !user.bot).size <= 1) {
           queue.textChannel.send("🎈 ┃ 因為頻道裡面已經沒人了，所以我離開了語音頻道").catch(console.error);
           queue.songs = [];
           try {
