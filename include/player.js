@@ -127,6 +127,7 @@ class Player {
    * @param {String} url YouTube video URL
    */
   async _getStream(url) {
+    this.queue.current = this.queue.songs[0];
     let encoderArgs = [
       "-analyzeduration", "0",
       "-loglevel", "0",
@@ -140,6 +141,21 @@ class Player {
     let ytdlStream = await ytdl(url, {
       highWaterMark: 1 << 20
     });
+    ytdlStream.once("info", songInfo => {
+      let songData = {
+        title: songInfo.videoDetails.title,
+        url: songInfo.videoDetails.video_url,
+        duration: songInfo.player_response.videoDetails.lengthSeconds,
+        thumbnail: songInfo.videoDetails.thumbnails.pop().url,
+        type: "song",
+        by: this.queue.current.by,
+        songId: this.queue.current.songId
+      };
+      if (this.queue.songs[0].songId === this.queue.current.songId) {
+        this.queue.songs[0] = songData;
+      }
+      this.queue.current = songData;
+    })
     this.queue.converter.ffmpeg = new FFmpeg({
       args: encoderArgs
     });
@@ -168,7 +184,6 @@ class Player {
     this.client.log("Start playing song");
     let queue = this.queue,
       song = queue.songs[0];
-    queue.current = queue.songs[0];
     this.source = voice.createAudioResource(stream, {
       inputType: voice.StreamType.Opus
     });
