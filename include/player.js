@@ -359,12 +359,14 @@ class Player {
         } else if (!queue.repeat) {
           queue.songs.shift();
         }
-        if (!queue.songs.length) {
+        if (queue.songs.length) {
           this.client.log("Queue ended");
+          this.queue.textChannel.send("👌 ┃ 播放完畢")
           this.stop();
+        } else {
+          this.queue.audioPlayer.removeAllListeners("stateChange")
+          this._getStream(this.queue.songs[0].url);
         }
-        this.queue.audioPlayer.removeAllListeners("stateChange")
-        this._getStream(this.queue.songs[0].url);
       }
     });
   }
