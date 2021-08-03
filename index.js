@@ -248,7 +248,7 @@ client.on("guildDelete", guild => {
 client.on("interactionCreate", interaction => {
   if (!interaction.isCommand()) return;
   const message = {
-    chnanel: interaction.channel,
+    channel: interaction.channel,
     guild: interaction.guild,
     author: interaction.user,
     client,
