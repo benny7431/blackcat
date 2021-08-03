@@ -46,7 +46,7 @@ client.db = db;
 client.commands = new Discord.Collection();
 client.prefix = PREFIX;
 client.queue = new Map();
-client.log = async function(msgConten, type) {
+client.log = async function(msgContent, type) {
   const webhook = new Discord.WebhookClient({
     id: process.env.WEBHOOK_ID,
     token: process.env.WEBHOOK_SECRET
