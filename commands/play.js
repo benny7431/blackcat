@@ -2,7 +2,7 @@ const ytdl = require("ytdl-core");
 const YouTube = require("youtube-sr").default;
 const Player = require("../include/player");
 const { v4: uuid } = require("uuid");
-const { MessageEmbed, Permissions, Util } = require("discord.js");
+const { MessageEmbed, Util } = require("discord.js");
 
 module.exports = {
   name: "play",
@@ -97,6 +97,7 @@ module.exports = {
 
     let songInfo = null;
     let song = null;
+    let songs = [];
 
     let songId = uuid();
 
@@ -177,12 +178,11 @@ module.exports = {
       }).catch(console.error);
     }
 
-    queueConstruct.songs.push(song);
-    message.client.queue.set(message.guild.id, queueConstruct);
+    songs.push(song);
 
     try {
-      queueConstruct.player = new Player(queueConstruct, message.client);
-      queueConstruct.player.connect(channel);
+      let player = new Player(channel, message.channel, message.client);
+      message.client.queue.set(message.guild.id, player);
       await message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
       queueConstruct.player.play(queueConstruct.songs[0]);
     } catch (error) {
