@@ -94,6 +94,23 @@ class Player {
     this.client.log("Stop player");
   }
 
+  /**
+   * Get now playing
+   * @example {
+     playing: true,
+     playTime: 123, //In seconds
+     title: "Song title",
+     thumbnail: "Thumbnail"
+   }
+   */
+  nowPlaying() {
+    if (!this.startTime) return {
+      playing: false
+    };
+
+    
+  }
+
   /** Create player
    * @param {VoiceChannel} channel Voice channel that will subscribe player
    */

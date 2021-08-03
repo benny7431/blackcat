@@ -51,10 +51,7 @@ client.log = async function(msgConten, type) {
     id: process.env.WEBHOOK_ID,
     token: process.env.WEBHOOK_SECRET
   });
-  let content = null;
-  if (system) {
-    content = `[Black cat] ${msgContent}`;
-  }
+  let content = `[Black cat] ${msgContent}`;
   switch (type) {
     case "info":
       webhook.send(content, {
