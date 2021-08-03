@@ -9,7 +9,7 @@ then
     fi
     node --check index.js
     node --check util/Util.js
-    node --check include/play.js
+    node --check include/player.js
   done
 else
   pm2-runtime --secret "$PM2_SECRET" --public "$PM2_PUBLIC" --machine-name "Black cat Server" --deep-monitoring start /home/process.json
