@@ -171,8 +171,6 @@ client.on("messageCreate", async (message) => {
   timestamps.set(message.author.id, now);
   setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 
-  message.slash = {};
-
   try {
     command.execute(message, args);
   } catch (error) {
