@@ -30,11 +30,11 @@ class Player {
     this.queue.connection.on(voice.VoiceConnectionStatus.Disconnected, async () => {
       try {
         await Promise.race([
-          voice.entersState(connection, voice.VoiceConnectionStatus.Signalling, 5000),
-          voice.entersState(connection, voice.VoiceConnectionStatus.Connecting, 5000),
+          voice.entersState(this.queue.connection, voice.VoiceConnectionStatus.Signalling, 5000),
+          voice.entersState(this.queue.connection, voice.VoiceConnectionStatus.Connecting, 5000),
         ]);
       } catch (error) {
-        this.client.queue.delete(connection.guild.id);
+        this.client.queue.delete(this.queue.textChannel.guildId);
         this.queue.connection.destroy();
       }
     });
@@ -118,7 +118,7 @@ class Player {
       console.log(error.message);
       this.emit("error");
       this.queue.connection.destroy();
-      client.queue.delete(connection.guild.id);
+      this.client.queue.delete(this.queue.textChannel.guildId);
     });
   }
 
@@ -134,7 +134,7 @@ class Player {
       "-ar", "48000",
       "-ac", "2",
     ];
-    if (this.queue.filter.length !== 0) encoderArgs = encoderArgs.concat(["-af", queue.filter.join(",")]);
+    if (this.queue.filter.length !== 0) encoderArgs = encoderArgs.concat(["-af", this.queue.filter.join(",")]);
     else encoderArgs.push("-af", "bass=g=2.5");
 
     let ytdlStream = await ytdl(url, {
@@ -242,8 +242,7 @@ class Player {
           btn.reply({
               content: "<:skip:827734282318905355> ┃ 跳過歌曲",
               ephemeral: true
-            })
-            .catch(console.error);
+            }).catch(console.error);
           break;
 
         case "pause":
@@ -253,16 +252,14 @@ class Player {
             btn.reply({
                 content: "<:pause:827737900359745586> ┃ 歌曲暫停!",
                 ephemeral: true
-              })
-              .catch(console.error);
+              }).catch(console.error);
           } else {
             queue.playing = !queue.playing;
             this.resume();
             btn.reply({
                 content: "<:play:827734196243398668> ┃ 繼續播放歌曲!",
                 ephemeral: true
-              })
-              .catch(console.error)
+              }).catch(console.error)
           }
           break;
 
@@ -273,16 +270,14 @@ class Player {
             btn.reply({
               content: "<:vol_up:827734772889157722> ┃ 解除靜音音樂",
               ephemeral: true
-            })
-              .catch(console.error);
+            }).catch(console.error);
           } else {
             queue.volume = 0;
             this.queue.converter.volume.setVolumeLogarithmic(0);
             btn.reply({
               content: "<:mute:827734384606052392> ┃ 靜音音樂",
               ephemeral: true
-            })
-              .catch(console.error)
+            }).catch(console.error)
           }
           break;
 
@@ -293,8 +288,7 @@ class Player {
           btn.reply({
             content: `<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${queue.volume}%`,
             ephemeral: true
-          })
-            .catch(console.error);
+          }).catch(console.error);
           break;
 
         case "vol_up":
@@ -304,8 +298,7 @@ class Player {
           btn.reply({
             content: `<:vol_up:827734772889157722> ┃ 音量上升，目前音量: ${queue.volume}%`,
             ephemeral: true
-          })
-            .catch(console.error);
+          }).catch(console.error);
           break;
 
         case "stop":
@@ -313,8 +306,7 @@ class Player {
           btn.reply({
             content: "<:stop:827734840891015189> ┃ 歌曲停止!",
             ephemeral: true
-          })
-            .catch(console.error);
+          }).catch(console.error);
           break;
       }
     });

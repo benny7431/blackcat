@@ -4,8 +4,8 @@ WORKDIR /home
 COPY . .
 
 ARG DEBIAN_FRONTEND="noninteractive"
-RUN apt -qqy update && \
-  apt -qqy install \
+RUN apt-get -qqy update && \
+  apt-get -qqy install \
   python \
   make \
   g++ \
