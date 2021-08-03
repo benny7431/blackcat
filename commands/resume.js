@@ -21,6 +21,9 @@ module.exports = {
       return queue.textChannel.send("<:play:827734196243398668> ┃ 繼續播放歌曲").catch(console.error);
     }
 
-    return message.channel.send("❌ ┃ 歌曲已經在播放了").catch(console.error);
+    if(message.slash) return message.slash.send("❌ ┃ 歌曲已經在播放了")
+      .catch(console.error);
+    else return message.channel.send("❌ ┃ 歌曲已經在播放了")
+      .catch(console.error);
   }
 };

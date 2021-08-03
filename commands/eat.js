@@ -11,7 +11,7 @@ module.exports = {
       {
         name: "要吃的東西",
         description: "你要給我吃的東西",
-        type: 3,
+        type: "STRING",
         required: true
       }
     ]
@@ -40,15 +40,22 @@ module.exports = {
       .setTitle("享用食物...")
       .setDescription(`🍽️ ┃ 正在吃${food}`)
       .setColor("BLURPLE");
-    let sent = await message.channel.send({
+    let sent = null;
+    if (message.slash) message.slash.send({
+      embeds: [embed]
+    }).catch(console.error);
+    else sent = await message.channel.send({
       embeds: [embed]
     }).catch(console.error);
     const timeout = getRandomNum(2000, 10000);
     embed.setDescription(`🍽️ ┃ 對於${food}我的評價是:${respone[getRandomNum(0, respone.length)]}`);
     setTimeout(function() {
-      sent.edit({
+      if (sent) sent.edit({
         embeds: [embed]
       }).catch(console.error);
+      else message.slash.edit({
+        embeds: [embed]
+      }).catch(console.error)
     }, timeout);
   }
 };

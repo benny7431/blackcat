@@ -12,11 +12,12 @@ module.exports = {
       {
         name: "搜尋字串",
         description: "在Youtube上的搜尋字串",
-        type: 3,
+        type: "STRING",
         required: true,
       }
     ]
   },
+  slashReply: false,
   async execute(message, args) {
     if (!args.length) return message.channel.send("❌ ┃ 請輸入歌曲名稱").catch(console.error);
     if (!message.member.voice.channel) return message.channel.send("❌ ┃ 你必須先加入一個語音頻道!").catch(console.error);

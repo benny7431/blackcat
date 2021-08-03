@@ -11,7 +11,7 @@ module.exports = {
       {
         name: "歌曲編號",
         description: "在播放清單中的歌曲編號",
-        type: 4,
+        type: "INTEGER",
         required: true,
       }
     ]

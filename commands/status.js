@@ -49,8 +49,11 @@ module.exports = {
       .addField("<:music:825646714404077569> ┃ 音樂播放狀態", `有${message.client.queue.size}個伺服器正在播放音樂`)
       .setColor("BLURPLE");
 
-    return message.channel.send({
+    if(message.slash) return message.slash.send({
       embeds: [embed]
-    });
+    }).catch(console.error);
+    else return message.channel.send({
+      embeds: [embed]
+    }).catch(console.error)
   }
 };

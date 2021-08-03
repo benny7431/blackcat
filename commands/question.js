@@ -11,7 +11,7 @@ module.exports = {
       {
         name: "問題內容",
         description: "要詢問的問題",
-        type: 3,
+        type: "STRING",
         required: true
       }
     ]
@@ -35,12 +35,21 @@ module.exports = {
       .setTitle("問答!")
       .setDescription(`❓ ┃ ${question}的答案...`)
       .setColor("BLURPLE");
-    let sent = await message.channel.send({
+    let sent = null;
+    if (message.slash) message.channel.send({
+      embeds: [embed]
+    });
+    else await message.channel.send({
       embeds: [embed]
     });
     embed.setDescription(`❓ ┃ 對於${question}我的回答是${randomAnswer}`);
-    setTimeout(() => sent.edit({
-      embeds: [embed]
-    }), 2000);
+    setTimeout(() => {
+      if(sent) sent.edit({
+        embeds: [embed]
+      });
+      else message.slash.edit({
+        embeds: [embed]
+      });
+    }, 2000);
   }
 };

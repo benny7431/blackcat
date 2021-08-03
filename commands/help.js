@@ -26,12 +26,11 @@ module.exports = {
       .setURL("https://blackcatbot.tk/blackcat");
     let buttonRow = new MessageActionRow()
       .addComponents(discordBtn, inviteBtn);
-    if (message.slash.raw) {
-      helpEmbed.addField("\u200B",
-        "[➕ 加入支援伺服器](https://blackcatbot.tk/discord)\n\n" +
-        "[➕ 再邀請一次機器人](https://blackcatbot.tk/blackcat)");
-      return message.slash.sendEmbed(helpEmbed);
-    } else return message.channel.send({
+    if (message.slash.raw) return message.slash.send({
+      embeds: [helpEmbed],
+      components: [buttonRow]
+    }).catch(console.error)
+    else return message.channel.send({
       embeds: [helpEmbed],
       components: [buttonRow]
     }).catch(console.error);

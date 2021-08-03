@@ -9,7 +9,7 @@ module.exports = {
       {
         name: "動作",
         description: "要執行的動作",
-        type: 3,
+        type: "STRING",
         required: true,
         choices: [
           {
@@ -28,7 +28,7 @@ module.exports = {
       {
         name: "等化器模式",
         description: "要新增/移除的等化器模式",
-        type: 3,
+        type: "STRING",
         required: true,
         choices: [
           {
@@ -68,7 +68,7 @@ module.exports = {
     const filters = {
       "bassboost": "bass=g=7",
       "8D": "apulsator=hz=0.09",
-      "nightcore": "aresample=48000,asetrate=48000*1.25",
+      "nightcore": "aresample=48000,asetrate=48000*1.15",
       "vaporwave": "aresample=48000,asetrate=48000*0.8",
       "surrounding": "surround",
       "treble": "treble=g=5",
@@ -120,6 +120,7 @@ module.exports = {
         msg = `✅ ┃ 成功移除音樂音效${args[1]}, 重新播放歌曲將會套用目前設定!`;
       }
     }
-    message.channel.send(msg).catch(console.error);
+    if(message.slash) message.slash.send(msg).catch(console.error);
+    else message.channel.send(msg).catch(console.error);
   }
 };

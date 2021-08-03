@@ -12,7 +12,7 @@ module.exports = {
       {
         name: "歌曲編號",
         description: "在播放清單中的歌曲編號",
-        type: 4,
+        type: "INTEGER",
         required: true,
       }
     ]
@@ -37,7 +37,10 @@ module.exports = {
     } else {
       queue.songs = queue.songs.slice(args[0] - 2);
     }
-    queue.connection.dispatcher.end();
-    return queue.textChannel.send(`<:skip:827734282318905355> ┃ 跳到第 ${args[0]} 首歌曲`).catch(console.error);
+    queue.player.skip();
+    if(message.slash) return message.slash.send(`<:skip:827734282318905355> ┃ 跳到第 ${args[0]} 首歌曲`)
+      .catch(console.error);
+    else return queue.textChannel.send(`<:skip:827734282318905355> ┃ 跳到第 ${args[0]} 首歌曲`)
+      .catch(console.error);
   }
 };

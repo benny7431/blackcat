@@ -12,7 +12,7 @@ module.exports = {
       {
         name: "音量",
         description: "要變更的音量",
-        type: 3,
+        type: "INTEGER",
         required: false,
       }
     ]
@@ -31,6 +31,9 @@ module.exports = {
     queue.volume = args[0];
     queue.converter.volume.setVolumeLogarithmic(args[0] / 100);
 
-    return queue.textChannel.send(`<:vol_up:827734772889157722> ┃ 設定音量至: ${args[0]}%`).catch(console.error);
+    if(message.slash.raw) message.slash.send(`<:vol_up:827734772889157722> ┃ 設定音量至: ${args[0]}%`)
+      .catch(console.error);
+    else return queue.textChannel.send(`<:vol_up:827734772889157722> ┃ 設定音量至: ${args[0]}%`)
+      .catch(console.error);
   }
 };

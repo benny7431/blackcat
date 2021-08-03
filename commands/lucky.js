@@ -23,7 +23,10 @@ module.exports = {
         .setTitle(`${message.author.username}的幸運指數`)
         .setDescription(`🍀 ┃ 你的幸運指數是${lucky}\n\n${bar}`)
         .setColor("BLURPLE");
-      return message.channel.send({
+      if (message.slash) return message.slash.send({
+        embeds: [embed]
+      }).catch(console.error)
+      else return message.channel.send({
         embeds: [embed]
       }).catch(console.error);
     } else {
@@ -31,7 +34,10 @@ module.exports = {
         .setTitle(`${message.mentions.members.first().displayName}的幸運指數`)
         .setDescription(`${message.mentions.members.first().displayName}的幸運指數是${lucky}\n\n${bar}`)
         .setColor("BLURPLE");
-      return message.channel.send({
+      if (message.slash) return message.slash.send({
+        embeds: [embed]
+      }).catch(console.error)
+      else return message.channel.send({
         embeds: [embed]
       }).catch(console.error);
     }

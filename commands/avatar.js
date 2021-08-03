@@ -21,7 +21,10 @@ module.exports = {
         size: 4096
       }))
       .setColor("BLURPLE");
-    return message.channel.send({
+    if (message.slash) return message.slash.send({
+      embeds: [embed]
+    }).catch(console.error)
+    else return message.channel.send({
       embeds: [embed]
     }).catch(console.error);
   }

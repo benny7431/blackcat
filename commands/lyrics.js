@@ -13,7 +13,7 @@ module.exports = {
       {
         name: "歌曲名稱",
         description: "要搜尋歌詞的音樂名稱",
-        type: 3,
+        type: "STRING",
         required: false,
       }
     ]
@@ -32,9 +32,13 @@ module.exports = {
       .setTitle(`📃 ┃ ${songtitle}歌詞`)
       .setDescription("🔄 ┃ 正在尋找歌詞...")
       .setColor("BLURPLE");
-    let lyricsmessage = await message.channel.send({
+    let sent = null;
+    if (message.slash) message.slash.send({
       embeds: [lyricsEmbed]
-    });
+    }).catch(console.error)
+    else sent = message.channel.send({
+      embeds: [lyricsEmbed]
+    }).catch(console.error);
 
     try {
       lyrics = await lyricsFinder(songtitle, "");
@@ -46,8 +50,13 @@ module.exports = {
 
     if (lyricsEmbed.description.length > 2048)
       lyricsEmbed.description = `${lyricsEmbed.description.substr(0, 2000)}...`;
-    return lyricsmessage.edit({
-      embeds: [lyricsEmbed]
-    }).catch(console.error);
+    if (sent) sent.edit({
+        embeds: [lyricsEmbed]
+      })
+      .catch(console.error);
+    else message.slash.edit({
+        embeds: [lyricsEmbed]
+      })
+      .catch(console.error)
   }
 };

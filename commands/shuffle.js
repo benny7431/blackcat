@@ -23,6 +23,9 @@ module.exports = {
     }
     queue.songs = songs;
     message.client.queue.set(message.guild.id, queue);
-    return queue.textChannel.send("🔀 ┃ 隨機排序播放清單").catch(console.error);
+    if(message.slash) return message.slash.send("🔀 ┃ 隨機排序播放清單")
+      .catch(console.error);
+    else return queue.textChannel.send("🔀 ┃ 隨機排序播放清單")
+      .catch(console.error);
   }
 };

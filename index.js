@@ -197,7 +197,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
           queue.textChannel.send("🎈 ┃ 因為頻道裡面已經沒人了，所以我離開了語音頻道").catch(console.error);
           queue.songs = [];
           try {
-            queue.connection.dispatcher.end();
+            queue.player.stop();
           } catch (e) {
             console.log(e.message);
           }
@@ -265,49 +265,13 @@ client.on("interactionCreate", interaction => {
       },
       delete: function() {
         return interaction.deleteReply();
-      },
-      raw: int
+      }
     }
   };
 
-  try {
-    if (!int.guild_id) return client.api.interactions(int.id, int.token).callback.post({
-      data: {
-        type: 4,
-        data: {
-          content: "請在伺服器中執行指令!",
-          flags: 64
-        }
-      }
-    });
-    else if (!message.channel.permissionsFor("848006097197334568").has("SEND_MESSAGES")) return client.api.interactions(int.id, int.token).callback.post({
-      data: {
-        type: 4,
-        data: {
-          content: "沒有權限在此頻道發送訊息!",
-          flags: 64
-        }
-      }
-    });
-  } catch (e) {
-    console.log(e.message);
-  }
+  const commandName = interaction.commandName.toLowerCase();
 
-  let args = [];
-  if (int.data.options) {
-    const contents = [];
-    int.data.options.forEach(arg => {
-      contents.push(arg.value);
-    });
-    message.content = `b.${int.data.name} ${contents.join(" ")}`;
-    args = contents;
-  }
-
-  const commandName = int.data.name.toLowerCase();
-
-  const command =
-    client.commands.get(commandName) ||
-    client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
+  const command = client.commands.get(commandName);
 
   if (!command) return;
 
@@ -324,21 +288,20 @@ client.on("interactionCreate", interaction => {
 
     if (now < expirationTime) {
       const timeLeft = (expirationTime - now) / 1000;
-      return message.channel.send(`🕒 請等待${Math.ceil(timeLeft.toFixed(1))}秒後再使用${command.name}指令!!!`);
+      return interaction.reply(`🕒 請等待${Math.ceil(timeLeft.toFixed(1))}秒後再使用${command.name}指令!!!`);
     }
   }
 
   timestamps.set(message.author.id, now);
   setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 
-  if (!command.slashReply) await client.api.interactions(int.id, int.token).callback.post({
-    data: {
-      type: 4,
-      data: {
-        content: "正在處理..."
-      }
-    }
-  
+  let args = [];
+  interaction.options.data.forEach(option => {
+    args.push(option.value);
+  });
+  message.content = `b. ${args.join(" ")}`;
+
+  if(!command.slashReply) interaction.reply("請稍等...");
 
   try {
     command.execute(message, args);

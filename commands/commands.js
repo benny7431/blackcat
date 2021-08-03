@@ -11,7 +11,7 @@ module.exports = {
       {
         name: "指令類別",
         description: "要查看的指令類別",
-        type: 3,
+        type: "STRING",
         required: true,
         choices: [
           {
@@ -43,7 +43,10 @@ module.exports = {
           "`b.commands util` 工具指令\n" +
           "`b.commands other` 其他指令")
         .setColor("BLURPLE");
-      return message.channel.send({
+      if (message.slash) return message.slash.send({
+        embeds: [embed]
+      }).catch(console.error)
+      else return message.channel.send({
         embeds: [embed]
       }).catch(console.error);
     }
@@ -106,7 +109,10 @@ module.exports = {
     } else {
       return message.channel.send("❌ ┃ 請輸入正確的指令類別!").catch(console.error);
     }
-    return message.channel.send({
+    if (message.slash) return message.slash.send({
+      embeds: [embed]
+    }).catch(console.error)
+    else return message.channel.send({
       embeds: [embed]
     }).catch(console.error);
   }

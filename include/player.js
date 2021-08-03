@@ -188,6 +188,7 @@ class Player {
       inputType: voice.StreamType.Opus
     });
     queue.audioPlayer.play(this.source);
+    this.queue.channel.stageInstance?.setTopic(`正在播放 - ${this.queue.current.title.substr(0, 112)}`)
 
     let embed = new Discord.MessageEmbed()
       .setColor("BLURPLE")

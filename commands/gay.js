@@ -24,13 +24,21 @@ module.exports = {
           .setTitle(`${message.mentions.members.first().displayName}的Gay指數`)
           .setDescription(`🏳️‍🌈 ┃ ${message.mentions.members.first().displayName}的Gay指數是${gay}\n\n${bar}`)
           .setColor("BLURPLE");
-        return message.channel.send(embed).catch(console.error);
+        if (message.slash) return message.slash.send({
+          embeds: [embed]
+        }).catch(console.error)
+        else return message.channel.send({
+          embeds: [embed]
+        }).catch(console.error);
       } else {
         const embed = new MessageEmbed()
           .setTitle(`${message.author.username}的Gay指數`)
           .setDescription(`🏳️‍🌈 ┃ 你的Gay指數是${gay}\n\n${bar}`)
           .setColor("BLURPLE");
-        return message.channel.send({
+        if (message.slash) return message.slash.send({
+          embeds: [embed]
+        }).catch(console.error)
+        else return message.channel.send({
           embeds: [embed]
         }).catch(console.error);
       }
@@ -39,7 +47,10 @@ module.exports = {
         .setTitle(`${message.author.username}的Gay指數`)
         .setDescription(`🏳️‍🌈 ┃ 你的Gay指數是${gay}\n\n${bar}`)
         .setColor("BLURPLE");
-      return message.channel.send({
+      if (message.slash) return message.slash.send({
+        embeds: [embed]
+      }).catch(console.error)
+      else return message.channel.send({
         embeds: [embed]
       }).catch(console.error);
     }

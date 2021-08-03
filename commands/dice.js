@@ -11,7 +11,7 @@ module.exports = {
       {
         name: "骰子面數",
         description: "骰子的面數",
-        type: 4,
+        type: "INTEGER",
         required: false
       }
     ]
@@ -29,27 +29,41 @@ module.exports = {
         .setTitle("骰子!")
         .setDescription("🎲 ┃ 你得到了...")
         .setColor("BLURPLE");
-      let sent = await message.channel.send({
+      let sent = null;
+      if (message.slash) message.slash.send({
+        embeds: [embed]
+      });
+      else sent = await message.channel.send({
         embeds: [embed]
       });
       setTimeout(function() {
-        sent.edit({
+        if(sent) sent.edit({
           embeds: [embed]
         }).catch(console.error);
+        else message.slash.edit({
+          embeds: [embed]
+        });
       }, 2000);
     } else {
       const embed = new MessageEmbed()
         .setTitle("骰子!")
         .setDescription("🎲 ┃ 你得到了...")
         .setColor("BLURPLE");
-      let sent = await message.channel.send({
+      let sent = null;
+      if (message.slash) message.slash.send({
+        embeds: [embed]
+      });
+      else sent = await message.channel.send({
         embeds: [embed]
       });
       setTimeout(function() {
         embed.setDescription(`🎲 ┃ 你得到了${getRandomNum(1, 6)}!`);
-        sent.edit({
+        if(sent) sent.edit({
           embeds: [embed]
         }).catch(console.error);
+        else message.slash.edit({
+          embeds: [embed]
+        });
       }, 2000);
       return;
     }

@@ -17,7 +17,9 @@ module.exports = {
 
     queue.repeat = false;
     queue.loop = !queue.loop;
-    if (message.slash.raw) return message.slash.send(`${queue.loop ? "🔁 " : ""}重複播放清單目前為 ${queue.loop ? "啟動\n將會重複歌單!" : "關閉"}!`);
+    if (message.slash) return message.slash
+      .send(`${queue.loop ? "🔁 " : ""}重複播放清單目前為 ${queue.loop ? "啟動\n將會重複歌單!" : "關閉"}!`)
+      .catch(console.error);
     else return queue.textChannel
       .send(`${queue.loop ? "🔁 " : ""}重複播放清單目前為 ${queue.loop ? "啟動\n將會重複歌單!" : "關閉"}!`)
       .catch(console.error);
