@@ -34,7 +34,7 @@ module.exports = {
 
     if (message.slash) return message.slash.send({
       embeds: [embed]
-    }).catch(console.error)
+    }).catch(console.error);
     else return message.channel.send({
       embeds: [embed]
     }).catch(console.error);

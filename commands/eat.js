@@ -55,7 +55,7 @@ module.exports = {
       }).catch(console.error);
       else message.slash.edit({
         embeds: [embed]
-      }).catch(console.error)
+      }).catch(console.error);
     }, timeout);
   }
 };

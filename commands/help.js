@@ -29,7 +29,7 @@ module.exports = {
     if (message.slash.raw) return message.slash.send({
       embeds: [helpEmbed],
       components: [buttonRow]
-    }).catch(console.error)
+    }).catch(console.error);
     else return message.channel.send({
       embeds: [helpEmbed],
       components: [buttonRow]

@@ -44,7 +44,7 @@ module.exports = {
       if (message.slash) return message.slash.send("❌ ┃ 請輸入歌曲名稱或網址")
         .catch(console.error);
       else return message.channel.send("❌ ┃ 請輸入歌曲名稱或網址")
-        .catch(console.error)
+        .catch(console.error);
     }
 
     if (!channel.joinable) {
@@ -57,7 +57,7 @@ module.exports = {
       if (message.slash) return message.slash.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!")
         .catch(console.error);
       else return message.channel.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!")
-        .catch(console.error)
+        .catch(console.error);
     }
 
     if (channel.type === "GUILD_STAGE_VOICE") {

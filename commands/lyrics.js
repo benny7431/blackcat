@@ -35,7 +35,7 @@ module.exports = {
     let sent = null;
     if (message.slash) message.slash.send({
       embeds: [lyricsEmbed]
-    }).catch(console.error)
+    }).catch(console.error);
     else sent = message.channel.send({
       embeds: [lyricsEmbed]
     }).catch(console.error);
@@ -57,6 +57,6 @@ module.exports = {
     else message.slash.edit({
         embeds: [lyricsEmbed]
       })
-      .catch(console.error)
+      .catch(console.error);
   }
 };

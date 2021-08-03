@@ -155,7 +155,7 @@ class Player {
         this.queue.songs[0] = songData;
       }
       this.queue.current = songData;
-    })
+    });
     this.queue.converter.ffmpeg = new FFmpeg({
       args: encoderArgs
     });
@@ -188,7 +188,7 @@ class Player {
       inputType: voice.StreamType.Opus
     });
     queue.audioPlayer.play(this.source);
-    this.queue.channel.stageInstance?.setTopic(`正在播放 - ${this.queue.current.title.substr(0, 112)}`)
+    this.queue.channel.stageInstance?.setTopic(`正在播放 - ${this.queue.current.title.substr(0, 112)}`);
 
     let embed = new Discord.MessageEmbed()
       .setColor("BLURPLE")
