@@ -80,7 +80,7 @@ module.exports = {
       }
     }
 
-    if (message.slash) message.slasj.send("<:music_search:827735016254734346> ┃ 搜尋中...\n> `" + args.join(" ") + "`")
+    if (message.slash) message.slash.send("<:music_search:827735016254734346> ┃ 搜尋中...\n> `" + args.join(" ") + "`")
       .catch(console.error);
     else message.channel.send("<:music_search:827735016254734346> ┃ 搜尋中...\n> `" + args.join(" ") + "`")
       .catch(console.error);
