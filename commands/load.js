@@ -91,12 +91,6 @@ module.exports = {
     if (!serverQueue) {
       try {
         queueConstruct.player = new Player(queueConstruct, message.client);
-        if(channel.type === "GUILD_STAGE_VOICE" && !channel.stageInstance) {
-          channel.createStageInstance({
-            topic: "即將開始播放音樂...",
-            privacyLevel: "GUILD_ONLY"
-          });
-        }
         queueConstruct.player.connect(channel);
         await message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
         queueConstruct.player.play(queueConstruct.songs[0]);

@@ -21,11 +21,18 @@ class Player {
    */
   async connect(channel) {
     this.client.log("Connecting to voice channel");
+    if (channel.type === "GUILD_STAGE_VOICE" && !channel.stageInstance) {
+      channel.createStageInstance({
+        topic: "即將開始播放音樂...",
+        privacyLevel: "GUILD_ONLY"
+      });
+    }
     this.queue.connection = await voice.joinVoiceChannel({
       channelId: channel.id,
       guildId: channel.guild.id,
       adapterCreator: channel.guild.voiceAdapterCreator,
     });
+    if(channel.guild.me.voice?.suppress) channel.guild.me.voice.setSuppressed(false);
     this._createPlayer(channel);
     this.queue.connection.on(voice.VoiceConnectionStatus.Disconnected, async () => {
       try {
@@ -258,9 +265,9 @@ class Player {
           queue.playing = true;
           this.skip();
           btn.reply({
-              content: "<:skip:827734282318905355> ┃ 跳過歌曲",
-              ephemeral: true
-            }).catch(console.error);
+            content: "<:skip:827734282318905355> ┃ 跳過歌曲",
+            ephemeral: true
+          }).catch(console.error);
           break;
 
         case "pause":
@@ -268,16 +275,16 @@ class Player {
             queue.playing = !queue.playing;
             this.pause();
             btn.reply({
-                content: "<:pause:827737900359745586> ┃ 歌曲暫停!",
-                ephemeral: true
-              }).catch(console.error);
+              content: "<:pause:827737900359745586> ┃ 歌曲暫停!",
+              ephemeral: true
+            }).catch(console.error);
           } else {
             queue.playing = !queue.playing;
             this.resume();
             btn.reply({
-                content: "<:play:827734196243398668> ┃ 繼續播放歌曲!",
-                ephemeral: true
-              }).catch(console.error);
+              content: "<:play:827734196243398668> ┃ 繼續播放歌曲!",
+              ephemeral: true
+            }).catch(console.error);
           }
           break;
 

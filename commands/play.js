@@ -60,26 +60,6 @@ module.exports = {
         .catch(console.error);
     }
 
-    if (channel.type === "GUILD_STAGE_VOICE") {
-      if (!channel.manageable || !channel.permissionsFor(message.guild.me).has(Permissions.STAGE_MODERATOR)) {
-        if (message.slash) return message.slash.send("❌ ┃ 我必須成為舞台頻道的主持人才可以在裡面播放音樂!")
-          .catch(console.error);
-        else return message.channel.send("❌ ┃ 我必須成為舞台頻道的主持人才可以在裡面播放音樂!")
-          .catch(console.error);
-      }
-      try {
-        await channel.permissionOverwrites.create(message.guild.me, {
-          "STAGE_MODERATOR": true
-        });
-      } catch (e) {
-        console.log(e);
-        if (message.slash) return message.slash.send("❌ ┃ 我無法將自己設為舞台管理員，請自行設置!")
-          .catch(console.error);
-        else return message.slash.send("❌ ┃ 我無法將自己設為舞台管理員，請自行設置!")
-          .catch(console.error);
-      }
-    }
-
     if (message.slash) message.slash.send("<:music_search:827735016254734346> ┃ 搜尋中...\n> `" + args.join(" ") + "`")
       .catch(console.error);
     else message.channel.send("<:music_search:827735016254734346> ┃ 搜尋中...\n> `" + args.join(" ") + "`")
@@ -202,12 +182,6 @@ module.exports = {
 
     try {
       queueConstruct.player = new Player(queueConstruct, message.client);
-      if (channel.type === "GUILD_STAGE_VOICE" && !channel.stageInstance) {
-        channel.createStageInstance({
-          topic: "即將開始播放音樂...",
-          privacyLevel: "GUILD_ONLY"
-        });
-      }
       queueConstruct.player.connect(channel);
       await message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
       queueConstruct.player.play(queueConstruct.songs[0]);
