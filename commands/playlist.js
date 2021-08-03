@@ -43,7 +43,7 @@ module.exports = {
       if(message.slash) return message.slash.send("❌ ┃ 請輸入歌曲名稱或網址")
         .catch(console.error);
       else return message.channel.send("❌ ┃ 請輸入歌曲名稱或網址")
-        .catch(console.error)
+        .catch(console.error);
     }
     if (!channel.joinable) {
       if(message.slash) return message.slash.send("❌ ┃ 無法連接到語音頻道!因為我沒有權限加入你在的房間!")
@@ -55,7 +55,7 @@ module.exports = {
       if(message.slash) return message.slash.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!")
         .catch(console.error);
       else return message.channel.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!")
-        .catch(console.error)
+        .catch(console.error);
     }
 
     if (channel.type === "GUILD_STAGE_VOICE") {
@@ -114,10 +114,10 @@ module.exports = {
     let sent = null;
     if (message.slash) await message.slash.send({
       embeds: [playlistEmbed]
-    }).catch(console.error)
+    }).catch(console.error);
     else sent = await message.channel.send({
       embeds: [playlistEmbed]
-    }).catch(console.error)
+    }).catch(console.error);
 
     if (urlValid) {
       try {

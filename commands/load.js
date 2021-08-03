@@ -32,9 +32,9 @@ module.exports = {
     }
     if (!channel.speakable) {
       if (message.slash) return message.slash.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!")
-        .catch(console.error)
+        .catch(console.error);
       else return message.channel.send("❌ ┃ 我沒辦法在你的語音頻道裡放收音機!因為我沒有說話的權限!")
-        .catch(console.error)
+        .catch(console.error);
     }
     if (serverQueue && channel !== message.guild.me.voice.channel) {
       if (message.slash) return message.slash.send("❌ ┃ 你必須跟我在同一個頻道裡面!")
@@ -85,7 +85,7 @@ module.exports = {
     if(sent) sent.edit(`<:load:833271811666870282> ┃ 已讀取${songs.length}首歌曲`)
       .catch(console.error);
     else message.slash.edit(`<:load:833271811666870282> ┃ 已讀取${songs.length}首歌曲`)
-      .catch(console.error)
+      .catch(console.error);
     if (!serverQueue) message.client.queue.set(message.guild.id, queueConstruct);
 
     if (!serverQueue) {

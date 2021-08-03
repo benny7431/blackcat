@@ -258,10 +258,10 @@ client.on("interactionCreate", interaction => {
     createdTimestamp: interaction.createdTimestamp,
     slash: {
       send: function(data) {
-        return interaction.reply(data)
+        return interaction.reply(data);
       },
       edit: function(data) {
-        return interaction.editReply(data)
+        return interaction.editReply(data);
       },
       delete: function() {
         return interaction.deleteReply();
