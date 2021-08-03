@@ -189,7 +189,6 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     const queue = client.queue.get(oldState.guild.id);
     if (!queue) return;
     if (!queue.connection) return;
-    if (!queue.connection.dispatcher) return;
     if (!queue.songs.length || queue.songs.length === 0) return;
     if (queue.connection.channel.members.filter(user => !user.bot).size <= 1) {
       setTimeout(function() {
