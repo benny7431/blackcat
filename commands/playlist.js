@@ -27,7 +27,7 @@ module.exports = {
     const serverQueue = message.client.queue.get(message.guild.id);
     if (serverQueue && channel !== message.guild.me.voice.channel) return message.channel.send("❌ ┃ 你必須跟我在同一個頻道裡面!").catch(console.error);
 
-    if (!args.length) return message.channel.send("❌ ┃ 請輸入播放清單名稱或網址!").catch(console.error)
+    if (!args.length) return message.channel.send("❌ ┃ 請輸入播放清單名稱或網址!").catch(console.error);
     if (!channel) return message.channel.send("❌ ┃ 你要先加入一個語音頻道...不然我要在哪的房間放收音機呢？").catch(console.error);
 
     if (!channel.joinable) return message.channel.send("❌ ┃ 無法連接到語音頻道!因為我沒有權限加入你在的房間!").catch(console.error);

@@ -9,11 +9,8 @@ test/
 # note
 notes/
 
-# shell script
-shell/
-
-# web server
-web/
+# arc server worker
+public/arc-sw.js
 
 # temp
 temp/

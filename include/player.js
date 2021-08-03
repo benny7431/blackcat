@@ -1,8 +1,8 @@
-const Discord = require("discord.js")
+const Discord = require("discord.js");
 const voice = require("@discordjs/voice");
 const ytdl = require("ytdl-core");
 const { opus, FFmpeg, VolumeTransformer } = require("prism-media");
-const { canModifyQueue } = require("../util/Util")
+const { canModifyQueue } = require("../util/Util");
 
 class Player {
   /**
@@ -12,6 +12,7 @@ class Player {
   constructor(queue, client) {
     this.queue = queue;
     this.client = client;
+    this.source = null;
   }
 
   /**
@@ -25,7 +26,7 @@ class Player {
       guildId: channel.guild.id,
       adapterCreator: channel.guild.voiceAdapterCreator,
     });
-    this._createPlayer(channel)
+    this._createPlayer(channel);
     this.queue.connection.on(voice.VoiceConnectionStatus.Disconnected, async () => {
       try {
         await Promise.race([
@@ -96,19 +97,9 @@ class Player {
 
   /**
    * Get now playing
-   * @example {
-     playing: true,
-     playTime: 123, //In seconds
-     title: "Song title",
-     thumbnail: "Thumbnail"
-   }
    */
-  nowPlaying() {
-    if (!this.startTime) return {
-      playing: false
-    };
-
-    
+  get playTime() {
+    return this.source.playbackDuration / 1000
   }
 
   /** Create player
@@ -178,10 +169,10 @@ class Player {
     let queue = this.queue,
       song = queue.songs[0];
     queue.current = queue.songs[0];
-    let source = voice.createAudioResource(stream, {
+    this.source = voice.createAudioResource(stream, {
       inputType: voice.StreamType.Opus
     });
-    queue.audioPlayer.play(source);
+    queue.audioPlayer.play(this.source);
 
     let embed = new Discord.MessageEmbed()
       .setColor("BLURPLE")
@@ -196,32 +187,32 @@ class Player {
       .setLabel("跳過")
       .setStyle("PRIMARY")
       .setEmoji("827734282318905355")
-      .setCustomId("skip")
+      .setCustomId("skip");
     let pauseBtn = new Discord.MessageButton()
       .setLabel("暫停")
       .setStyle("PRIMARY")
       .setEmoji("827737900359745586")
-      .setCustomId("pause")
+      .setCustomId("pause");
     let stopBtn = new Discord.MessageButton()
       .setLabel("停止")
       .setStyle("DANGER")
       .setEmoji("827734840891015189")
-      .setCustomId("stop")
+      .setCustomId("stop");
     let volupBtn = new Discord.MessageButton()
       .setLabel("上升")
       .setStyle("SUCCESS")
       .setEmoji("827734772889157722")
-      .setCustomId("vol_up")
+      .setCustomId("vol_up");
     let muteBtn = new Discord.MessageButton()
       .setLabel("靜音")
       .setStyle("SUCCESS")
       .setEmoji("827734384606052392")
-      .setCustomId("mute")
+      .setCustomId("mute");
     let voldownBtn = new Discord.MessageButton()
       .setLabel("下降")
       .setStyle("SUCCESS")
       .setEmoji("827734683340111913")
-      .setCustomId("vol_down")
+      .setCustomId("vol_down");
     let playControl = new Discord.MessageActionRow()
       .addComponents(skipBtn)
       .addComponents(pauseBtn)
@@ -248,11 +239,9 @@ class Player {
         case "skip":
           queue.playing = true;
           this.skip();
-          queue.textChannel.send("<:skip:827734282318905355> ┃ 跳過歌曲")
-            .then(sent => {
-              setTimeout(function () {
-                sent.delete().catch(console.error);
-              }, 3000);
+          btn.reply({
+              content: "<:skip:827734282318905355> ┃ 跳過歌曲",
+              ephemeral: true
             })
             .catch(console.error);
           break;
@@ -261,23 +250,19 @@ class Player {
           if (queue.playing) {
             queue.playing = !queue.playing;
             this.pause();
-            queue.textChannel.send("<:pause:827737900359745586> ┃ 歌曲暫停!")
-              .then(sent => {
-                setTimeout(function () {
-                  sent.delete().catch(console.error);
-                }, 3000);
+            btn.reply({
+                content: "<:pause:827737900359745586> ┃ 歌曲暫停!",
+                ephemeral: true
               })
               .catch(console.error);
           } else {
             queue.playing = !queue.playing;
             this.resume();
-            queue.textChannel.send("<:play:827734196243398668> ┃ 繼續播放歌曲!")
-              .then(sent => {
-                setTimeout(function () {
-                  sent.delete().catch(console.error);
-                }, 3000);
+            btn.reply({
+                content: "<:play:827734196243398668> ┃ 繼續播放歌曲!",
+                ephemeral: true
               })
-              .catch(console.error);
+              .catch(console.error)
           }
           break;
 
@@ -285,23 +270,19 @@ class Player {
           if (queue.volume <= 0) {
             queue.volume = 60;
             this.queue.converter.volume.setVolumeLogarithmic(60 / 100);
-            queue.textChannel.send("<:vol_up:827734772889157722> ┃ 解除靜音音樂")
-              .then(sent => {
-                setTimeout(function () {
-                  sent.delete().catch(console.error);
-                }, 3000);
-              })
+            btn.reply({
+              content: "<:vol_up:827734772889157722> ┃ 解除靜音音樂",
+              ephemeral: true
+            })
               .catch(console.error);
           } else {
             queue.volume = 0;
             this.queue.converter.volume.setVolumeLogarithmic(0);
-            queue.textChannel.send("<:mute:827734384606052392> ┃ 靜音音樂")
-              .then(sent => {
-                setTimeout(function () {
-                  sent.delete().catch(console.error);
-                }, 3000);
-              })
-              .catch(console.error);
+            btn.reply({
+              content: "<:mute:827734384606052392> ┃ 靜音音樂",
+              ephemeral: true
+            })
+              .catch(console.error)
           }
           break;
 
@@ -309,12 +290,10 @@ class Player {
           if (queue.volume - 10 <= 0) queue.volume = 0;
           else queue.volume = queue.volume - 10;
           this.queue.converter.volume.setVolumeLogarithmic(queue.volume / 100);
-          queue.textChannel.send(`<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${queue.volume}%`)
-            .then(sent => {
-              setTimeout(function () {
-                sent.delete().catch(console.error);
-              }, 3000);
-            })
+          btn.reply({
+            content: `<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${queue.volume}%`,
+            ephemeral: true
+          })
             .catch(console.error);
           break;
 
@@ -322,25 +301,20 @@ class Player {
           if (queue.volume + 10 >= 100) queue.volume = 100;
           else queue.volume = queue.volume + 10;
           this.queue.converter.volume.setVolumeLogarithmic(queue.volume / 100);
-          queue.textChannel.send(`<:vol_up:827734772889157722> ┃ 音量上升，目前音量: ${queue.volume}%`)
-            .then(sent => {
-              setTimeout(function () {
-                sent.delete().catch(console.error);
-              }, 3000);
-            })
+          btn.reply({
+            content: `<:vol_up:827734772889157722> ┃ 音量上升，目前音量: ${queue.volume}%`,
+            ephemeral: true
+          })
             .catch(console.error);
           break;
 
         case "stop":
           queue.songs = [];
-          queue.textChannel.send("<:stop:827734840891015189> ┃ 歌曲停止!")
+          btn.reply({
+            content: "<:stop:827734840891015189> ┃ 歌曲停止!",
+            ephemeral: true
+          })
             .catch(console.error);
-          try {
-            this.stop();
-          } catch (error) {
-            console.error(error);
-            queue.connection.destroy();
-          }
           break;
       }
     });
@@ -352,6 +326,7 @@ class Player {
     queue.audioPlayer.on("stateChange", (oldState, newState) => {
       if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
         this.client.log("Music ended");
+        this.source = null;
         collector.stop();
         if (queue.loop) {
           let lastSong = this.queue.songs.shift();
@@ -361,10 +336,10 @@ class Player {
         }
         if (queue.songs.length) {
           this.client.log("Queue ended");
-          this.queue.textChannel.send("👌 ┃ 播放完畢")
+          this.queue.textChannel.send("👌 ┃ 播放完畢");
           this.stop();
         } else {
-          this.queue.audioPlayer.removeAllListeners("stateChange")
+          this.queue.audioPlayer.removeAllListeners("stateChange");
           this._getStream(this.queue.songs[0].url);
         }
       }

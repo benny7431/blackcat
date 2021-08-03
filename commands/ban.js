@@ -3,7 +3,17 @@ const { Permissions } = require("discord.js");
 module.exports = {
   name: "ban",
   description: "封鎖成員",
-  register: false,
+  register: true,
+  slash: {
+    name: "ban",
+    description: "封鎖成員",
+    options: [{
+      name: "成員",
+      type: "USER",
+      description: "要封鎖的成員",
+      required: true,
+    }],
+  },
   async execute(message, args) {
     if (!message.member.permissions.has(Permissions.FLAGS.BAN_MEMBERS) && message.author.id !== "669194742218752070") return message.channel.send("❌ ┃ 你沒有足夠的權限!").catch(console.error);
     if (!message.guild.me.permissions.has(Permissions.FLAGS.BAN_MEMBERS)) return message.channel.send("❌ ┃ 我沒有足夠的權限!");

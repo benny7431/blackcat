@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const fetch = require("node-fetch");
 module.exports = async function(req, res) {
   if (req.body.resource !== "build") {
     return res.end();
@@ -13,10 +13,10 @@ module.exports = async function(req, res) {
     }]
   };
   await fetch(req.query.url, {
-    method:  'POST',
+    method:  "POST",
     body:    JSON.stringify(body),
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json"
     }
   })
     .then(() => {

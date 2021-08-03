@@ -10,21 +10,5 @@ module.exports = {
     }
 
     return true;
-  },
-  async restartDynos(client) {
-    const ytdl = require("ytdl-core");
-    
-    try {
-      let testSong = await ytdl.getInfo("https://youtu.be/lK-i-Ak0EAE");
-    } catch (e) {
-      let headers = {
-        "Accept": "application/vnd.heroku+json; version=3",
-        "Authorization": `Bearer ${process.env.HEROKU_API_KEY}`
-      };
-      fetch(`https://api.heroku.com/apps/${process.env.HEROKU_APP_ID}/dynos`, {
-        method: "delete",
-        headers
-      });
-    }
   }
 };

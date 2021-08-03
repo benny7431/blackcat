@@ -19,8 +19,8 @@ module.exports = {
     embed.setColor("BLURPLE");
     embed.addField("ID", message.guild.id);
     embed.addField("擁有者", `${message.guild.owner.user.username} (<@${message.guild.owner.id}>)`);
-    embed.addField("創建時間", message.guild.createdAt.toLocaleString('zh-TW', {
-      timeZone: 'Asia/Taipei',
+    embed.addField("創建時間", message.guild.createdAt.toLocaleString("zh-TW", {
+      timeZone: "Asia/Taipei",
       dateStyle: "short",
       timeStyle: "short"
     }));

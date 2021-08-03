@@ -33,9 +33,9 @@ module.exports = {
         embeds: [embed]
       });
       setTimeout(function() {
-       sent.edit({
-         embeds: [embed]
-       }).catch(console.error);
+        sent.edit({
+          embeds: [embed]
+        }).catch(console.error);
       }, 2000);
     } else {
       const embed = new MessageEmbed()

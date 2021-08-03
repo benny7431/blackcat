@@ -31,7 +31,7 @@ const intents = new Discord.Intents([
   "GUILD_MESSAGE_REACTIONS",
   "GUILD_MESSAGE_TYPING",
   "DIRECT_MESSAGES",
-])
+]);
 const client = new Discord.Client({
   allowedMentions: { parse: ["users", "roles"], repliedUser: true },
   restTimeOffset: 0,
@@ -53,30 +53,30 @@ client.log = async function(msgContent, type) {
   });
   let content = `[Black cat] ${msgContent}`;
   switch (type) {
-    case "info":
-      webhook.send(content, {
-        username: "Black cat log",
-        avatarURL: "https://blackcatbot.tk/assets/info.png"
-      });
-      break;
-    case "warn":
-      webhook.send(content, {
-        username: "Black cat log",
-        avatarURL: "https://blackcatbot.tk/assets/warn.png"
-      });
-      break;
-    case "error":
-      webhook.send(content, {
-        username: "Black cat log",
-        avatarURL: "https://blackcatbot.tk/assets/error.png"
-      });
-      break;
-    default:
-      webhook.send(content, {
-        username: "Black cat log",
-        avatarURL: "https://blackcatbot.tk/assets/info.png"
-      });
-      break;
+  case "info":
+    webhook.send(content, {
+      username: "Black cat log",
+      avatarURL: "https://blackcatbot.tk/assets/info.png"
+    });
+    break;
+  case "warn":
+    webhook.send(content, {
+      username: "Black cat log",
+      avatarURL: "https://blackcatbot.tk/assets/warn.png"
+    });
+    break;
+  case "error":
+    webhook.send(content, {
+      username: "Black cat log",
+      avatarURL: "https://blackcatbot.tk/assets/error.png"
+    });
+    break;
+  default:
+    webhook.send(content, {
+      username: "Black cat log",
+      avatarURL: "https://blackcatbot.tk/assets/info.png"
+    });
+    break;
   }
 };
 
@@ -86,7 +86,7 @@ const limiter = RateLimit({
   max: 100,
   message: "429 Too many requests",
   onLimitReached: function(req) {
-    client.log(`${req.headers['x-forwarded-for']} has been rate-limited`, "warn");
+    client.log(`${req.headers["x-forwarded-for"]} has been rate-limited`, "warn");
   }
 });
 app.set("trust proxy", true);
@@ -248,10 +248,106 @@ client.on("guildDelete", guild => {
 
 client.on("interactionCreate", interaction => {
   if (!interaction.isCommand()) return;
-  interaction.reply({
-    content: "由於新版API上線，斜線指令目前暫停使用"
-  });
-})
+  const message = {
+    chnanel: interaction.channel,
+    guild: interaction.guild,
+    author: interaction.user,
+    client,
+    content: null,
+    member: interaction.member,
+    createdTimestamp: interaction.createdTimestamp,
+    slash: {
+      send: function(data) {
+        return interaction.reply(data)
+      },
+      edit: function(data) {
+        return interaction.editReply(data)
+      },
+      delete: function() {
+        return interaction.deleteReply();
+      },
+      raw: int
+    }
+  };
+
+  try {
+    if (!int.guild_id) return client.api.interactions(int.id, int.token).callback.post({
+      data: {
+        type: 4,
+        data: {
+          content: "請在伺服器中執行指令!",
+          flags: 64
+        }
+      }
+    });
+    else if (!message.channel.permissionsFor("848006097197334568").has("SEND_MESSAGES")) return client.api.interactions(int.id, int.token).callback.post({
+      data: {
+        type: 4,
+        data: {
+          content: "沒有權限在此頻道發送訊息!",
+          flags: 64
+        }
+      }
+    });
+  } catch (e) {
+    console.log(e.message);
+  }
+
+  let args = [];
+  if (int.data.options) {
+    const contents = [];
+    int.data.options.forEach(arg => {
+      contents.push(arg.value);
+    });
+    message.content = `b.${int.data.name} ${contents.join(" ")}`;
+    args = contents;
+  }
+
+  const commandName = int.data.name.toLowerCase();
+
+  const command =
+    client.commands.get(commandName) ||
+    client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
+
+  if (!command) return;
+
+  if (!cooldowns.has(command.name)) {
+    cooldowns.set(command.name, new Discord.Collection());
+  }
+
+  const now = Date.now();
+  const timestamps = cooldowns.get(command.name);
+  const cooldownAmount = (command.cooldown || 1) * 1000;
+
+  if (timestamps.has(message.author.id)) {
+    const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+
+    if (now < expirationTime) {
+      const timeLeft = (expirationTime - now) / 1000;
+      return message.channel.send(`🕒 請等待${Math.ceil(timeLeft.toFixed(1))}秒後再使用${command.name}指令!!!`);
+    }
+  }
+
+  timestamps.set(message.author.id, now);
+  setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+
+  if (!command.slashReply) await client.api.interactions(int.id, int.token).callback.post({
+    data: {
+      type: 4,
+      data: {
+        content: "正在處理..."
+      }
+    }
+  
+
+  try {
+    command.execute(message, args);
+  } catch (error) {
+    console.error(error);
+    message.channel.send(`❌ ┃ 執行時出現錯誤:${error.message}`).catch(console.error);
+    message.client.log(message, `${error.message} (Command:${command.name})`, false, "error");
+  }
+});
 
 app.get("/", (req, res) => {
   res.sendFile(join(__dirname, "static", "200.html"));
@@ -298,7 +394,7 @@ app.ws("/api/ws/playing", (ws) => {
           title: song.title,
           url: song.url,
           thumbnail: song.thumbnail,
-          now: Math.floor((queue.connection.dispatcher.streamTime - queue.connection.dispatcher.pausedTime) / 1000),
+          now: queue.player.playTime,
           total: Number(song.duration),
           pause: queue.playing,
           playing: true,
@@ -331,30 +427,6 @@ app.get("/api/exist", async function(req, res) {
   let guild = client.guilds.cache.get(req.query.server);
   if (!guild) return res.send({ exist: false });
   res.send({ exist: true });
-});
-
-app.get("/api/playing", async function(req, res) {
-  if (!req.query.server) return res.send({ error: true, code: 101 });
-  const guild = client.guilds.cache.get(req.query.server);
-  if (!guild) return res.send({ exist: false });
-  const queue = client.queue.get(guild.id);
-  if (!queue) return res.send({ playing: false });
-  const song = queue.songs[0];
-  if (!song) return res.send({ playing: false });
-  try {
-    res.status(200).send({
-      name: guild.name,
-      title: song.title,
-      url: song.url,
-      thumbnail: song.thumbnail,
-      now: Math.floor((queue.connection.dispatcher.streamTime - queue.connection.dispatcher.pausedTime) / 1000),
-      total: Number(song.duration),
-      pause: queue.playing,
-      playing: true
-    });
-  } catch {
-    res.send({ playing: false });
-  }
 });
 
 app.get("/api/lyrics", async function(req, res) {
@@ -401,12 +473,12 @@ app.get("/api/auth/login", function(req, res) {
     scope: "identify guilds"
   };
   fetch("https://discord.com/api/oauth2/token", {
-      method: "POST",
-      body: new URLSearchParams(data),
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    })
+    method: "POST",
+    body: new URLSearchParams(data),
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+  })
     .then(res => res.json())
     .then(json => {
       let text = `${json.token_type} ${json.access_token}`;
@@ -429,10 +501,10 @@ app.get("/api/auth/info", function(req, res) {
   if (!req.userToken) return res.status(400).send({ error: true, message: "沒有提供Token，請重新登入" });
   const token = req.userToken;
   fetch("https://discord.com/api/users/@me", {
-      headers: {
-        authorization: token
-      }
-    })
+    headers: {
+      authorization: token
+    }
+  })
     .then(info => info.json())
     .then(json => res.send(json))
     .catch(error => {
@@ -462,23 +534,23 @@ app.get("/api/pause", async function(req, res) {
   if (!req.userToken || !req.query.guild) return res.send({ message: "發生錯誤，請重新整理頁面", red: true });
   const premission = await checkModify(req.userToken, req.query.guild);
   switch (premission) {
-    case 1:
-      return res.send({ message: "請先加入這個伺服器!", red: true });
-    case 2:
-      return res.send({ message: "請先加入一個語音頻道!", red: true });
-    case 3:
-      return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
-    case 4:
-      return res.send({ message: "沒有找到伺服器", red: true });
-    case 5:
-      return res.send({ error: true, code: 101 });
+  case 1:
+    return res.send({ message: "請先加入這個伺服器!", red: true });
+  case 2:
+    return res.send({ message: "請先加入一個語音頻道!", red: true });
+  case 3:
+    return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
+  case 4:
+    return res.send({ message: "沒有找到伺服器", red: true });
+  case 5:
+    return res.send({ error: true, code: 101 });
   }
   try {
     const queue = client.queue.get(req.query.guild);
     if (!queue) return res.send({ error: true, code: 101 });
     if (queue.playing) {
       queue.playing = false;
-      queue.connection.dispatcher.pause();
+      queue.player.pause();
       queue.textChannel.send("<:pause:827737900359745586> ┃ 歌曲已由網頁面板暫停").then(sent => {
         setTimeout(function() {
           sent.delete();
@@ -497,23 +569,23 @@ app.get("/api/resume", async function(req, res) {
   if (!req.userToken || !req.query.guild) return res.send({ message: "發生錯誤，請重新整理頁面", red: true });
   const premission = await checkModify(req.userToken, req.query.guild);
   switch (premission) {
-    case 1:
-      return res.send({ message: "請先加入這個伺服器!", red: true });
-    case 2:
-      return res.send({ message: "請先加入一個語音頻道!", red: true });
-    case 3:
-      return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
-    case 4:
-      return res.send({ message: "沒有找到伺服器", red: true });
-    case 5:
-      return res.send({ error: true, code: 101 });
+  case 1:
+    return res.send({ message: "請先加入這個伺服器!", red: true });
+  case 2:
+    return res.send({ message: "請先加入一個語音頻道!", red: true });
+  case 3:
+    return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
+  case 4:
+    return res.send({ message: "沒有找到伺服器", red: true });
+  case 5:
+    return res.send({ error: true, code: 101 });
   }
   try {
     const queue = client.queue.get(req.query.guild);
     if (!queue) return res.send({ error: true, code: 101 });
     if (!queue.playing) {
       queue.playing = true;
-      queue.connection.dispatcher.resume();
+      queue.player.resume();
       queue.textChannel.send("<:play:827734196243398668> ┃ 由網頁面板繼續播放歌曲").then(sent => {
         setTimeout(function() {
           sent.delete();
@@ -532,22 +604,22 @@ app.get("/api/skip", async function(req, res) {
   if (!req.userToken || !req.query.guild) return res.send({ message: "發生錯誤，請重新整理頁面", red: true });
   const premission = await checkModify(req.userToken, req.query.guild);
   switch (premission) {
-    case 1:
-      return res.send({ message: "請先加入這個伺服器!", red: true });
-    case 2:
-      return res.send({ message: "請先加入一個語音頻道!", red: true });
-    case 3:
-      return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
-    case 4:
-      return res.send({ message: "沒有找到伺服器", red: true });
-    case 5:
-      return res.send({ error: true, code: 101 });
+  case 1:
+    return res.send({ message: "請先加入這個伺服器!", red: true });
+  case 2:
+    return res.send({ message: "請先加入一個語音頻道!", red: true });
+  case 3:
+    return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
+  case 4:
+    return res.send({ message: "沒有找到伺服器", red: true });
+  case 5:
+    return res.send({ error: true, code: 101 });
   }
   try {
     const queue = client.queue.get(req.query.guild);
     if (!queue) return res.send({ error: true, code: 101 });
     queue.playing = true;
-    queue.connection.dispatcher.end();
+    queue.player.skip();
     queue.textChannel.send("<:next:766802340538875964> ┃ 由網頁面板跳過目前歌曲").then(sent => {
       setTimeout(function() {
         sent.delete();

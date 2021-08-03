@@ -64,35 +64,35 @@ module.exports = {
         collector.on("collect", async (choice) => {
           choice.defer();
           switch (choice.values[0]) {
-            case "1":
-              choiceIndex = 1;
-              break;
-            case "2":
-              choiceIndex = 2;
-              break;
-            case "3":
-              choiceIndex = 3;
-              break;
-            case "4":
-              choiceIndex = 4;
-              break;
-            case "5":
-              choiceIndex = 5;
-              break;
-            case "6":
-              choiceIndex = 6;
-              break;
-            case "7":
-              choiceIndex = 7;
-              break;
-            case "8":
-              choiceIndex = 8;
-              break;
-            case "9":
-              choiceIndex = 9;
-              break;
-            case "cancel":
-              choiceIndex = 0;
+          case "1":
+            choiceIndex = 1;
+            break;
+          case "2":
+            choiceIndex = 2;
+            break;
+          case "3":
+            choiceIndex = 3;
+            break;
+          case "4":
+            choiceIndex = 4;
+            break;
+          case "5":
+            choiceIndex = 5;
+            break;
+          case "6":
+            choiceIndex = 6;
+            break;
+          case "7":
+            choiceIndex = 7;
+            break;
+          case "8":
+            choiceIndex = 8;
+            break;
+          case "9":
+            choiceIndex = 9;
+            break;
+          case "cancel":
+            choiceIndex = 0;
           }
         });
         collector.on("end", () => {
