@@ -22,7 +22,7 @@ module.exports = {
   async execute(message, args) {
     const queue = message.client.queue.get(message.guild.id);
     if (!(queue || args.length || queue.songs.length)) {
-      if (message.slash.raw) return message.slash.send("❌ ┃ 目前沒有任何音樂正在播放!");
+      if (message.slash) return message.slash.send("❌ ┃ 目前沒有任何音樂正在播放!");
       return message.channel.send("❌ ┃ 目前沒有任何音樂正在播放!").catch(console.error);
 
     }

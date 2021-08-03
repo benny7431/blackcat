@@ -18,7 +18,7 @@ module.exports = {
     const gayPercent = Math.floor(gay / 10);
     const bar = ("🏳️‍🌈 ".repeat(gayPercent) + "❌ ".repeat(10 - gayPercent)).trim();
 
-    if (!message.slash.raw) {
+    if (!message.slash) {
       if (message.mentions.members.size > 0) {
         const embed = new MessageEmbed()
           .setTitle(`${message.mentions.members.first().displayName}的Gay指數`)

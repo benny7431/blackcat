@@ -11,7 +11,7 @@ module.exports = {
   slashReply: true,
   execute(message) {
     let user;
-    if (message.slash.raw) user = message.author;
+    if (message.slash) user = message.author;
     else user = message.mentions.users.size >= 1 ? message.mentions.users.first() : message.author;
     const embed = new MessageEmbed()
       .setTitle(`🖼️ ┃ ${user.username}的頭貼`)

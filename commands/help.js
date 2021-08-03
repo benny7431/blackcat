@@ -26,7 +26,7 @@ module.exports = {
       .setURL("https://blackcatbot.tk/blackcat");
     let buttonRow = new MessageActionRow()
       .addComponents(discordBtn, inviteBtn);
-    if (message.slash.raw) return message.slash.send({
+    if (message.slash) return message.slash.send({
       embeds: [helpEmbed],
       components: [buttonRow]
     }).catch(console.error);

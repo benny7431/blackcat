@@ -80,7 +80,7 @@ module.exports = {
       }
     }
 
-    if (message.slash.raw) message.slasj.send("<:music_search:827735016254734346> ┃ 搜尋中...\n> `" + args.join(" ") + "`")
+    if (message.slash) message.slasj.send("<:music_search:827735016254734346> ┃ 搜尋中...\n> `" + args.join(" ") + "`")
       .catch(console.error);
     else message.channel.send("<:music_search:827735016254734346> ┃ 搜尋中...\n> `" + args.join(" ") + "`")
       .catch(console.error);
@@ -140,7 +140,7 @@ module.exports = {
         } else if (error.message.includes("private") || error.message.includes("403")) {
           errorMsg = "❌ ┃ 無法播放私人影片";
         } else if (error.message.includes("429")) {
-          if (message.slash.raw) message.slash.send("❌ ┃ 發生Youtube API錯誤，機器人將會自動重新啟動...");
+          if (message.slash) message.slash.send("❌ ┃ 發生Youtube API錯誤，機器人將會自動重新啟動...");
           else message.channel.send("❌ ┃ 發生Youtube API錯誤，機器人將會自動重新啟動...").catch(console.error);
 
           if (process.env.HEROKU_API_KEY && process.env.HEROKU_APP_ID) require("heroku-restarter")(process.env["HEROKU_API_KEY"], process.env["HEROKU_APP_ID"]).restart();
@@ -173,7 +173,7 @@ module.exports = {
         } else if (error.message.includes("private") || error.message.includes("403")) {
           errorMsg = "❌ ┃ 無法播放私人影片";
         } else if (error.message.includes("429")) {
-          if (message.slash.raw) message.slash.send("❌ ┃ 發生Youtube API錯誤，機器人將會自動重新啟動...");
+          if (message.slash) message.slash.send("❌ ┃ 發生Youtube API錯誤，機器人將會自動重新啟動...");
           else message.channel.send("❌ ┃ 發生Youtube API錯誤，機器人將會自動重新啟動...").catch(console.error);
 
           if (process.env.HEROKU_API_KEY && process.env.HEROKU_APP_ID) require("heroku-restarter")(process.env["HEROKU_API_KEY"], process.env["HEROKU_APP_ID"]).restart();

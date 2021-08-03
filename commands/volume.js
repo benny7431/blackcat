@@ -31,7 +31,7 @@ module.exports = {
     queue.volume = args[0];
     queue.converter.volume.setVolumeLogarithmic(args[0] / 100);
 
-    if(message.slash.raw) message.slash.send(`<:vol_up:827734772889157722> ┃ 設定音量至: ${args[0]}%`)
+    if(message.slash) message.slash.send(`<:vol_up:827734772889157722> ┃ 設定音量至: ${args[0]}%`)
       .catch(console.error);
     else return queue.textChannel.send(`<:vol_up:827734772889157722> ┃ 設定音量至: ${args[0]}%`)
       .catch(console.error);
