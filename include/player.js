@@ -6,13 +6,34 @@ const { canModifyQueue } = require("../util/Util");
 
 class Player {
   /**
-   * @param {Object} queue Server Queue
+   * @param {Object} channel Server Queue
    * @param {Client} client Discord.js Client
    */
-  constructor(queue, client) {
-    this.queue = queue;
+  constructor(channel, client) {
     this.client = client;
-    this.source = null;
+
+    // Song list
+    this.songs = [];
+
+    // Song behavior
+    this.loop = false;
+    this.repeat = false;
+
+    // Player, connection and source
+    this.audioPlayer = voice.createAudioPlayer();
+    this.connection = await voice.joinVoiceChannel({
+      channelId: channel.id,
+      guildId: channel.guild.id,
+      adapterCreator: channel.guild.voiceAdapterCreator,
+    });
+    if (channel.type === "GUILD_STAGE_VOICE" && !channel.stageInstance) {
+      await channel.createStageInstance({
+        topic: "即將開始播放音樂...",
+        privacyLevel: "GUILD_ONLY"
+      });
+      await channel.guild.me.voice.setSuppressed(false);
+    }
+    this.audioResource = null;
   }
 
   /**
@@ -21,18 +42,6 @@ class Player {
    */
   async connect(channel) {
     this.client.log("Connecting to voice channel");
-    if (channel.type === "GUILD_STAGE_VOICE" && !channel.stageInstance) {
-      channel.createStageInstance({
-        topic: "即將開始播放音樂...",
-        privacyLevel: "GUILD_ONLY"
-      });
-    }
-    this.queue.connection = await voice.joinVoiceChannel({
-      channelId: channel.id,
-      guildId: channel.guild.id,
-      adapterCreator: channel.guild.voiceAdapterCreator,
-    });
-    if(channel.guild.me.voice?.suppress) channel.guild.me.voice.setSuppressed(false);
     this._createPlayer(channel);
     this.queue.connection.on(voice.VoiceConnectionStatus.Disconnected, async () => {
       try {
@@ -65,8 +74,8 @@ class Player {
     } else if (!this.queue.repeat) {
       this.queue.songs.shift();
     }
-    if (!this.queue.songs.length) {
-      this.queue.audioPlayer.stop();
+    if (this.queue.songs.length <= 0) {
+      this.stop();
     }
     this._getStream(this.queue.songs[0].url);
   }
@@ -99,16 +108,33 @@ class Player {
   stop() {
     this.queue.songs = [];
     this.queue.audioPlayer.stop();
-    this.queue.connection.destroy();
     this.client.queue.delete(this.queue.textChannel.guildId);
     this.client.log("Stop player");
   }
 
   /**
-   * Get now playing
+   * Get now play time
    */
-  get playTime() {
+  static get playTime() {
     return this.source.playbackDuration / 1000;
+  }
+  
+  /**
+   * Loop music
+   * @param {Boolean} value Value
+   */
+  loop(value) {
+    this.repeat = false;
+    this.loop = !this.loop;
+  }
+  
+  /**
+   * Repeat music
+   * @param {Boolean} value Value
+   */
+  repeat(value) {
+    this.loop = false;
+    this.repeat = !this.repeat;
   }
 
   /** Create player
@@ -116,16 +142,12 @@ class Player {
    */
   _createPlayer(channel) {
     this.client.log("Create player");
-    this.queue.audioPlayer = voice.createAudioPlayer({
-      behaviors: {
-        noSubscriber: voice.NoSubscriberBehavior.Pause,
-      },
-    });
+    this.queue.audioPlayer = voice.createAudioPlayer();
     this.queue.connection.subscribe(this.queue.audioPlayer);
 
     this.queue.audioPlayer.on("error", error => {
       console.log(error.message);
-      this.emit("error");
+      this.client.log(error.message);
       this.queue.connection.destroy();
       this.client.queue.delete(this.queue.textChannel.guildId);
     });
@@ -191,13 +213,12 @@ class Player {
    */
   async _playStream(stream) {
     this.client.log("Start playing song");
-    let queue = this.queue,
-      song = queue.songs[0];
+    let song = queue.songs[0];
     this.source = voice.createAudioResource(stream, {
       inputType: voice.StreamType.Opus
     });
-    queue.audioPlayer.play(this.source);
-    this.queue.channel.stageInstance?.setTopic(`正在播放 - ${this.queue.current.title.substr(0, 112)}`);
+    this.queue.audioPlayer.play(this.source);
+    if (this.queue.channel.type === "GUILD_STAGE_VOICE") this.queue.channel.stageInstance.setTopic(`正在播放 - ${this.queue.current.title.substr(0, 112)}`);
 
     let embed = new Discord.MessageEmbed()
       .setColor("BLURPLE")
@@ -247,12 +268,12 @@ class Player {
       .addComponents(muteBtn)
       .addComponents(volupBtn);
 
-    let playingMessage = await queue.textChannel.send({
+    this.controller = await this.queue.textChannel.send({
       embeds: [embed],
       components: [playControl, volumeControl]
     });
 
-    let collector = playingMessage.createMessageComponentCollector();
+    let collector = this.controller.createMessageComponentCollector();
     collector.on("collect", async btn => {
       const member = btn.member;
       if (!canModifyQueue(member)) return btn.reply({
@@ -262,7 +283,7 @@ class Player {
 
       switch (btn.customId) {
         case "skip":
-          queue.playing = true;
+          this.queue.playing = true;
           this.skip();
           btn.reply({
             content: "<:skip:827734282318905355> ┃ 跳過歌曲",
@@ -271,15 +292,15 @@ class Player {
           break;
 
         case "pause":
-          if (queue.playing) {
-            queue.playing = !queue.playing;
+          if (this.queue.playing) {
+            this.queue.playing = !this.queue.playing;
             this.pause();
             btn.reply({
               content: "<:pause:827737900359745586> ┃ 歌曲暫停!",
               ephemeral: true
             }).catch(console.error);
           } else {
-            queue.playing = !queue.playing;
+            this.queue.playing = !this.queue.playing;
             this.resume();
             btn.reply({
               content: "<:play:827734196243398668> ┃ 繼續播放歌曲!",
@@ -289,15 +310,15 @@ class Player {
           break;
 
         case "mute":
-          if (queue.volume <= 0) {
-            queue.volume = 60;
+          if (this.queue.volume <= 0) {
+            this.queue.volume = 60;
             this.queue.converter.volume.setVolumeLogarithmic(60 / 100);
             btn.reply({
               content: "<:vol_up:827734772889157722> ┃ 解除靜音音樂",
               ephemeral: true
             }).catch(console.error);
           } else {
-            queue.volume = 0;
+            this.queue.volume = 0;
             this.queue.converter.volume.setVolumeLogarithmic(0);
             btn.reply({
               content: "<:mute:827734384606052392> ┃ 靜音音樂",
@@ -307,21 +328,21 @@ class Player {
           break;
 
         case "vol_down":
-          if (queue.volume - 10 <= 0) queue.volume = 0;
-          else queue.volume = queue.volume - 10;
-          this.queue.converter.volume.setVolumeLogarithmic(queue.volume / 100);
+          if (this.queue.volume - 10 <= 0) this.queue.volume = 0;
+          else this.queue.volume = this.queue.volume - 10;
+          this.queue.converter.volume.setVolumeLogarithmic(this.queue.volume / 100);
           btn.reply({
-            content: `<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${queue.volume}%`,
+            content: `<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${this.queue.volume}%`,
             ephemeral: true
           }).catch(console.error);
           break;
 
         case "vol_up":
-          if (queue.volume + 10 >= 100) queue.volume = 100;
-          else queue.volume = queue.volume + 10;
-          this.queue.converter.volume.setVolumeLogarithmic(queue.volume / 100);
+          if (this.queue.volume + 10 >= 100) this.queue.volume = 100;
+          else this.queue.volume = this.queue.volume + 10;
+          this.queue.converter.volume.setVolumeLogarithmic(this.queue.volume / 100);
           btn.reply({
-            content: `<:vol_up:827734772889157722> ┃ 音量上升，目前音量: ${queue.volume}%`,
+            content: `<:vol_up:827734772889157722> ┃ 音量上升，目前音量: ${this.queue.volume}%`,
             ephemeral: true
           }).catch(console.error);
           break;
@@ -340,25 +361,23 @@ class Player {
       playingMessage.delete().catch(console.error);
     });
 
-    queue.audioPlayer.on("stateChange", (oldState, newState) => {
-      if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
-        this.client.log("Music ended");
-        this.source = null;
-        collector.stop();
-        if (queue.loop) {
-          let lastSong = this.queue.songs.shift();
-          queue.songs.push(lastSong);
-        } else if (!queue.repeat) {
-          queue.songs.shift();
-        }
-        if (queue.songs.length) {
-          this.client.log("Queue ended");
-          this.queue.textChannel.send("👌 ┃ 播放完畢");
-          this.stop();
-        } else {
-          this.queue.audioPlayer.removeAllListeners("stateChange");
-          this._getStream(this.queue.songs[0].url);
-        }
+    this.queue.audioPlayer.on(voice.AudioPlayerStatus.Idle, (oldState, newState) => {
+      this.client.log("Player enter idle state");
+      this.source = null;
+      collector.stop();
+      if (this.queue.loop) {
+        let lastSong = this.queue.songs.shift();
+        this.queue.songs.push(lastSong);
+      } else if (!queue.repeat) {
+        queue.songs.shift();
+      }
+      if (queue.songs.length) {
+        this.client.log("Queue ended");
+        this.queue.textChannel.send("👌 ┃ 播放完畢");
+        this.stop();
+      } else {
+        this.queue.audioPlayer.removeAllListeners("stateChange");
+        this._getStream(this.queue.songs[0].url);
       }
     });
   }
