@@ -90,7 +90,7 @@ class Player {
    * Stop player
    */
   stop() {
-    this.queue.audioPlayer.destroy();
+    this.queue.audioPlayer.stop();
     this.queue.connection.destroy();
     this.client.queue.delete(this.queue.textChannel.guildId);
     this.client.log("Stop player");
