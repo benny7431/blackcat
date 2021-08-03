@@ -99,7 +99,7 @@ class Player {
    * Get now playing
    */
   get playTime() {
-    return this.source.playbackDuration / 1000
+    return this.source.playbackDuration / 1000;
   }
 
   /** Create player
@@ -259,7 +259,7 @@ class Player {
             btn.reply({
                 content: "<:play:827734196243398668> ┃ 繼續播放歌曲!",
                 ephemeral: true
-              }).catch(console.error)
+              }).catch(console.error);
           }
           break;
 
@@ -277,7 +277,7 @@ class Player {
             btn.reply({
               content: "<:mute:827734384606052392> ┃ 靜音音樂",
               ephemeral: true
-            }).catch(console.error)
+            }).catch(console.error);
           }
           break;
 
