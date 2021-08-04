@@ -253,21 +253,6 @@ class Player {
     let ytdlStream = await ytdl(url, {
       highWaterMark: 1 << 20
     });
-    ytdlStream.once("info", songInfo => {
-      let songData = {
-        title: songInfo.videoDetails.title,
-        url: songInfo.videoDetails.video_url,
-        duration: songInfo.player_response.videoDetails.lengthSeconds,
-        thumbnail: songInfo.videoDetails.thumbnails.pop().url,
-        type: "song",
-        by: this.now.by,
-        songId: this.now.songId
-      };
-      if (this.songList[0].songId === this.now.songId) {
-        this.songList[0] = songData;
-      }
-      this.now = songData;
-    });
     this.ffmpeg = new FFmpeg({
       args: encoderArgs
     });
