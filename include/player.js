@@ -25,7 +25,7 @@ class Player {
       loop: false,
       repeat: false,
       filter: []
-    }
+    };
 
     // Player
     this.audioPlayer = voice.createAudioPlayer();
@@ -88,8 +88,8 @@ class Player {
    */
   add(songs) {
     songs.forEach(song => {
-      this.songList.push(song)
-    })
+      this.songList.push(song);
+    });
   }
 
   /**
@@ -122,7 +122,7 @@ class Player {
    * @param {Number} volume Volume
    */
   setVolume(volume) {
-    this.behavior.volume = volume
+    this.behavior.volume = volume;
     this.volumeTransformer.setVolumeLogarithmic(volume / 100);
   }
 
@@ -174,7 +174,7 @@ class Player {
    * Get filters
    */
   static get filter() {
-    return this.behavior.filter
+    return this.behavior.filter;
   }
 
   /**
@@ -267,7 +267,7 @@ class Player {
       channels: 2,
       frameSize: 960
     });
-    console.log("Preparing stream")
+    console.log("Preparing stream");
     let opusStream = ytdlStream
       .pipe(this.ffmpeg)
       .pipe(this.volumeTransformer)
