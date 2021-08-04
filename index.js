@@ -341,9 +341,6 @@ app.ws("/api/ws/playing", (ws) => {
       if (!queue) {
         return ws.send(JSON.stringify({ playing: false }));
       }
-      if (queue.songs.length < 1) {
-        return ws.send(JSON.stringify({ playing: false }));
-      }
       const song = queue.current;
       if (!song) {
         return ws.send(JSON.stringify({ playing: false }));
