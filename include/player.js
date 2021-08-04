@@ -79,6 +79,7 @@ class Player {
    * Start player
    */
   start() {
+    this.behavior.playing = true;
     this._getStream(this.songList[0].url);
   }
 
@@ -435,7 +436,6 @@ class Player {
       this.client.log("Player enter idle state");
       this.audioResource = null;
       this.collector.stop();
-      this.collector = null;
       if (this.behavior.loop) {
         let lastSong = this.songList.shift();
         this.songList.push(lastSong);

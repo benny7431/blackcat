@@ -194,7 +194,7 @@ client.on("messageCreate", async (message) => {
           queue.textChannel.send("🎈 ┃ 因為頻道裡面已經沒人了，所以我離開了語音頻道").catch(console.error);
           queue.songs = [];
           try {
-            queue.player.stop();
+            queue.stop();
           } catch (e) {
             console.log(e.message);
           }
@@ -354,7 +354,7 @@ app.ws("/api/ws/playing", (ws) => {
           title: song.title,
           url: song.url,
           thumbnail: song.thumbnail,
-          now: queue.player.playTime,
+          now: queue.playTime,
           total: Number(song.duration),
           pause: queue.playing,
           playing: true,
@@ -510,7 +510,7 @@ app.get("/api/pause", async function(req, res) {
     if (!queue) return res.send({ error: true, code: 101 });
     if (queue.playing) {
       queue.playing = false;
-      queue.player.pause();
+      queue.pause();
       queue.textChannel.send("<:pause:827737900359745586> ┃ 歌曲已由網頁面板暫停").then(sent => {
         setTimeout(function() {
           sent.delete();
@@ -545,7 +545,7 @@ app.get("/api/resume", async function(req, res) {
     if (!queue) return res.send({ error: true, code: 101 });
     if (!queue.playing) {
       queue.playing = true;
-      queue.player.resume();
+      queue.resume();
       queue.textChannel.send("<:play:827734196243398668> ┃ 由網頁面板繼續播放歌曲").then(sent => {
         setTimeout(function() {
           sent.delete();
@@ -579,7 +579,7 @@ app.get("/api/skip", async function(req, res) {
     const queue = client.queue.get(req.query.guild);
     if (!queue) return res.send({ error: true, code: 101 });
     queue.playing = true;
-    queue.player.skip();
+    queue.skip();
     queue.textChannel.send("<:next:766802340538875964> ┃ 由網頁面板跳過目前歌曲").then(sent => {
       setTimeout(function() {
         sent.delete();
