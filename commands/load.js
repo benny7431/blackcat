@@ -18,7 +18,7 @@ module.exports = {
         .catch(console.error);
     }
     if (serverQueue && channel !== message.guild.me.voice.channel) {
-      if(message.slash) return message.slash.send("❌ ┃ 你必須跟我在同一個頻道裡面!")
+      if (message.slash) return message.slash.send("❌ ┃ 你必須跟我在同一個頻道裡面!")
         .catch(console.error);
       else return message.channel.send("❌ ┃ 你必須跟我在同一個頻道裡面!")
         .catch(console.error);
@@ -40,28 +40,9 @@ module.exports = {
       if (message.slash) return message.slash.send("❌ ┃ 你必須跟我在同一個頻道裡面!")
         .catch(console.error);
       else return message.channel.send("❌ ┃ 你必須跟我在同一個頻道裡面!")
-      .catch(console.error);
+        .catch(console.error);
     }
 
-    const queueConstruct = {
-      textChannel: message.channel,
-      channel,
-      connection: null,
-      songs: [],
-      loop: false,
-      repeat: false,
-      volume: 60,
-      playing: true,
-      filter: [],
-      current: null,
-      player: null,
-      audioPlayer: null,
-      converter: {
-        ffmpeg: null,
-        opus: null,
-        volume: null
-      }
-    };
     const songs = await message.client.db.get(`stored.${args.length && args[0] !== "" ? args[0] : message.author.id}`);
     message.client.log("Load queue", "info");
     if (!Array.isArray(songs)) return message.channel.send("❌ ┃ 你尚未儲存歌單，或是輸入了錯誤的ID!").catch(console.error);
@@ -70,6 +51,7 @@ module.exports = {
       .catch(console.error);
     else sent = await message.channel.send(`<:load:833271811666870282> ┃ 正在讀取${songs.length}首歌曲`)
       .catch(console.error);
+    let songList = [];
     songs.forEach(async song => {
       let songId = uuid();
       let songData = {
@@ -79,27 +61,28 @@ module.exports = {
         by: message.author.username,
         songId
       };
-      if (serverQueue) serverQueue.songs.push(songData);
-      else queueConstruct.songs.push(songData);
+      songList.push(songData);
     });
-    if(sent) sent.edit(`<:load:833271811666870282> ┃ 已讀取${songs.length}首歌曲`)
+    if (sent) sent.edit(`<:load:833271811666870282> ┃ 已讀取${songs.length}首歌曲`)
       .catch(console.error);
     else message.slash.edit(`<:load:833271811666870282> ┃ 已讀取${songs.length}首歌曲`)
       .catch(console.error);
-    if (!serverQueue) message.client.queue.set(message.guild.id, queueConstruct);
 
     if (!serverQueue) {
       try {
-        queueConstruct.player = new Player(queueConstruct, message.client);
-        queueConstruct.player.connect(channel);
+        let player = new Player(channel, message.channel, message.client);
+        message.client.queue.set(message.guild.id, player);
+        player.add(songList);
         await message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
-        queueConstruct.player.play(queueConstruct.songs[0]);
+        player.start();
       } catch (error) {
         console.error(error);
         message.client.queue.delete(message.guild.id);
         await channel.leave();
         return message.channel.send(`❌ ┃ 無法加入語音頻道...原因: ${error.message}`).catch(console.error);
       }
+    } else {
+      serverQueue.add(songList);
     }
   }
 };

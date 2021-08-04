@@ -16,8 +16,7 @@ module.exports = {
     if (!canModifyQueue(message.member)) return;
 
     if (!queue.playing) {
-      queue.playing = true;
-      queue.connection.dispatcher.resume();
+      queue.resume();
       return queue.textChannel.send("<:play:827734196243398668> ┃ 繼續播放歌曲").catch(console.error);
     }
 

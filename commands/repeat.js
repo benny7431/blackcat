@@ -13,8 +13,7 @@ module.exports = {
     if (!queue) return message.channel.send("❌ ┃ 現在沒有人在播放音樂欸030").catch(console.error);
     if (!canModifyQueue(message.member)) return;
 
-    queue.loop = false;
-    queue.repeat = !queue.repeat;
+    queue.repeat();
     if(message.slash) return message.slash.send(`${queue.repeat ? "🔂 ┃ " : ""}重複播放目前為 ${queue.repeat ? "啟動  將會重複目前的歌曲!" : "關閉"}!`)
       .catch(console.error);
     else return queue.textChannel.send(`${queue.repeat ? "🔂 ┃ " : ""}重複播放目前為 ${queue.repeat ? "啟動  將會重複目前的歌曲!" : "關閉"}!`)

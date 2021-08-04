@@ -29,7 +29,6 @@ module.exports = {
 
     if (args[0] > queue.songs.length) return message.channel.send(`❌ ┃ 播放清單只有 ${queue.songs.length} 首歌!`).catch(console.error);
 
-    queue.playing = true;
     if (queue.loop) {
       for (let i = 0; i < args[0] - 2; i++) {
         queue.songs.push(queue.songs.shift());
@@ -37,7 +36,7 @@ module.exports = {
     } else {
       queue.songs = queue.songs.slice(args[0] - 2);
     }
-    queue.player.skip();
+    queue.skip();
     if(message.slash) return message.slash.send(`<:skip:827734282318905355> ┃ 跳到第 ${args[0]} 首歌曲`)
       .catch(console.error);
     else return queue.textChannel.send(`<:skip:827734282318905355> ┃ 跳到第 ${args[0]} 首歌曲`)

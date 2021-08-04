@@ -9,8 +9,8 @@ module.exports = {
     if (isNaN(args[0]) || Number(args[0]) <= 0) return message.channel.send("❌ ┃ 請輸入有效的數字").catch(console.error);
     if (Number(args[0]) < 2 || Number(args[0]) >= 100) return message.channel.send("❌ ┃ 請輸入大於2，小於100的數字!").catch(console.error);
 
-    if (!message.member.permission.has(Permissions.FLAGS.MANAGE_MESSAGES) && message.author.id !== "669194742218752070") return message.channel.send("❌ ┃ 你沒有足夠的權限").catch(console.error);
-    if (!message.guild.me.permission.has(Permissions.FLAGS.MANAGE_MESSAGES)) return message.channel.send("❌ ┃ 我沒有相關的權限!").catch(console.error);
+    if (!message.member.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES) && message.author.id !== "669194742218752070") return message.channel.send("❌ ┃ 你沒有足夠的權限").catch(console.error);
+    if (!message.guild.me.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) return message.channel.send("❌ ┃ 我沒有相關的權限!").catch(console.error);
 
     try {
       await message.delete();

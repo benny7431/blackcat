@@ -24,8 +24,7 @@ module.exports = {
     if (!(queue || args.length || queue.songs.length)) {
       if (message.slash) return message.slash.send("❌ ┃ 目前沒有任何音樂正在播放!");
       return message.channel.send("❌ ┃ 目前沒有任何音樂正在播放!").catch(console.error);
-
-    }
+    } 
     const songtitle = !args.length ? queue.songs[0].title : args.join(" ");
     let lyrics = null;
     var lyricsEmbed = new MessageEmbed()

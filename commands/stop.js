@@ -18,7 +18,7 @@ module.exports = {
 
     try {
       queue.songs = [];
-      queue.player.stop();
+      queue.stop();
     } catch {
       try {
         queue.connection.destroy();

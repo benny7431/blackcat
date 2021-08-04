@@ -28,8 +28,7 @@ module.exports = {
     if (isNaN(args[0])) return message.channel.send("❌ ┃ 請使用一個數字來變更音量").catch(console.error);
     if (parseInt(args[0]) > 100 || parseInt(args[0]) < 0) message.channel.send("❌ ┃ 請輸入 0 ~ 100 之間的數字!").catch(console.error);
 
-    queue.volume = args[0];
-    queue.converter.volume.setVolumeLogarithmic(args[0] / 100);
+    queue.setVolume(args[0]);
 
     if(message.slash) message.slash.send(`<:vol_up:827734772889157722> ┃ 設定音量至: ${args[0]}%`)
       .catch(console.error);

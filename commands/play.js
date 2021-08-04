@@ -75,26 +75,6 @@ module.exports = {
       return message.client.commands.get("playlist").execute(message, args);
     }
 
-    const queueConstruct = {
-      textChannel: message.channel,
-      channel,
-      connection: null,
-      songs: [],
-      loop: false,
-      repeat: false,
-      volume: 60,
-      playing: true,
-      filter: [],
-      current: null,
-      player: null,
-      audioPlayer: null,
-      converter: {
-        ffmpeg: null,
-        opus: null,
-        volume: null
-      }
-    };
-
     let songInfo = null;
     let song = null;
     let songs = [];
@@ -166,8 +146,10 @@ module.exports = {
       }
     }
 
+    songs.push(song);
+
     if (serverQueue) {
-      serverQueue.songs.push(song);
+      serverQueue.add(songs);
       const embed = new MessageEmbed()
         .setColor("BLURPLE")
         .setTitle(`<:music_add:827734890924867585> ┃ 我已經把${song.title}加入播放清單了!`)
@@ -178,17 +160,15 @@ module.exports = {
       }).catch(console.error);
     }
 
-    songs.push(song);
-
     try {
       let player = new Player(channel, message.channel, message.client);
       message.client.queue.set(message.guild.id, player);
-      await message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
-      queueConstruct.player.play(queueConstruct.songs[0]);
+      player.add(songs);
+      message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
+      player.start();
     } catch (error) {
       console.error(error);
       message.client.queue.delete(message.guild.id);
-      await channel.leave();
       return message.channel.send(`❌ ┃ 無法加入語音頻道...原因: ${error.message}`).catch(console.error);
     }
   }

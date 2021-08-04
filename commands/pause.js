@@ -15,8 +15,7 @@ module.exports = {
     if (!canModifyQueue(message.member)) return;
 
     if (queue.playing) {
-      queue.playing = false;
-      queue.connection.dispatcher.pause();
+      queue.pause();
       if(message.slash) return message.slash.send("<:pause:827737900359745586> ┃ 歌曲已暫停")
         .catch(console.error);
       else return message.channel.send("<:pause:827737900359745586> ┃ 歌曲已暫停")

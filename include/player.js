@@ -15,21 +15,23 @@ class Player {
     this.client = client;
 
     // Song list
-    this.songs = [];
-    this.current = null;
+    this.songList = [];
+    this.now = null;
 
     // Song behavior
-    this.volume = 60;
-    this.playing = true
-    this.loop = false;
-    this.repeat = false;
-    this.filter = [];
+    this.behavior = {
+      volume: 60,
+      playing: true,
+      loop: false,
+      repeat: false,
+      filter: []
+    }
 
     // Player
     this.audioPlayer = voice.createAudioPlayer();
 
     // Voice connection
-    this.connection = await voice.joinVoiceChannel({
+    this.connection = voice.joinVoiceChannel({
       channelId: channel.id,
       guildId: channel.guild.id,
       adapterCreator: channel.guild.voiceAdapterCreator,
@@ -75,37 +77,39 @@ class Player {
    * Start player
    */
   start() {
-    this._getStream(this.songs[0].url);
+    this._getStream(this.songList[0].url);
   }
 
   /**
    * Add songs
-   * @param {Array} songs Array of song data
+   * @param {Object[]} songs Array of song data
    */
   add(songs) {
-    this.songs.concat(songs);
+    this.songList.concat(songs);
   }
 
   /**
    * Skip current song
    */
   skip() {
-    if (this.loop) {
-      let lastSong = this.songs.shift();
-      this.songs.push(lastSong);
-    } else if (!this.repeat) {
-      this.songs.shift();
+    this.behavior.playing = true;
+    if (this.behavior.loop) {
+      let lastSong = this.songList.shift();
+      this.songList.push(lastSong);
+    } else if (!this.behavior.repeat) {
+      this.songList.shift();
     }
-    if (this.songs.length <= 0) {
+    if (this.songList.length <= 0) {
       this.stop();
     }
-    this._getStream(this.songs[0].url);
+    this._getStream(this.songList[0].url);
   }
 
   /**
    * Pause player
    */
   pause() {
+    this.behavior.playing = false;
     this.audioPlayer.pause();
   }
 
@@ -114,7 +118,8 @@ class Player {
    * @param {Number} volume Volume
    */
   setVolume(volume) {
-    this.volume.setVolumeLogarithmic(volume);
+    this.behavior.volume = volume
+    this.volumeTransformer.setVolumeLogarithmic(volume / 100);
   }
 
   /**
@@ -129,7 +134,8 @@ class Player {
    */
   stop() {
     this.text.send("👌 ┃ 播放完畢");
-    this.songs = [];
+    if (this.collector) this.collector.stop();
+    this.songList = [];
     this.audioPlayer.stop();
     this.client.queue.delete(this.text.guildId);
     this.client.log("Queue ended");
@@ -139,9 +145,47 @@ class Player {
    * Loop music
    * @param {Boolean} value Value
    */
-  loop(value = !this.loop) {
-    this.repeat = false;
-    this.loop = value;
+  loop(value = !this.behavior.loop) {
+    this.behavior.repeat = false;
+    this.behavior.loop = value;
+  }
+
+  /**
+   * Destroy voice connection
+   */
+  destroy() {
+    this.connection.destroy();
+  }
+
+  /**
+   * Repeat music
+   * @param {Boolean} value Value
+   */
+  repeat(value = !this.behavior.repeat) {
+    this.behavior.loop = false;
+    this.behavior.repeat = value;
+  }
+
+  /**
+   * Get filters
+   */
+  static get filter() {
+    return this.behavior.filter
+  }
+
+  /**
+   * Set filter
+   * @param {String[]} filterArray Filters
+   */
+  static set filter(filterArray) {
+    this.behavior.filter = filterArray;
+  }
+  
+  /**
+   * Get loop status
+   */
+  static get loop() {
+    return this.behavior.loop;
   }
 
   /**
@@ -152,12 +196,38 @@ class Player {
   }
 
   /**
-   * Repeat music
-   * @param {Boolean} value Value
+   * Get queue text channel
    */
-  repeat(value = !this.repeat) {
-    this.loop = false;
-    this.repeat = value;
+  static get textChannel() {
+    return this.text;
+  }
+  
+  /**
+   * Get song list
+   */
+  static get songs() {
+    return this.songList;
+  }
+  
+  /**
+   * Set song list
+   */
+  static set songs(newList) {
+    this.songList = newList;
+  }
+  
+  /**
+   * Get current playing
+   */
+  static get current() {
+    return this.now;
+  }
+  
+  /**
+   * Check is music playing
+   */
+  static get playing() {
+    return this.behavior.playing;
   }
 
   /**
@@ -166,7 +236,7 @@ class Player {
    * @param {String} url YouTube video URL
    */
   async _getStream(url) {
-    this.current = this.songs[0];
+    this.now = this.songList[0];
     let encoderArgs = [
       "-analyzeduration", "0",
       "-loglevel", "0",
@@ -174,7 +244,7 @@ class Player {
       "-ar", "48000",
       "-ac", "2",
     ];
-    if (this.filter.length !== 0) encoderArgs = encoderArgs.concat(["-af", this.filter.join(",")]);
+    if (this.behavior.filter.length !== 0) encoderArgs = encoderArgs.concat(["-af", this.behavior.filter.join(",")]);
     else encoderArgs.push("-af", "bass=g=2.5");
 
     let ytdlStream = await ytdl(url, {
@@ -187,20 +257,20 @@ class Player {
         duration: songInfo.player_response.videoDetails.lengthSeconds,
         thumbnail: songInfo.videoDetails.thumbnails.pop().url,
         type: "song",
-        by: this.current.by,
-        songId: this.current.songId
+        by: this.now.by,
+        songId: this.now.songId
       };
-      if (this.songs[0].songId === this.current.songId) {
-        this.songs[0] = songData;
+      if (this.songList[0].songId === this.now.songId) {
+        this.songList[0] = songData;
       }
-      this.current = songData;
+      this.now = songData;
     });
     this.ffmpeg = new FFmpeg({
       args: encoderArgs
     });
-    this.volume = new VolumeTransformer({
+    this.volumeTransformer = new VolumeTransformer({
       type: "s16le",
-      volume: 0.6
+      volume: this.behavior.volume / 100
     });
     this.opus = new opus.Encoder({
       rate: 48000,
@@ -209,7 +279,7 @@ class Player {
     });
     let opusStream = ytdlStream
       .pipe(this.ffmpeg)
-      .pipe(this.volume)
+      .pipe(this.volumeTransformer)
       .pipe(this.opus);
     this._playStream(opusStream);
   }
@@ -226,7 +296,7 @@ class Player {
       inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.source);
-    if (this.channel.type === "GUILD_STAGE_VOICE") this.voiceChannel.stageInstance.setTopic(`正在播放 - ${this.current.title.substr(0, 112)}`);
+    if (this.channel.type === "GUILD_STAGE_VOICE") this.voiceChannel.stageInstance.setTopic(`正在播放 - ${this.now.title.substr(0, 112)}`);
 
     let embed = new Discord.MessageEmbed()
       .setColor("BLURPLE")
@@ -276,13 +346,13 @@ class Player {
       .addComponents(muteBtn)
       .addComponents(volupBtn);
 
-    this.controller = await this.text.send({
+    let controller = await this.text.send({
       embeds: [embed],
       components: [playControl, volumeControl]
     });
 
-    let collector = this.controller.createMessageComponentCollector();
-    collector.on("collect", async btn => {
+    this.collector = controller.createMessageComponentCollector();
+    this.collector.on("collect", async btn => {
       const member = btn.member;
       if (!canModifyQueue(member)) return btn.reply({
         content: "❌ ┃ 請加入語音頻道!",
@@ -291,7 +361,7 @@ class Player {
 
       switch (btn.customId) {
         case "skip":
-          this.playing = true;
+          this.behavior.playing = true;
           this.skip();
           btn.reply({
             content: "<:skip:827734282318905355> ┃ 跳過歌曲",
@@ -300,15 +370,15 @@ class Player {
           break;
 
         case "pause":
-          if (this.playing) {
-            this.playing = !this.playing;
+          if (this.behavior.playing) {
+            this.behavior.playing = !this.behavior.playing;
             this.pause();
             btn.reply({
               content: "<:pause:827737900359745586> ┃ 歌曲暫停!",
               ephemeral: true
             }).catch(console.error);
           } else {
-            this.playing = !this.playing;
+            this.behavior.playing = !this.behavior.playing;
             this.resume();
             btn.reply({
               content: "<:play:827734196243398668> ┃ 繼續播放歌曲!",
@@ -318,15 +388,15 @@ class Player {
           break;
 
         case "mute":
-          if (this.volume <= 0) {
-            this.volume = 60;
+          if (this.behavior.volume <= 0) {
+            this.behavior.volume = 60;
             this.volumeTransformer.setVolumeLogarithmic(60 / 100);
             btn.reply({
               content: "<:vol_up:827734772889157722> ┃ 解除靜音音樂",
               ephemeral: true
             }).catch(console.error);
           } else {
-            this.volume = 0;
+            this.behavior.volume = 0;
             this.volumeTransformer.setVolumeLogarithmic(0);
             btn.reply({
               content: "<:mute:827734384606052392> ┃ 靜音音樂",
@@ -336,21 +406,21 @@ class Player {
           break;
 
         case "vol_down":
-          if (this.volume - 10 <= 0) this.volume = 0;
-          else this.volume = this.volume - 10;
-          this.volumeTransformer.setVolumeLogarithmic(this.queue.volume / 100);
+          if (this.behavior.volume - 10 <= 0) this.behavior.volume = 0;
+          else this.behavior.volume = this.behavior.volume - 10;
+          this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
           btn.reply({
-            content: `<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${this.volume}%`,
+            content: `<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${this.behavior.volume}%`,
             ephemeral: true
           }).catch(console.error);
           break;
 
         case "vol_up":
-          if (this.volume + 10 >= 100) this.volume = 100;
-          else this.volume = this.volume + 10;
-          this.volumeTransformer.setVolumeLogarithmic(this.queue.volume / 100);
+          if (this.behavior.volume + 10 >= 100) this.behavior.volume = 100;
+          else this.behavior.volume = this.behavior.volume + 10;
+          this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
           btn.reply({
-            content: `<:vol_up:827734772889157722> ┃ 音量上升，目前音量: ${this.volume}%`,
+            content: `<:vol_up:827734772889157722> ┃ 音量上升，目前音量: ${this.behavior.volume}%`,
             ephemeral: true
           }).catch(console.error);
           break;
@@ -365,26 +435,27 @@ class Player {
       }
     });
 
-    collector.on("end", async () => {
-      playingMessage.delete().catch(console.error);
+    this.collector.on("end", async () => {
+      controller.delete().catch(console.error);
     });
 
     this.audioPlayer.on(voice.AudioPlayerStatus.Idle, () => {
       this.client.log("Player enter idle state");
       this.source = null;
-      collector.stop();
-      if (this.loop) {
-        let lastSong = this.songs.shift();
-        this.songs.push(lastSong);
-      } else if (!this.repeat) {
-        this.songs.shift();
+      this.collector.stop();
+      this.collector = null;
+      if (this.behavior.loop) {
+        let lastSong = this.songList.shift();
+        this.songList.push(lastSong);
+      } else if (!this.behavior.repeat) {
+        this.songList.shift();
       }
-      if (this.songs.length <= 0) {
+      if (this.songList.length <= 0) {
         this.client.log("Queue ended");
         this.stop();
       } else {
         this.audioPlayer.removeAllListeners(voice.AudioPlayerStatus.Idle);
-        this._getStream(this.songs[0].url);
+        this._getStream(this.songList[0].url);
       }
     });
   }

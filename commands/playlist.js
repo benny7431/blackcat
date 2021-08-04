@@ -63,26 +63,6 @@ module.exports = {
     const url = args[0];
     const urlValid = pattern.test(args[0]);
 
-    const queueConstruct = {
-      textChannel: message.channel,
-      channel,
-      connection: null,
-      songs: [],
-      loop: false,
-      repeat: false,
-      volume: 60,
-      playing: true,
-      filter: [],
-      current: null,
-      player: null,
-      audioPlayer: null,
-      converter: {
-        ffmpeg: null,
-        opus: null,
-        volume: null
-      }
-    };
-
     let song = null;
     let playlist = null;
     let videos = [];
@@ -120,6 +100,8 @@ module.exports = {
         return message.channel.send("❌ ┃ 沒有找到播放清單...").catch(console.error);
       }
     }
+    
+    let songList = [];
 
     videos.videos.forEach((video) => {
       let songId = uuid();
@@ -132,12 +114,7 @@ module.exports = {
         by: message.author.username,
         songId
       };
-
-      if (serverQueue) {
-        serverQueue.songs.push(song);
-      } else {
-        queueConstruct.songs.push(song);
-      }
+      songList.push(song);
     });
 
     playlistEmbed
@@ -153,20 +130,20 @@ module.exports = {
       embeds: [playlistEmbed]
     }).catch(console.error);
 
-    if (!serverQueue) message.client.queue.set(message.guild.id, queueConstruct);
-
     if (!serverQueue) {
       try {
-        queueConstruct.player = new Player(queueConstruct, message.client);
-        queueConstruct.player.connect(channel);
-        await message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
-        queueConstruct.player.play(queueConstruct.songs[0]);
+        let player = new Player(channel, message.channel, message.client);
+        message.client.queue.set(message.guild.id, player);
+        message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
+        player.start();
       } catch (error) {
         console.error(error);
         message.client.queue.delete(message.guild.id);
         await channel.leave();
         return message.channel.send(`❌ ┃ 無法加入語音頻道...原因: ${error.message}`).catch(console.error);
       }
+    } else {
+      serverQueue.add(songList);
     }
   }
 };
