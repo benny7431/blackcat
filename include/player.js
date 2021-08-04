@@ -293,7 +293,7 @@ class Player {
    */
   async _playStream(stream) {
     this.client.log("Start playing song");
-    let song = songs[0];
+    let song = this.songList[0];
     this.source = voice.createAudioResource(stream, {
       inputType: voice.StreamType.Opus
     });
