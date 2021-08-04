@@ -97,6 +97,7 @@ class Player {
    */
   skip() {
     this.behavior.playing = true;
+    if(this.collector) collector.stop();
     if (this.behavior.loop) {
       let lastSong = this.songList.shift();
       this.songList.push(lastSong);
@@ -141,6 +142,7 @@ class Player {
     if (this.collector) this.collector.stop();
     this.songList = [];
     this.audioPlayer.stop();
+    if (this.voiceChannel.stageInstance) this.voiceChannel.stageInstance.delete();
     this.client.queue.delete(this.text.guildId);
     this.client.log("Queue ended");
   }
@@ -442,10 +444,9 @@ class Player {
         this.songList.shift();
       }
       if (this.songList.length <= 0) {
-        this.client.log("Queue ended");
         this.stop();
       } else {
-        this.audioPlayer.removeAllListeners(voice.AudioPlayerStatus.Idle);
+        this.audioPlayer.removeAllListeners();
         this._getStream(this.songList[0].url);
       }
     });

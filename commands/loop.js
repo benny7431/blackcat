@@ -19,7 +19,7 @@ module.exports = {
     if (message.slash) return message.slash
       .send(`${queue.loop ? "🔁 " : ""}重複播放清單目前為 ${queue.loop ? "啟動\n將會重複歌單!" : "關閉"}!`)
       .catch(console.error);
-    else return queue.textChannel
+    else return message.channel
       .send(`${queue.loop ? "🔁 " : ""}重複播放清單目前為 ${queue.loop ? "啟動\n將會重複歌單!" : "關閉"}!`)
       .catch(console.error);
   }

@@ -14,7 +14,7 @@ module.exports = {
     const serverQueue = message.client.queue.get(message.guild.id);
     if (!serverQueue) return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!").catch(console.error);
     let currentPage = 0;
-    const embeds = generateQueueEmbed(message, serverQueue.songs);
+    const embeds = generateQueueEmbed(message, serverQueue);
     const queueEmbed = await message.channel.send({
       content: `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
       embeds: [currentPage]
