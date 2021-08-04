@@ -38,11 +38,12 @@ class Player {
     });
     this.voiceChannel = channel;
     if (channel.type === "GUILD_STAGE_VOICE" && !channel.stageInstance) {
-      await channel.createStageInstance({
+      channel.createStageInstance({
         topic: "即將開始播放音樂...",
         privacyLevel: "GUILD_ONLY"
+      }).then(() => {
+        channel.guild.me.voice.setSuppressed(false);
       });
-      await channel.guild.me.voice.setSuppressed(false);
     }
 
     // Audio resource
