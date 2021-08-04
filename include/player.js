@@ -37,13 +37,6 @@ class Player {
       adapterCreator: channel.guild.voiceAdapterCreator,
     });
     this.voiceChannel = channel;
-    if (channel.type === "GUILD_STAGE_VOICE" && !channel.stageInstance) {
-      await channel.createStageInstance({
-        topic: "即將開始播放音樂...",
-        privacyLevel: "GUILD_ONLY"
-      });
-      await channel.guild.me.voice.setSuppressed(false);
-    }
     this.connection.subscribe(this.audioPlayer);
 
     // Audio resource
@@ -77,8 +70,15 @@ class Player {
   /**
    * Start player
    */
-  start() {
+  async start() {
     this.behavior.playing = true;
+    if (channel.type === "GUILD_STAGE_VOICE" && !channel.stageInstance) {
+      await channel.createStageInstance({
+        topic: "即將開始播放音樂...",
+        privacyLevel: "GUILD_ONLY"
+      });
+      await channel.guild.me.voice.setSuppressed(false);
+    }
     this._getStream(this.songList[0].url);
   }
 
