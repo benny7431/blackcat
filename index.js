@@ -180,7 +180,7 @@ client.on("messageCreate", async (message) => {
   }
 });
 
-client.on("voiceStateUpdate", async (oldState, newState) => {
+/*client.on("voiceStateUpdate", async (oldState, newState) => {
   try {
     if (!oldState.channelID && newState.channelID) return;
     if (!oldState.guild || !newState.guild) return;
@@ -204,7 +204,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   } catch (error) {
     console.log(error);
   }
-});
+});*/
 
 client.on("guildCreate", async guild => {
   client.user.setPresence({
