@@ -134,7 +134,7 @@ module.exports = {
       try {
         let player = new Player(channel, message.channel, message.client);
         message.client.queue.set(message.guild.id, player);
-        player.add(songList)
+        player.add(songList);
         message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
         player.start();
       } catch (error) {
