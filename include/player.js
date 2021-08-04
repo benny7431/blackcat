@@ -86,7 +86,9 @@ class Player {
    * @param {Object[]} songs Array of song data
    */
   add(songs) {
-    this.songList.concat(songs);
+    songs.forEach(song => {
+      this.songList.push(song)
+    })
   }
 
   /**
