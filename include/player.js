@@ -44,6 +44,7 @@ class Player {
       });
       await channel.guild.me.voice.setSuppressed(false);
     }
+    this.connection.subscribe(this.audioPlayer);
 
     // Audio resource
     this.audioResource = null;
@@ -238,6 +239,7 @@ class Player {
    * @param {String} url YouTube video URL
    */
   async _getStream(url) {
+    console.log("Getting stream");
     this.now = this.songList[0];
     let encoderArgs = [
       "-analyzeduration", "0",
@@ -264,11 +266,13 @@ class Player {
       channels: 2,
       frameSize: 960
     });
+    console.log("Preparing stream")
     let opusStream = ytdlStream
       .pipe(this.ffmpeg)
       .pipe(this.volumeTransformer)
       .pipe(this.opus);
     this._playStream(opusStream);
+    console.log("Start stream");
   }
 
   /**
