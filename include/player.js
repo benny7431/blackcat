@@ -294,10 +294,10 @@ class Player {
   async _playStream(stream) {
     this.client.log("Start playing song");
     let song = this.songList[0];
-    this.source = voice.createAudioResource(stream, {
+    this.audioResource = voice.createAudioResource(stream, {
       inputType: voice.StreamType.Opus
     });
-    this.audioPlayer.play(this.source);
+    this.audioPlayer.play(this.audioResource);
     if (this.voiceChannel.type === "GUILD_STAGE_VOICE") this.voiceChannel.stageInstance.setTopic(`正在播放 - ${this.now.title.substr(0, 112)}`);
 
     let embed = new Discord.MessageEmbed()
@@ -443,7 +443,7 @@ class Player {
 
     this.audioPlayer.on(voice.AudioPlayerStatus.Idle, () => {
       this.client.log("Player enter idle state");
-      this.source = null;
+      this.audioResource = null;
       this.collector.stop();
       this.collector = null;
       if (this.behavior.loop) {
