@@ -21,8 +21,8 @@ module.exports = {
       else return message.channel.send("<:pause:827737900359745586> ┃ 歌曲已暫停")
         .catch(console.error);
     } else {
-      if(message.slash) return message.slash.send("❌ ┃ 歌曲已經在播放了(･ัω･ั)").catch(console.error);
-      else return message.channel.send("❌ ┃ 歌曲已經在播放了(･ัω･ั)").catch(console.error);
+      if(message.slash) return message.slash.send("❌ ┃ 歌曲已經暫停了(･ัω･ั)").catch(console.error);
+      else return message.channel.send("❌ ┃ 歌曲已經暫停了(･ัω･ั)").catch(console.error);
     }
   }
 };

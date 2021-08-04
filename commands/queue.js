@@ -68,7 +68,7 @@ module.exports = {
 function generateQueueEmbed(message, queue) {
   const embeds = [];
   let k = 10;
-  for (let i = 0; i < queue.length; i += 10) {
+  for (let i = 0; i < queue.songs.length; i += 10) {
     const current = queue.slice(i, k);
     let j = i;
     k += 10;
