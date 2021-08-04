@@ -299,7 +299,7 @@ class Player {
       inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.source);
-    if (this.channel.type === "GUILD_STAGE_VOICE") this.voiceChannel.stageInstance.setTopic(`正在播放 - ${this.now.title.substr(0, 112)}`);
+    if (this.voiceChannel.type === "GUILD_STAGE_VOICE") this.voiceChannel.stageInstance.setTopic(`正在播放 - ${this.now.title.substr(0, 112)}`);
 
     let embed = new Discord.MessageEmbed()
       .setColor("BLURPLE")
