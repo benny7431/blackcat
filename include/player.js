@@ -172,11 +172,16 @@ class Player {
     this.behavior.loop = false;
     this.behavior.repeat = value;
   }
+  
+  /**
+   * Modify or get song list
+   */
+  
 
   /**
    * Get filters
    */
-  static get filter() {
+  get filter() {
     return this.behavior.filter;
   }
 
@@ -184,56 +189,35 @@ class Player {
    * Set filter
    * @param {String[]} filterArray Filters
    */
-  static set filter(filterArray) {
+  set filter(filterArray) {
     this.behavior.filter = filterArray;
-  }
-  
-  /**
-   * Get loop status
-   */
-  static get loop() {
-    return this.behavior.loop;
   }
 
   /**
    * Get now play time
    */
-  static get playTime() {
+  get playTime() {
     return this.audioResource.playbackDuration / 1000;
   }
 
   /**
    * Get queue text channel
    */
-  static get textChannel() {
+  get textChannel() {
     return this.text;
-  }
-  
-  /**
-   * Get song list
-   */
-  static get songs() {
-    return this.songList;
-  }
-  
-  /**
-   * Set song list
-   */
-  static set songs(newList) {
-    this.songList = newList;
   }
   
   /**
    * Get current playing
    */
-  static get current() {
+  get current() {
     return this.now;
   }
   
   /**
    * Check is music playing
    */
-  static get playing() {
+  get playing() {
     return this.behavior.playing;
   }
 
