@@ -415,7 +415,7 @@ class Player {
     });
 
     this.audioPlayer.on("stateChange", (oldState, newState) => {
-      if (newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
+      if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
         this.client.log("Player enter idle state");
         this.audioResource = null;
         this.collector.stop();
