@@ -602,12 +602,14 @@ app.use(io.expressErrorHandler());
 
 app.listen(process.env.PORT || 8080);
 
+process.on("uncaughtException", (error) => console.error(error));
+process.on("unhandledRejection", (error) => console.error(error));
+
 process.on("exit", (code) => {
   console.log(`Process exit with code: ${code}`);
 });
 
 process.on("SIGINT", () => {
   client.destroy();
-  console.log("Bot is shutting down by Pm2");
   process.exit(0);
 });
