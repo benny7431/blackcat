@@ -52,7 +52,7 @@ module.exports = {
       const filter = (interaction) => interaction.clicker.id === message.author.id;
       let resultsMessage = await message.channel.send("<:music_search:827735016254734346> ┃ 搜尋結果:", {
         components: [component]
-      });
+      }).catch(console.error);
       try {
         let collector = resultsMessage.createMessageComponentCollector({
           filter,
@@ -108,7 +108,7 @@ module.exports = {
         resultsMessage.delete();
       }
     } catch (error) {
-      message.channel.send("❌ 搜尋時發生錯誤!");
+      message.channel.send("❌ 搜尋時發生錯誤!").catch(console.error);
       console.error(error);
     }
   }

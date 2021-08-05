@@ -245,6 +245,12 @@ client.on("guildDelete", guild => {
 
 client.on("interactionCreate", interaction => {
   if (!interaction.isCommand()) return;
+  if (!interaction.inGuild()) return interaction.reply("❌ ┃ 請在伺服器裡傳送指令!").catch(console.error);
+  if (!interaction.guild) return interaction.reply("❌ ┃ 黑貓必須要在你的伺服器裡!").catch(console.error);
+  if (!interaction.channel.permissionsFor(interaction.guild.me).has([
+      Discord.Permissions.FLAGS.EMBED_LINKS,
+      Discord.Permissions.SEND_MESSAGES
+    ])) return interaction.reply("❌ ┃ 我沒有權限在此頻道發送訊息!").catch(console.error);
   const message = {
     channel: interaction.channel,
     guild: interaction.guild,

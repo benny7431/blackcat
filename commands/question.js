@@ -29,7 +29,8 @@ module.exports = {
     ];
     const randomAnswer = answer[Math.floor(Math.random() * answer.length)];
     const question = args.join(" ");
-    if (!args.length) return message.channel.send("❌ ┃ 你要問我什麼呢?");
+    if (!args.length) return message.channel.send("❌ ┃ 你要問我什麼呢?")
+      .catch(console.error);
 
     const embed = new MessageEmbed()
       .setTitle("問答!")
@@ -38,18 +39,18 @@ module.exports = {
     let sent = null;
     if (message.slash) message.channel.send({
       embeds: [embed]
-    });
+    }).catch(console.error);
     else await message.channel.send({
       embeds: [embed]
-    });
+    }).catch(console.error);
     embed.setDescription(`❓ ┃ 對於${question}我的回答是${randomAnswer}`);
     setTimeout(() => {
       if(sent) sent.edit({
         embeds: [embed]
-      });
+      }).catch(console.error);
       else message.slash.edit({
         embeds: [embed]
-      });
+      }).catch(console.error);
     }, 2000);
   }
 };

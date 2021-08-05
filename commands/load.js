@@ -1,6 +1,5 @@
 const ytdl = require("ytdl-core");
 const Player = require("../include/player");
-const { v4: uuid } = require("uuid");
 const { Permissions, Util } = require("discord.js");
 
 module.exports = {
@@ -53,13 +52,11 @@ module.exports = {
       .catch(console.error);
     let songList = [];
     songs.forEach(async song => {
-      let songId = uuid();
       let songData = {
         title: song.title,
         url: song.url,
         type: "loaded_song",
-        by: message.author.username,
-        songId
+        by: message.author.username
       };
       songList.push(songData);
     });

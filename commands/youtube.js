@@ -6,16 +6,21 @@ module.exports = {
   aliases: ["yt"],
   register: false,
   async execute(message) {
-    if (!message.member.voice.channel) return message.channel.send("❌ ┃ 請加入一個語音頻道!");
+    if (!message.member.voice.channel) return message.channel.send("❌ ┃ 請加入一個語音頻道!")
+      .catch(console.error);
     let embed = new MessageEmbed()
       .setColor("BLURPLE")
       .setTitle("一起觀看YouTube")
       .setDescription("正在創建你的頻道...");
-    let sent = await message.channel.send(embed);
+    let sent = await message.channel.send({
+      embeds: [embed]
+    }).catch(console.error);
     let invite = await message.client.together.createTogetherCode(message.member.voice.channelID, "youtube")
-      .catch(error => {
+      .catch(() => {
         embed.setDescription("無法創建頻道!");
-        return sent.edit({ embed });
+        return sent.edit({
+          embeds: [embed]
+        }).catch(console.error);
       });
     let button = new MessageButton()
       .setStyle("LINK")
@@ -27,6 +32,6 @@ module.exports = {
     return sent.edit({
       embeds: [embed],
       component: [component]
-    });
+    }).catch(console.error);
   }
 };

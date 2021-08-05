@@ -1,6 +1,5 @@
 const YouTube = require("youtube-sr").default;
 const Player = require("../include/player");
-const { v4: uuid } = require("uuid");
 const { MessageEmbed, Permissions, Util } = require("discord.js");
 
 module.exports = {
@@ -85,7 +84,8 @@ module.exports = {
         videos = await playlist.fetch();
       } catch (error) {
         console.error(error);
-        return message.channel.send("❌ ┃ 沒有找到播放清單").catch(console.error);
+        return message.channel.send("❌ ┃ 沒有找到播放清單")
+          .catch(console.error);
       }
     } else {
       try {
@@ -97,22 +97,21 @@ module.exports = {
         videos = await playlist.fetch();
       } catch (error) {
         console.error(error);
-        return message.channel.send("❌ ┃ 沒有找到播放清單...").catch(console.error);
+        return message.channel.send("❌ ┃ 沒有找到播放清單...")
+          .catch(console.error);
       }
     }
     
     let songList = [];
 
     videos.videos.forEach((video) => {
-      let songId = uuid();
       song = {
         title: video.title,
         url: `https://www.youtube.com/watch?v=${video.id}`,
         duration: video.duration / 1000,
         thumbnail: video.thumbnail.url,
         type: "playlist_song",
-        by: message.author.username,
-        songId
+        by: message.author.username
       };
       songList.push(song);
     });
@@ -135,13 +134,15 @@ module.exports = {
         let player = new Player(channel, message.channel, message.client);
         message.client.queue.set(message.guild.id, player);
         player.add(songList);
-        message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
+        message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`)
+          .catch(console.error);
         player.start();
       } catch (error) {
         console.error(error);
         message.client.queue.delete(message.guild.id);
         await channel.leave();
-        return message.channel.send(`❌ ┃ 無法加入語音頻道...原因: ${error.message}`).catch(console.error);
+        return message.channel.send(`❌ ┃ 無法加入語音頻道...原因: ${error.message}`)
+          .catch(console.error);
       }
     } else {
       serverQueue.add(songList);

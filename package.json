@@ -7,7 +7,7 @@
   "private": true,
   "homepage": "https://blackcatbot.tk",
   "engines": {
-    "node": "<=14.16.1",
+    "node": "14.x",
     "npm": "7.x"
   },
   "dependencies": {
@@ -46,6 +46,7 @@
   },
   "scripts": {
     "start": "bash bootstrap.sh",
+    "build": "bash bootstrap.sh build",
     "test": "bash bootstrap.sh test"
   },
   "devDependencies": {

@@ -143,6 +143,7 @@ class Player {
     this.songList = [];
     this.audioPlayer.stop();
     if (this.voiceChannel.stageInstance) this.voiceChannel.stageInstance.delete();
+    this.connection.destroy();
     this.client.queue.delete(this.text.guildId);
     this.client.log("Queue ended");
   }
@@ -242,7 +243,6 @@ class Player {
    * @param {String} url YouTube video URL
    */
   async _getStream(url) {
-    console.log("Getting stream");
     this.now = this.songList[0];
     let encoderArgs = [
       "-analyzeduration", "0",
@@ -269,13 +269,11 @@ class Player {
       channels: 2,
       frameSize: 960
     });
-    console.log("Preparing stream");
     let opusStream = ytdlStream
       .pipe(this.ffmpeg)
       .pipe(this.volumeTransformer)
       .pipe(this.opus);
     this._playStream(opusStream);
-    console.log("Start stream");
   }
 
   /**
@@ -284,10 +282,10 @@ class Player {
    * @param {Readable} stream Stream to play
    */
   async _playStream(stream) {
-    this.client.log("Start playing song");
     let song = this.songList[0];
-    this.audioResource = voice.createAudioResource(stream, {
-      inputType: voice.StreamType.Opus
+    let probe = await voice.demuxProbe(stream);
+    this.audioResource = voice.createAudioResource(probe.stream, {
+      inputType: probe.type
     });
     this.audioPlayer.play(this.audioResource);
     if (this.voiceChannel.type === "GUILD_STAGE_VOICE") this.voiceChannel.stageInstance.setTopic(`正在播放 - ${this.now.title.substr(0, 112)}`);
@@ -433,21 +431,23 @@ class Player {
       controller.delete().catch(console.error);
     });
 
-    this.audioPlayer.on(voice.AudioPlayerStatus.Idle, () => {
-      this.client.log("Player enter idle state");
-      this.audioResource = null;
-      this.collector.stop();
-      if (this.behavior.loop) {
-        let lastSong = this.songList.shift();
-        this.songList.push(lastSong);
-      } else if (!this.behavior.repeat) {
-        this.songList.shift();
-      }
-      if (this.songList.length <= 0) {
-        this.stop();
-      } else {
-        this.audioPlayer.removeAllListeners();
-        this._getStream(this.songList[0].url);
+    this.audioPlayer.on("stateChange", () => {
+      if (newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
+        this.client.log("Player enter idle state");
+        this.audioResource = null;
+        this.collector.stop();
+        if (this.behavior.loop) {
+          let lastSong = this.songList.shift();
+          this.songList.push(lastSong);
+        } else if (!this.behavior.repeat) {
+          this.songList.shift();
+        }
+        if (this.songList.length === 0) {
+          this.stop();
+        } else {
+          this.audioPlayer.removeAllListeners("stateChange");
+          this._getStream(this.songList[0].url);
+        }
       }
     });
   }

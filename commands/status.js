@@ -3,6 +3,8 @@ const osu = require("node-os-utils");
 const pidusage = require("pidusage");
 const prism = require("prism-media");
 const { MessageEmbed } = require("discord.js");
+const { version: ytdl } = require("ytdl-core");
+const { version: voice } = require("@discordjs/voice/package.json");
 
 module.exports = {
   name: "status",
@@ -43,6 +45,8 @@ module.exports = {
       .addField("<:nodejs:825348691018907648> ┃ 程式資訊", `Node.js ${process.version.replace("v", "")}`)
       .addField("<:djs:825712204811599873> ┃ 程式架構資訊", `Discord.js ${require("discord.js").version}`)
       .addField("<:ffmpeg:864066680565137438> ┃ 解碼器資訊", `FFmpeg ${ffmpeg}`)
+      .addField("<:load:833271811666870282> ┃ 播放器資訊", `YTDL core v.${ytdl}`)
+      .addField("<:joinvc:866176795471511593> ┃ 音樂播放器資訊", `@discordjs/voice v.${voice}`)
       .addField("<:cpu:825348830115528734> ┃ 處理器資訊", `${cpu.model} (${(Math.floor(cpu.speed / 100)) / 10}GHz)`)
       .addField("<:ram:825348875132731432> ┃ 記憶體資訊", `**機器人:** ${memBot} MB, **主機:** ${memUsed}/${memTotal} GB (${memPercent}%)`)
       .addField("<:servers:825537523065159710> ┃ 伺服器數量", `${message.client.guilds.cache.size}個伺服器`)

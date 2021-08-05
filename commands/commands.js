@@ -107,7 +107,8 @@ module.exports = {
         .setFooter("<>表示必要, []表示可選")
         .setColor("BLURPLE");
     } else {
-      return message.channel.send("❌ ┃ 請輸入正確的指令類別!").catch(console.error);
+      return message.channel.send("❌ ┃ 請輸入正確的指令類別!")
+        .catch(console.error);
     }
     if (message.slash) return message.slash.send({
       embeds: [embed]

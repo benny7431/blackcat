@@ -31,7 +31,6 @@
 # 🏗️ 啟動機器人
 
 ## 部署至Heroku
-> 建議使用此方法
 
 ### 使用按鈕部署
 
@@ -47,9 +46,13 @@
   - ```sh
     heroku git:remote -a <Your app name>
     ```
-- 將部署方式設定成容器(Docker container)
+- 將部署方式設定成Ubuntu 20.04
   - ```sh
-    heroku stack:set container
+    heroku stack:set heroku:20
+    ```
+- 新增Node.js Buildpack
+  - ````sh
+    heroku buildpacks:set heroku/nodejs
     ```
 - 部署程式
   - ```sh
@@ -57,12 +60,6 @@
     ```
 
 **請確認所有環境變數已經設置完成!**
-
-## Heroku dynos
-- Web dyno
-  - 用於一般用途
-- Worker dyno
-  - 用於API被攻擊時，或者不希望開啟API功能
 
 ***
 

@@ -1,8 +1,7 @@
 const ytdl = require("ytdl-core");
 const YouTube = require("youtube-sr").default;
 const Player = require("../include/player");
-const { v4: uuid } = require("uuid");
-const { MessageEmbed, Util } = require("discord.js");
+const { MessageEmbed, Util, MessageButton, MessageActionRow } = require("discord.js");
 
 module.exports = {
   name: "play",
@@ -79,19 +78,16 @@ module.exports = {
     let song = null;
     let songs = [];
 
-    let songId = uuid();
-
     if (urlValid) {
       try {
         songInfo = await ytdl.getInfo(url);
         song = {
           title: songInfo.videoDetails.title,
           url: songInfo.videoDetails.video_url,
-          duration: songInfo.player_response.videoDetails.lengthSeconds,
+          duration: songInfo.videoDetails.lengthSeconds,
           thumbnail: songInfo.videoDetails.thumbnails.pop().url,
           type: "song",
-          by: message.author.username,
-          songId
+          by: message.author.username
         };
       } catch (error) {
         message.client.log(message, error.message, false, "error");
@@ -120,11 +116,10 @@ module.exports = {
         song = {
           title: songInfo.videoDetails.title,
           url: songInfo.videoDetails.video_url,
-          duration: songInfo.player_response.videoDetails.lengthSeconds,
+          duration: songInfo.videoDetails.lengthSeconds,
           thumbnail: songInfo.videoDetails.thumbnails.pop().url,
           type: "song",
-          by: message.author.username,
-          songId
+          by: message.author.username
         };
       } catch (error) {
         message.client.log(message, error.message, false, "error");
@@ -155,7 +150,7 @@ module.exports = {
         .setTitle(`<:music_add:827734890924867585> ┃ 我已經把${song.title}加入播放清單了!`)
         .setThumbnail(song.thumbnail);
 
-      return serverQueue.textChannel.send({
+      return message.channel.send({
         embeds: [embed]
       }).catch(console.error);
     }
@@ -164,12 +159,14 @@ module.exports = {
       let player = new Player(channel, message.channel, message.client);
       message.client.queue.set(message.guild.id, player);
       player.add(songs);
-      message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
+      message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`)
+        .catch(console.error);
       player.start();
     } catch (error) {
       console.error(error);
       message.client.queue.delete(message.guild.id);
-      return message.channel.send(`❌ ┃ 無法加入語音頻道...原因: ${error.message}`).catch(console.error);
+      return message.channel.send(`❌ ┃ 無法加入語音頻道...原因: ${error.message}`)
+        .catch(console.error);
     }
   }
 };

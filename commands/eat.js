@@ -22,7 +22,8 @@ module.exports = {
       return Math.floor(Math.random() * end) + start;
     }
 
-    if (!args.length) return message.channel.send("❌ ┃ 請輸入食物名稱!或是...標注一個人").catch(console.error);
+    if (!args.length) return message.channel.send("❌ ┃ 請輸入食物名稱!或是...標注一個人")
+      .catch(console.error);
 
     const respone = [
       "還不錯",

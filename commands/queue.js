@@ -12,16 +12,17 @@ module.exports = {
   slashReply: false,
   async execute(message) {
     const serverQueue = message.client.queue.get(message.guild.id);
-    if (!serverQueue) return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!").catch(console.error);
+    if (!serverQueue) return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!")
+      .catch(console.error);
     let currentPage = 0;
     const embeds = generateQueueEmbed(message, serverQueue);
     const queueEmbed = await message.channel.send({
       content: `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
       embeds: [currentPage]
     });
-    await queueEmbed.react("<:left:828163434674651136>");
-    await queueEmbed.react("<:cancel_fill:828163722253041674>");
-    await queueEmbed.react("<:right:828163370603118622>");
+    await queueEmbed.react("<:left:828163434674651136>").catch(console.error);
+    await queueEmbed.react("<:cancel_fill:828163722253041674>").catch(console.error);
+    await queueEmbed.react("<:right:828163370603118622>").catch(console.error);
 
     const filter = (reaction, user) => ["left", "cancel_fill", "right"].includes(reaction.emoji.name) && user.id === message.author.id;
     try {
@@ -36,23 +37,23 @@ module.exports = {
           if (currentPage < embeds.length - 1) {
             currentPage++;
             queueEmbed.edit(`📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`, embeds[currentPage]);
-            await reaction.users.remove(message.author.id);
+            await reaction.users.remove(message.author.id).catch(console.error);
           } else {
-            await reaction.users.remove(message.author.id);
+            await reaction.users.remove(message.author.id).catch(console.error);
           }
         } else if (reaction.emoji.name === "left") {
           if (currentPage !== 0) {
             --currentPage;
             queueEmbed.edit(`📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`, embeds[currentPage]);
-            await reaction.users.remove(message.author.id);
+            await reaction.users.remove(message.author.id).catch(console.error);
           } else {
-            await reaction.users.remove(message.author.id);
+            await reaction.users.remove(message.author.id).catch(console.error);
           }
         } else if (reaction.emoji.name === "cancel_fill") {
           collector.stop();
-          queueEmbed.delete();
+          queueEmbed.delete().catch(console.error);
         } else {
-          await reaction.users.remove(message.author.id);
+          await reaction.users.remove(message.author.id).catch(console.error);
         }
       });
 
