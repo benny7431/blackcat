@@ -17,7 +17,7 @@ module.exports = {
       if (message.slash) message.slash.send("❌ ┃ 目前沒有任何歌曲正在播放!")
         .catch(console.error);
       return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!")
-        .catch(console.error);;
+        .catch(console.error);
     }
     const song = queue.current;
     const seek = queue.playTime;

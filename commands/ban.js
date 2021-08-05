@@ -18,7 +18,7 @@ module.exports = {
     if (!message.member.permissions.has(Permissions.FLAGS.BAN_MEMBERS) && message.author.id !== "669194742218752070") return message.channel.send("❌ ┃ 你沒有足夠的權限!")
       .catch(console.error);
     if (!message.guild.me.permissions.has(Permissions.FLAGS.BAN_MEMBERS)) return message.channel.send("❌ ┃ 我沒有足夠的權限!")
-      .catch(console.error)
+      .catch(console.error);
 
     if (message.mentions.members.size === 0 ||!args.length) return message.channel
       .send("❌ ┃ 請標記要驅逐的那個人!")

@@ -78,7 +78,7 @@ module.exports = {
       if (message.slash) message.slash.send("❌ ┃ 目前沒有任何歌曲正在播放!")
         .catch(console.error);
       return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!")
-        .catch(console.error);;
+        .catch(console.error);
     }
     if (!args.length) return message.channel.send("❌ ┃ 請輸入動作 add/remove/clear")
       .catch(console.error);
