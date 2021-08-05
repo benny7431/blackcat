@@ -283,9 +283,8 @@ class Player {
    */
   async _playStream(stream) {
     let song = this.songList[0];
-    let probe = await voice.demuxProbe(stream);
-    this.audioResource = voice.createAudioResource(probe.stream, {
-      inputType: probe.type
+    this.audioResource = voice.createAudioResource(stream, {
+      inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.audioResource);
     if (this.voiceChannel.type === "GUILD_STAGE_VOICE") this.voiceChannel.stageInstance.setTopic(`正在播放 - ${this.now.title.substr(0, 112)}`);
