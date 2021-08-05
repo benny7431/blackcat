@@ -174,8 +174,18 @@ class Player {
   }
   
   /**
-   * Modify or get song list
+   * Get song list
    */
+  get songs() {
+    return this.songList;
+  }
+  
+  /**
+   * Modify song list
+   */
+  set songs(songs) {
+    this.songList = songs
+  }
   
 
   /**
