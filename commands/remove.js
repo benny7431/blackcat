@@ -23,7 +23,7 @@ module.exports = {
       if (message.slash) message.slash.send("❌ ┃ 目前沒有任何歌曲正在播放!")
         .catch(console.error);
       return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!")
-        .catch(console.error);;
+        .catch(console.error);
     }
     if (!canModifyQueue(message.member)) {
       if (message.slash) return message.slash
@@ -40,7 +40,7 @@ module.exports = {
 
     const song = queue.songs.splice(args[0] - 1, 1);
     if (message.slash) return message.slash.send(`<:music_remove:827734952451899412> ┃ 從播放清單移除了 ${song[0].title}`)
-      .catch(console.error)
+      .catch(console.error);
     else return message.channel.send(`<:music_remove:827734952451899412> ┃ 從播放清單移除了 ${song[0].title}`)
       .catch(console.error);
   }
