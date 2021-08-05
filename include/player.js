@@ -70,8 +70,8 @@ class Player {
   /**
    * Start player
    */
-  async start() {
-    return new Promise((reslove, reject) => {
+  start() {
+    return new Promise(async (reslove, reject) => {
       this.behavior.playing = true;
       try {
         if (this.voiceChannel.type === "GUILD_STAGE_VOICE" && !this.voiceChannel.stageInstance) {
