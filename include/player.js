@@ -97,7 +97,7 @@ class Player {
    */
   skip() {
     this.behavior.playing = true;
-    if(this.collector) collector.stop();
+    if (this.collector) collector.stop();
     if (this.behavior.loop) {
       let lastSong = this.songList.shift();
       this.songList.push(lastSong);
@@ -172,21 +172,21 @@ class Player {
     this.behavior.loop = false;
     this.behavior.repeat = value;
   }
-  
+
   /**
    * Get song list
    */
   get songs() {
     return this.songList;
   }
-  
+
   /**
    * Modify song list
    */
   set songs(songs) {
     this.songList = songs
   }
-  
+
 
   /**
    * Get filters
@@ -216,14 +216,14 @@ class Player {
   get textChannel() {
     return this.text;
   }
-  
+
   /**
    * Get current playing
    */
   get current() {
     return this.now;
   }
-  
+
   /**
    * Check is music playing
    */

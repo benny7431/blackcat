@@ -38,10 +38,10 @@ module.exports = {
     if (song.duration > 0) nowPlaying.setFooter("還剩下" + new Date(left * 1000).toISOString().substr(11, 8));
 
     if (message.slash) return message.slash.send({
-      embeds: [embed]
+      embeds: [nowPlaying]
     }).catch(console.error);
     else return message.channel.send({
-      embeds: [embed]
+      embeds: [nowPlaying]
     }).catch(console.error);
   }
 };
