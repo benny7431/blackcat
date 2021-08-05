@@ -191,7 +191,7 @@ class Player {
    * Modify song list
    */
   set songs(songs) {
-    this.songList = songs
+    this.songList = songs;
   }
 
 
