@@ -430,7 +430,7 @@ class Player {
       controller.delete().catch(console.error);
     });
 
-    this.audioPlayer.on("stateChange", () => {
+    this.audioPlayer.on("stateChange", (oldState, newState) => {
       if (newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
         this.client.log("Player enter idle state");
         this.audioResource = null;
