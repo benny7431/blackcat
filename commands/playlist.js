@@ -136,7 +136,10 @@ module.exports = {
         player.add(songList);
         message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`)
           .catch(console.error);
-        player.start();
+        player.start()
+          .catch(() => {
+            return message.channel.send("❌ ┃ 無法開始舞台頻道!")
+          });
       } catch (error) {
         console.error(error);
         message.client.queue.delete(message.guild.id);

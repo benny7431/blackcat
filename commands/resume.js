@@ -31,7 +31,7 @@ module.exports = {
       queue.resume();
       if (message.slash) return message.slash.send("<:play:827734196243398668> ┃ 繼續播放歌曲")
         .catch(console.error);
-      else return message.channel.send.send("<:play:827734196243398668> ┃ 繼續播放歌曲")
+      else return message.channel.send("<:play:827734196243398668> ┃ 繼續播放歌曲")
         .catch(console.error);
     }
 

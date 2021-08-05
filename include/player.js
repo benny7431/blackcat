@@ -71,15 +71,22 @@ class Player {
    * Start player
    */
   async start() {
-    this.behavior.playing = true;
-    if (this.voiceChannel.type === "GUILD_STAGE_VOICE" && !this.voiceChannel.stageInstance) {
-      await this.voiceChannel.createStageInstance({
-        topic: "即將開始播放音樂...",
-        privacyLevel: "GUILD_ONLY"
-      });
-      await this.voiceChannel.guild.me.voice.setSuppressed(false);
-    }
-    this._getStream(this.songList[0].url);
+    return new Promise((reslove, reject) => {
+      this.behavior.playing = true;
+      try {
+        if (this.voiceChannel.type === "GUILD_STAGE_VOICE" && !this.voiceChannel.stageInstance) {
+          await this.voiceChannel.createStageInstance({
+            topic: "即將開始播放音樂...",
+            privacyLevel: "GUILD_ONLY"
+          });
+          await this.voiceChannel.guild.me.voice.setSuppressed(false);
+        }
+      } catch {
+        reject();
+      }
+      this._getStream(this.songList[0].url);
+      reslove();
+    });
   }
 
   /**
@@ -229,6 +236,20 @@ class Player {
    */
   get playing() {
     return this.behavior.playing;
+  }
+
+  /**
+   * Get repeat status
+   */
+  get repeat() {
+    return this.repeat;
+  }
+
+  /**
+   * Get loop status
+   */
+  get loop() {
+    return this.loop;
   }
 
   /**
