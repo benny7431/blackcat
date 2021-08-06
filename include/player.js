@@ -242,14 +242,14 @@ class Player {
    * Get repeat status
    */
   get repeat() {
-    return this.repeat;
+    return this.behavior.repeat;
   }
 
   /**
    * Get loop status
    */
   get loop() {
-    return this.loop;
+    return this.behavior.loop;
   }
 
   /**
