@@ -73,7 +73,7 @@ module.exports = {
         await message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
         player.start()
           .catch(() => {
-            return message.channel.send("❌ ┃ 無法開始舞台頻道!")
+            return message.channel.send("❌ ┃ 無法開始舞台頻道!\n黑貓必須為該舞台頻道的管理員!");
           })
       } catch (error) {
         console.error(error);

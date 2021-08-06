@@ -162,7 +162,7 @@ module.exports = {
         .catch(console.error);
       player.start()
         .catch(() => {
-          return message.channel.send("❌ ┃ 無法開始舞台頻道!")
+          return message.channel.send("❌ ┃ 無法開始舞台頻道!\n黑貓必須為該舞台頻道的管理員!");
         })
     } catch (error) {
       console.error(error);

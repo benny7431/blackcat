@@ -82,6 +82,7 @@ class Player {
           await this.voiceChannel.guild.me.voice.setSuppressed(false);
         }
       } catch {
+        this.destroy();
         reject();
       }
       this._getStream(this.songList[0].url);
@@ -146,13 +147,7 @@ class Player {
    */
   stop() {
     this.text.send("👌 ┃ 播放完畢");
-    if (this.collector) this.collector.stop();
-    this.songList = [];
-    this.audioPlayer.stop();
-    if (this.voiceChannel.stageInstance) this.voiceChannel.stageInstance.delete();
-    this.connection.destroy();
-    this.client.players.delete(this.text.guildId);
-    this.client.log("Queue ended");
+    this.destroy();
   }
 
   /**
@@ -168,7 +163,13 @@ class Player {
    * Destroy voice connection
    */
   destroy() {
+    if (this.collector) this.collector.stop();
+    this.songList = [];
+    this.audioPlayer.stop();
+    if (this.voiceChannel.stageInstance) this.voiceChannel.stageInstance.delete();
     this.connection.destroy();
+    this.client.players.delete(this.text.guildId);
+    this.client.log("Queue ended");
   }
 
   /**
@@ -258,6 +259,7 @@ class Player {
    * @param {String} url YouTube video URL
    */
   async _getStream(url) {
+    this.client.log("Getting stream", "info");
     this.now = this.songList[0];
     let encoderArgs = [
       "-analyzeduration", "0",
@@ -297,12 +299,17 @@ class Player {
    * @param {Readable} stream Stream to play
    */
   async _playStream(stream) {
+    this.client.log("Start playing stream");
     let song = this.songList[0];
     this.audioResource = voice.createAudioResource(stream, {
       inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.audioResource);
-    if (this.voiceChannel.type === "GUILD_STAGE_VOICE") this.voiceChannel.stageInstance.setTopic(`正在播放 - ${this.now.title.substr(0, 112)}`);
+    if (this.voiceChannel.type === "GUILD_STAGE_VOICE") this.voiceChannel.stageInstance
+      .setTopic(`正在播放 - ${this.now.title.substr(0, 112)}`)
+      .catch((error) => {
+        console.log(error.message);
+      });
 
     let embed = new Discord.MessageEmbed()
       .setColor("BLURPLE")
