@@ -65,10 +65,9 @@ module.exports = {
       .catch(console.error);
 
     const search = args.join(" ");
-    const videoPattern = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.?be)\/.+$/gi;
     const playlistPattern = /^.*(list=)([^#\&\?]*).*/gi;
     const url = args[0];
-    const urlValid = videoPattern.test(args[0]);
+    const urlValid = ytdl.validateURL(url);
 
     if (!urlValid && playlistPattern.test(args[0])) {
       return message.client.commands.get("playlist").execute(message, args);
