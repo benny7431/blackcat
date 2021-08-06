@@ -104,7 +104,7 @@ class Player {
    */
   skip() {
     this.behavior.playing = true;
-    if (this.collector) collector.stop();
+    if (this.collector) this.collector.stop();
     if (this.behavior.loop) {
       let lastSong = this.songList.shift();
       this.songList.push(lastSong);
