@@ -311,7 +311,7 @@ client.on("interactionCreate", interaction => {
   } catch (error) {
     console.error(error);
     message.channel.send(`❌ ┃ 執行時出現錯誤:${error.message}`).catch(console.error);
-    message.client.log(message, `${error.message} (Command:${command.name})`, false, "error");
+    message.client.log(`${error.message} (Command:${command.name})`, "error");
   }
 });
 

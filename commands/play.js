@@ -90,7 +90,7 @@ module.exports = {
           by: message.author.username
         };
       } catch (error) {
-        message.client.log(message, error.message, false, "error");
+        message.client.log(error.message, "error");
         let errorMsg = null;
         if (error.message.includes("404") || error.message.includes("id")) {
           errorMsg = "❌ ┃ 找不到影片";
@@ -122,7 +122,7 @@ module.exports = {
           by: message.author.username
         };
       } catch (error) {
-        message.client.log(message, error.message, false, "error");
+        message.client.log(error.message, "error");
         let errorMsg = null;
         if (error.message.includes("404") || error.message.includes("id")) {
           errorMsg = "❌ ┃ 找不到影片";
