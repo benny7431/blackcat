@@ -25,7 +25,7 @@ module.exports = {
         .catch(console.error);
     }
 
-    queue.repeat();
+    queue.toggleRepeat();
     if(message.slash) return message.slash.send(`${queue.repeat ? "🔂 ┃ " : ""}重複播放目前為 ${queue.repeat ? "啟動  將會重複目前的歌曲!" : "關閉"}!`)
       .catch(console.error);
     else return message.channel.send(`${queue.repeat ? "🔂 ┃ " : ""}重複播放目前為 ${queue.repeat ? "啟動  將會重複目前的歌曲!" : "關閉"}!`)

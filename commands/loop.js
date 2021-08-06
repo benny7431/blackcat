@@ -27,7 +27,7 @@ module.exports = {
         .catch(console.error);
     }
 
-    queue.loop();
+    queue.toggleLoop();
     if (message.slash) return message.slash
       .send(`${queue.loop ? "🔁 " : ""}重複播放清單目前為 ${queue.loop ? "啟動\n將會重複歌單!" : "關閉"}!`)
       .catch(console.error);

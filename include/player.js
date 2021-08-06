@@ -159,7 +159,7 @@ class Player {
    * Loop music
    * @param {Boolean} value Value
    */
-  loop(value = !this.behavior.loop) {
+  toggleLoop(value = !this.behavior.loop) {
     this.behavior.repeat = false;
     this.behavior.loop = value;
   }
@@ -175,7 +175,7 @@ class Player {
    * Repeat music
    * @param {Boolean} value Value
    */
-  repeat(value = !this.behavior.repeat) {
+  toggleRepeat(value = !this.behavior.repeat) {
     this.behavior.loop = false;
     this.behavior.repeat = value;
   }
