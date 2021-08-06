@@ -249,7 +249,7 @@ client.on("interactionCreate", interaction => {
   if (!interaction.guild) return interaction.reply("❌ ┃ 黑貓必須要在你的伺服器裡!").catch(console.error);
   if (!interaction.channel.permissionsFor(interaction.guild.me).has([
       Discord.Permissions.FLAGS.EMBED_LINKS,
-      Discord.Permissions.SEND_MESSAGES
+      Discord.Permissions.FLAGS.SEND_MESSAGES
     ])) return interaction.reply("❌ ┃ 我沒有權限在此頻道發送訊息!").catch(console.error);
   const message = {
     channel: interaction.channel,
