@@ -50,7 +50,7 @@ module.exports = {
       .addField("<:cpu:825348830115528734> ┃ 處理器資訊", `${cpu.model} (${(Math.floor(cpu.speed / 100)) / 10}GHz)`)
       .addField("<:ram:825348875132731432> ┃ 記憶體資訊", `**機器人:** ${memBot} MB, **主機:** ${memUsed}/${memTotal} GB (${memPercent}%)`)
       .addField("<:servers:825537523065159710> ┃ 伺服器數量", `${message.client.guilds.cache.size}個伺服器`)
-      .addField("<:music:825646714404077569> ┃ 音樂播放狀態", `有${message.client.queue.size}個伺服器正在播放音樂`)
+      .addField("<:music:825646714404077569> ┃ 音樂播放狀態", `有${message.client.players.size}個伺服器正在播放音樂`)
       .setColor("BLURPLE");
 
     if(message.slash) return message.slash.send({

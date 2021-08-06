@@ -9,7 +9,7 @@ module.exports = {
   },
   slashReply: true,
   execute(message) {
-    const queue = message.client.queue.get(message.guild.id);
+    const queue = message.client.players.get(message.guild.id);
     if (!queue) {
       if (message.slash) message.slash.send("❌ ┃ 目前沒有任何歌曲正在播放!")
         .catch(console.error);

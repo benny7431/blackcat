@@ -53,7 +53,7 @@ class Player {
           voice.entersState(this.connection, voice.VoiceConnectionStatus.Connecting, 7000),
         ]);
       } catch (error) {
-        this.client.queue.delete(this.text.guildId);
+        this.client.players.delete(this.text.guildId);
         this.connection.destroy();
       }
     });
@@ -151,7 +151,7 @@ class Player {
     this.audioPlayer.stop();
     if (this.voiceChannel.stageInstance) this.voiceChannel.stageInstance.delete();
     this.connection.destroy();
-    this.client.queue.delete(this.text.guildId);
+    this.client.players.delete(this.text.guildId);
     this.client.log("Queue ended");
   }
 

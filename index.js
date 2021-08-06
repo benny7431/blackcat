@@ -45,7 +45,7 @@ client.together = new DiscordTogether(client);
 client.db = db;
 client.commands = new Discord.Collection();
 client.prefix = PREFIX;
-client.queue = new Map();
+client.players = new Map();
 client.log = async function(msgContent, type) {
   const webhook = new Discord.WebhookClient({
     id: process.env.WEBHOOK_ID,
@@ -184,7 +184,7 @@ client.on("messageCreate", async (message) => {
   try {
     if (!oldState.channelID && newState.channelID) return;
     if (!oldState.guild || !newState.guild) return;
-    const queue = client.queue.get(oldState.guild.id);
+    const queue = client.players.get(oldState.guild.id);
     if (!queue) return;
     if (!queue.connection) return;
     if (!queue.songs.length || queue.songs.length === 0) return;
@@ -343,7 +343,7 @@ app.ws("/api/ws/playing", (ws) => {
         ws.send(JSON.stringify({ exist: false }));
         return ws.close();
       }
-      const queue = client.queue.get(guild.id);
+      const queue = client.players.get(guild.id);
       if (!queue) {
         return ws.send(JSON.stringify({ playing: false }));
       }
@@ -509,7 +509,7 @@ app.get("/api/pause", async function(req, res) {
     return res.send({ error: true, code: 101 });
   }
   try {
-    const queue = client.queue.get(req.query.guild);
+    const queue = client.players.get(req.query.guild);
     if (!queue) return res.send({ error: true, code: 101 });
     if (queue.playing) {
       queue.playing = false;
@@ -544,7 +544,7 @@ app.get("/api/resume", async function(req, res) {
     return res.send({ error: true, code: 101 });
   }
   try {
-    const queue = client.queue.get(req.query.guild);
+    const queue = client.players.get(req.query.guild);
     if (!queue) return res.send({ error: true, code: 101 });
     if (!queue.playing) {
       queue.playing = true;
@@ -579,7 +579,7 @@ app.get("/api/skip", async function(req, res) {
     return res.send({ error: true, code: 101 });
   }
   try {
-    const queue = client.queue.get(req.query.guild);
+    const queue = client.players.get(req.query.guild);
     if (!queue) return res.send({ error: true, code: 101 });
     queue.playing = true;
     queue.skip();

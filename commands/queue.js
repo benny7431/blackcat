@@ -11,7 +11,7 @@ module.exports = {
   },
   slashReply: false,
   async execute(message) {
-    const serverQueue = message.client.queue.get(message.guild.id);
+    const serverQueue = message.client.players.get(message.guild.id);
     if (!serverQueue) return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!")
       .catch(console.error);
     let currentPage = 0;

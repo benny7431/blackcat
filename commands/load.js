@@ -8,7 +8,7 @@ module.exports = {
   register: false,
   async execute(message, args) {
     const { channel } = message.member.voice;
-    const serverQueue = message.client.queue.get(message.guild.id);
+    const serverQueue = message.client.players.get(message.guild.id);
 
     if (!channel) {
       if (message.slash) return message.slash.send("❌ ┃ 你要先加入一個語音頻道...不然我要在哪的房間放收音機呢？")
@@ -68,7 +68,7 @@ module.exports = {
     if (!serverQueue) {
       try {
         let player = new Player(channel, message.channel, message.client);
-        message.client.queue.set(message.guild.id, player);
+        message.client.players.set(message.guild.id, player);
         player.add(songList);
         await message.channel.send(`<:joinvc:866176795471511593> ┃ 已加入\`${Util.escapeMarkdown(channel.name)}\`並將訊息發送至<#${message.channel.id}>`);
         player.start()
@@ -77,7 +77,7 @@ module.exports = {
           })
       } catch (error) {
         console.error(error);
-        message.client.queue.delete(message.guild.id);
+        message.client.players.delete(message.guild.id);
         await channel.leave();
         return message.channel.send(`❌ ┃ 無法加入語音頻道...原因: ${error.message}`).catch(console.error);
       }

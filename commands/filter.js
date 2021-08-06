@@ -64,7 +64,7 @@ module.exports = {
   },
   slashReply: true,
   execute(message, args) {
-    const queue = message.client.queue.get(message.guild.id);
+    const queue = message.client.players.get(message.guild.id);
     const filters = {
       "bassboost": "bass=g=7",
       "8D": "apulsator=hz=0.09",
