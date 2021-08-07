@@ -44,7 +44,7 @@ class Player {
 
     // Text channel
     this.text = textChannel;
-    
+
     // Guild (From text channel)
     this.guild = textChannel.guild;
 
@@ -59,6 +59,7 @@ class Player {
         this.client.players.delete(this.text.guildId);
         this.connection.destroy();
         if (this.collector) this.collector.stop();
+        this.text.send("🎈 ┃ 語音頻道連結斷開，音樂已停止")
       }
     });
 
@@ -76,6 +77,28 @@ class Player {
    */
   start() {
     return new Promise(async (reslove, reject) => {
+      this.audioPlayer.on("stateChange", (oldState, newState) => {
+        this.client.log(`${this.guild.name} State changed ${oldState.status} => ${newState.status}`);
+        if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
+          this.opus?.destroy();
+          this.ffmpeg?.destroy();
+          this.volumeTransformer?.destroy();
+          this.audioResource = null;
+          this.collector.stop();
+          if (this.behavior.loop) {
+            let lastSong = this.songList.shift();
+            this.songList.push(lastSong);
+          } else if (!this.behavior.repeat) {
+            this.songList.shift();
+          }
+          if (this.songList.length === 0) {
+            this.stop();
+          } else {
+            this._getStream(this.songList[0].url);
+          }
+        }
+      });
+
       this.behavior.playing = true;
       try {
         if (this.voiceChannel.type === "GUILD_STAGE_VOICE" && !this.voiceChannel.stageInstance) {
@@ -109,7 +132,7 @@ class Player {
    */
   skip() {
     this.behavior.playing = true;
-    if (this.collector) this.collector.stop();
+    this.collector?.stop();
     if (this.behavior.loop) {
       let lastSong = this.songList.shift();
       this.songList.push(lastSong);
@@ -457,29 +480,6 @@ class Player {
 
     this.collector.on("end", async () => {
       controller.delete().catch(console.error);
-    });
-
-    this.audioPlayer.on("stateChange", (oldState, newState) => {
-      this.client.log(`${this.guild.name} State changed ${oldState.status} => ${newState.status}`);
-      if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
-        this.opus.destroy();
-        this.ffmpeg.destroy();
-        this.volumeTransformer.destroy();
-        this.audioResource = null;
-        this.collector.stop();
-        if (this.behavior.loop) {
-          let lastSong = this.songList.shift();
-          this.songList.push(lastSong);
-        } else if (!this.behavior.repeat) {
-          this.songList.shift();
-        }
-        if (this.songList.length === 0) {
-          this.stop();
-        } else {
-          this.audioPlayer.removeAllListeners("stateChange");
-          this._getStream(this.songList[0].url);
-        }
-      }
     });
   }
 }
