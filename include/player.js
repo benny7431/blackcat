@@ -44,6 +44,9 @@ class Player {
 
     // Text channel
     this.text = textChannel;
+    
+    // Guild (From text channel)
+    this.guild = textChannel.guild;
 
     // Error events
     this.connection.on(voice.VoiceConnectionStatus.Disconnected, async () => {
@@ -55,6 +58,7 @@ class Player {
       } catch (error) {
         this.client.players.delete(this.text.guildId);
         this.connection.destroy();
+        if (this.collector) this.collector.stop();
       }
     });
 
@@ -169,7 +173,7 @@ class Player {
     if (this.voiceChannel.stageInstance) this.voiceChannel.stageInstance.delete();
     this.connection.destroy();
     this.client.players.delete(this.text.guildId);
-    this.client.log("Queue ended");
+    this.client.log(`${this.guild.name} Queue ended`);
   }
 
   /**
@@ -259,7 +263,7 @@ class Player {
    * @param {String} url YouTube video URL
    */
   async _getStream(url) {
-    this.client.log("Getting stream", "info");
+    this.client.log(`${this.guild.name} Getting stream`);
     this.now = this.songList[0];
     let encoderArgs = [
       "-analyzeduration", "0",
@@ -299,7 +303,7 @@ class Player {
    * @param {Readable} stream Stream to play
    */
   async _playStream(stream) {
-    this.client.log("Start playing stream");
+    this.client.log(`${this.guild.name} Start playing stream`);
     let song = this.songList[0];
     this.audioResource = voice.createAudioResource(stream, {
       inputType: voice.StreamType.Opus
@@ -309,6 +313,9 @@ class Player {
       .setTopic(`正在播放 - ${this.now.title.substr(0, 112)}`)
       .catch((error) => {
         console.log(error.message);
+        this.voiceChannel.stageInstance
+          .setTopic("正在播放音樂")
+          .catch(console.error);
       });
 
     let embed = new Discord.MessageEmbed()
@@ -453,8 +460,11 @@ class Player {
     });
 
     this.audioPlayer.on("stateChange", (oldState, newState) => {
+      this.client.log(`${this.guild.name} State changed ${oldState.status} => ${newState.status}`);
       if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
-        this.client.log("Player enter idle state");
+        this.opus.destroy();
+        this.ffmpeg.destroy();
+        this.volumeTransformer.destroy();
         this.audioResource = null;
         this.collector.stop();
         if (this.behavior.loop) {
