@@ -299,7 +299,8 @@ class Player {
     else encoderArgs.push("-af", "bass=g=2.5");
 
     let ytdlStream = await ytdl(url, {
-      highWaterMark: 1048576 * 32
+      highWaterMark: 1048576 * 32,
+      dlChunkSize: 0
     });
     this.ffmpeg = new FFmpeg({
       args: encoderArgs
