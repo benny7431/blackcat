@@ -59,7 +59,7 @@ class Player {
         this.client.players.delete(this.text.guildId);
         this.connection.destroy();
         if (this.collector) this.collector.stop();
-        this.text.send("🎈 ┃ 語音頻道連結斷開，音樂已停止")
+        this.text.send("🎈 ┃ 語音頻道連結斷開，音樂已停止");
       }
     });
 
