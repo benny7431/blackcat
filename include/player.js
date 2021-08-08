@@ -87,7 +87,7 @@ class Player {
       try {
         if (this.voiceChannel.type === "GUILD_STAGE_VOICE" && !this.voiceChannel.stageInstance) {
           await this.voiceChannel.createStageInstance({
-            topic: "即將開始播放音樂...",
+            topic: "🎶 音樂即將開始!",
             privacyLevel: "GUILD_ONLY"
           });
           await this.voiceChannel.guild.me.voice.setSuppressed(false);
@@ -319,7 +319,7 @@ class Player {
     });
     this.audioPlayer.play(this.audioResource);
     if (this.voiceChannel.type === "GUILD_STAGE_VOICE") this.voiceChannel.stageInstance
-      .setTopic(`正在播放 - ${this.now.title.substr(0, 112)}`)
+      .setTopic(`🎶 ${this.now.title.substr(0, 112)}`)
       .catch((error) => {
         console.log(error.message);
         this.voiceChannel.stageInstance
