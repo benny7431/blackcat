@@ -42,6 +42,9 @@ class Player {
     // YTDL stream
     this.stream = null;
 
+    // Encoded stream
+    this.encoded = null;
+
     // Audio resource
     this.audioResource = null;
 
@@ -110,6 +113,8 @@ class Player {
             topic: "即將開始播放音樂...",
             privacyLevel: "GUILD_ONLY"
           });
+          await this.voiceChannel.guild.me.voice.setSuppressed(false);
+        } else if (this.voiceChannel.stageInstance) {
           await this.voiceChannel.guild.me.voice.setSuppressed(false);
         }
       } catch {
@@ -317,11 +322,11 @@ class Player {
       channels: 2,
       frameSize: 960
     });
-    let opusEncoded = this.stream
+    this.encoded = this.stream
       .pipe(this.ffmpeg)
       .pipe(this.volumeTransformer)
       .pipe(this.opus);
-    this._playStream(opusEncoded);
+    this._playStream();
   }
 
   /**
@@ -332,7 +337,7 @@ class Player {
   async _playStream(stream) {
     this.client.log(`${this.guild.name} Start playing stream`);
     let song = this.songList[0];
-    this.audioResource = voice.createAudioResource(stream, {
+    this.audioResource = voice.createAudioResource(this.encoded, {
       inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.audioResource);
