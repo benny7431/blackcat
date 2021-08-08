@@ -41,7 +41,7 @@
     "utf-8-validate": "^5.0.5",
     "youtube-dl-exec": "^1.2.4",
     "youtube-sr": "^4.1.7",
-    "ytdl-core": "^4.9.1"
+    "ytdl-core": "^4.9.0"
   },
   "scripts": {
     "start": "bash bootstrap.sh",

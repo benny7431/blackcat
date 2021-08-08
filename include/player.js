@@ -38,6 +38,9 @@ class Player {
     });
     this.voiceChannel = channel;
     this.connection.subscribe(this.audioPlayer);
+    
+    // YTDL stream
+    this.stream = null;
 
     // Audio resource
     this.audioResource = null;
@@ -83,6 +86,7 @@ class Player {
           this.opus?.destroy();
           this.ffmpeg?.destroy();
           this.volumeTransformer?.destroy();
+          this.stream?.destroy();
           this.audioResource = null;
           this.collector.stop();
           if (this.behavior.loop) {
@@ -298,7 +302,7 @@ class Player {
     if (this.behavior.filter.length !== 0) encoderArgs = encoderArgs.concat(["-af", this.behavior.filter.join(",")]);
     else encoderArgs.push("-af", "bass=g=2.5");
 
-    let ytdlStream = await ytdl(url, {
+    this.stream = ytdl(url, {
       highWaterMark: 1048576 * 32,
       dlChunkSize: 0
     });
@@ -314,11 +318,11 @@ class Player {
       channels: 2,
       frameSize: 960
     });
-    let opusStream = ytdlStream
+    this.stream
       .pipe(this.ffmpeg)
       .pipe(this.volumeTransformer)
       .pipe(this.opus);
-    this._playStream(opusStream);
+    this._playStream();
   }
 
   /**
@@ -329,7 +333,7 @@ class Player {
   async _playStream(stream) {
     this.client.log(`${this.guild.name} Start playing stream`);
     let song = this.songList[0];
-    this.audioResource = voice.createAudioResource(stream, {
+    this.audioResource = voice.createAudioResource(this.stream, {
       inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.audioResource);
