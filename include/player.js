@@ -83,29 +83,6 @@ class Player {
    */
   start() {
     return new Promise(async (reslove, reject) => {
-      this.audioPlayer.on("stateChange", (oldState, newState) => {
-        this.client.log(`${this.guild.name} State changed ${oldState.status} => ${newState.status}`);
-        if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
-          this.opus?.destroy();
-          this.ffmpeg?.destroy();
-          this.volumeTransformer?.destroy();
-          this.stream?.destroy();
-          this.audioResource = null;
-          this.collector.stop();
-          if (this.behavior.loop) {
-            let lastSong = this.songList.shift();
-            this.songList.push(lastSong);
-          } else if (!this.behavior.repeat) {
-            this.songList.shift();
-          }
-          if (this.songList.length === 0) {
-            this.stop();
-          } else {
-            this._getStream(this.songList[0].url);
-          }
-        }
-      });
-
       this.behavior.playing = true;
       try {
         if (this.voiceChannel.type === "GUILD_STAGE_VOICE" && !this.voiceChannel.stageInstance) {
@@ -489,6 +466,31 @@ class Player {
 
     this.collector.on("end", async () => {
       controller.delete().catch(console.error);
+    });
+
+    this.audioPlayer.on("stateChange", (oldState, newState) => {
+      this.client.log(`${this.guild.name} State changed ${oldState.status} => ${newState.status}`);
+      if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
+        this.opus?.destroy();
+        this.ffmpeg?.destroy();
+        this.volumeTransformer?.destroy();
+        this.stream?.destroy();
+        this.encoded?.destroy();
+        this.audioResource = null;
+        this.collector.stop();
+        if (this.behavior.loop) {
+          let lastSong = this.songList.shift();
+          this.songList.push(lastSong);
+        } else if (!this.behavior.repeat) {
+          this.songList.shift();
+        }
+        this.audioPlayer.removeAllListeners("stateChange");
+        if (this.songList.length === 0) {
+          this.stop();
+        } else {
+          this._getStream(this.songList[0].url);
+        }
+      }
     });
   }
 }
