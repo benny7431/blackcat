@@ -317,11 +317,11 @@ class Player {
       channels: 2,
       frameSize: 960
     });
-    this.stream
+    let opusEncoded = this.stream
       .pipe(this.ffmpeg)
       .pipe(this.volumeTransformer)
       .pipe(this.opus);
-    this._playStream();
+    this._playStream(opusEncoded);
   }
 
   /**
@@ -332,7 +332,7 @@ class Player {
   async _playStream(stream) {
     this.client.log(`${this.guild.name} Start playing stream`);
     let song = this.songList[0];
-    this.audioResource = voice.createAudioResource(this.stream, {
+    this.audioResource = voice.createAudioResource(stream, {
       inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.audioResource);
