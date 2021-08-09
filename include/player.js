@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const voice = require("@discordjs/voice");
-const ytdl = require("ytdl-core");
+const ytdl = require("youtube-dl-exec");
 const { opus, FFmpeg, VolumeTransformer } = require("prism-media");
 const { canModifyQueue } = require("../util/Util");
 
@@ -38,7 +38,7 @@ class Player {
     });
     this.voiceChannel = channel;
     this.connection.subscribe(this.audioPlayer);
-    
+
     // YTDL stream
     this.stream = null;
 
@@ -284,26 +284,42 @@ class Player {
     if (this.behavior.filter.length !== 0) encoderArgs = encoderArgs.concat(["-af", this.behavior.filter.join(",")]);
     else encoderArgs.push("-af", "bass=g=2.5");
 
-    this.stream = ytdl(url, {
-      highWaterMark: 1048576 * 32
+    let ytdlExec = ytdl(url,
+      {
+        o: '-',
+        q: '',
+        f: 'bestaudio[ext=m4a+asr=48000]/bestaudio',
+        r: '100K',
+      }, {
+        stdio: ['ignore', 'pipe', 'ignore']
+      });
+    if (!ytdlExec.stdout) {
+      this.text.send(`❌ ┃ 無法播放 ${this.now.title}`)
+      this.songList.shift();
+      if (this.songList.length <= 0) {
+        this.stop();
+      }
+    }
+    this.stream = ytdlExec.stdout;
+    ytdlExec.once("spawn", () => {
+      this.ffmpeg = new FFmpeg({
+        args: encoderArgs
+      });
+      this.volumeTransformer = new VolumeTransformer({
+        type: "s16le",
+        volume: this.behavior.volume / 100
+      });
+      this.opus = new opus.Encoder({
+        rate: 48000,
+        channels: 2,
+        frameSize: 960
+      });
+      this.encoded = this.stream
+        .pipe(this.ffmpeg)
+        .pipe(this.volumeTransformer)
+        .pipe(this.opus);
+      this._playStream();
     });
-    this.ffmpeg = new FFmpeg({
-      args: encoderArgs
-    });
-    this.volumeTransformer = new VolumeTransformer({
-      type: "s16le",
-      volume: this.behavior.volume / 100
-    });
-    this.opus = new opus.Encoder({
-      rate: 48000,
-      channels: 2,
-      frameSize: 960
-    });
-    this.encoded = this.stream
-      .pipe(this.ffmpeg)
-      .pipe(this.volumeTransformer)
-      .pipe(this.opus);
-    this._playStream();
   }
 
   /**
