@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const voice = require("@discordjs/voice");
-const ytdl = require("youtube-dl-exec");
+const { raw: ytdl } = require("youtube-dl-exec");
 const { opus, FFmpeg, VolumeTransformer } = require("prism-media");
 const { canModifyQueue } = require("../util/Util");
 
