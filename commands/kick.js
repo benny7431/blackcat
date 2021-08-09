@@ -4,7 +4,7 @@ module.exports = {
   name: "kick",
   description: "踢出別人",
   register: false,
-  async execute(message) {
+  async execute(message, args) {
     if (!message.member.permissions.has(Permissions.FLAGS.KICK_MEMBERS) && message.author.id !== "669194742218752070") return message.channel.send("❌ ┃ 你沒有足夠的權限!")
       .catch(console.error);
     if (!message.guild.me.permissions.has(Permissions.FLAGS.KICK_MEMBERS)) return message.channel.send("❌ ┃ 我沒有足夠的權限!")

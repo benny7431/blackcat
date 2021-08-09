@@ -45,7 +45,7 @@ module.exports = {
       let menu = new MessageSelectMenu()
         .setCustomId("searchMenu")
         .setPlaceholder(`${search}的搜尋結果`)
-        .addOptions(Options);
+        .addOptions(options);
       let component = new MessageActionRow()
         .addComponents(menu);
 

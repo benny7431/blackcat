@@ -286,11 +286,13 @@ class Player {
 
     let ytdlExec = ytdl(url,
       {
-        o: '-',
-        q: '',
-        f: 'bestaudio[ext=webm+asr=48000]/bestaudio'
+        "o": "-",
+        "q": "",
+        "f": "bestaudio",
+        "x": "",
+        "no-playlist": ""
       }, {
-        stdio: ['ignore', 'pipe', 'ignore']
+        stdio: ["ignore", "pipe", "ignore"]
       });
     if (!ytdlExec.stdout) {
       this.text.send(`❌ ┃ 無法播放 ${this.now.title}`);
@@ -404,78 +406,78 @@ class Player {
       });
 
       switch (btn.customId) {
-        case "skip":
-          this.behavior.playing = true;
-          this.skip();
+      case "skip":
+        this.behavior.playing = true;
+        this.skip();
+        btn.reply({
+          content: "<:skip:827734282318905355> ┃ 跳過歌曲",
+          ephemeral: true
+        }).catch(console.error);
+        break;
+
+      case "pause":
+        if (this.behavior.playing) {
+          this.behavior.playing = !this.behavior.playing;
+          this.pause();
           btn.reply({
-            content: "<:skip:827734282318905355> ┃ 跳過歌曲",
+            content: "<:pause:827737900359745586> ┃ 歌曲暫停!",
             ephemeral: true
           }).catch(console.error);
-          break;
-
-        case "pause":
-          if (this.behavior.playing) {
-            this.behavior.playing = !this.behavior.playing;
-            this.pause();
-            btn.reply({
-              content: "<:pause:827737900359745586> ┃ 歌曲暫停!",
-              ephemeral: true
-            }).catch(console.error);
-          } else {
-            this.behavior.playing = !this.behavior.playing;
-            this.resume();
-            btn.reply({
-              content: "<:play:827734196243398668> ┃ 繼續播放歌曲!",
-              ephemeral: true
-            }).catch(console.error);
-          }
-          break;
-
-        case "mute":
-          if (this.behavior.volume <= 0) {
-            this.behavior.volume = 60;
-            this.volumeTransformer.setVolumeLogarithmic(60 / 100);
-            btn.reply({
-              content: "<:vol_up:827734772889157722> ┃ 解除靜音音樂",
-              ephemeral: true
-            }).catch(console.error);
-          } else {
-            this.behavior.volume = 0;
-            this.volumeTransformer.setVolumeLogarithmic(0);
-            btn.reply({
-              content: "<:mute:827734384606052392> ┃ 靜音音樂",
-              ephemeral: true
-            }).catch(console.error);
-          }
-          break;
-
-        case "vol_down":
-          if (this.behavior.volume - 10 <= 0) this.behavior.volume = 0;
-          else this.behavior.volume = this.behavior.volume - 10;
-          this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
+        } else {
+          this.behavior.playing = !this.behavior.playing;
+          this.resume();
           btn.reply({
-            content: `<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${this.behavior.volume}%`,
+            content: "<:play:827734196243398668> ┃ 繼續播放歌曲!",
             ephemeral: true
           }).catch(console.error);
-          break;
+        }
+        break;
 
-        case "vol_up":
-          if (this.behavior.volume + 10 >= 100) this.behavior.volume = 100;
-          else this.behavior.volume = this.behavior.volume + 10;
-          this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
+      case "mute":
+        if (this.behavior.volume <= 0) {
+          this.behavior.volume = 60;
+          this.volumeTransformer.setVolumeLogarithmic(60 / 100);
           btn.reply({
-            content: `<:vol_up:827734772889157722> ┃ 音量上升，目前音量: ${this.behavior.volume}%`,
+            content: "<:vol_up:827734772889157722> ┃ 解除靜音音樂",
             ephemeral: true
           }).catch(console.error);
-          break;
-
-        case "stop":
-          this.stop();
+        } else {
+          this.behavior.volume = 0;
+          this.volumeTransformer.setVolumeLogarithmic(0);
           btn.reply({
-            content: "<:stop:827734840891015189> ┃ 歌曲停止!",
+            content: "<:mute:827734384606052392> ┃ 靜音音樂",
             ephemeral: true
           }).catch(console.error);
-          break;
+        }
+        break;
+
+      case "vol_down":
+        if (this.behavior.volume - 10 <= 0) this.behavior.volume = 0;
+        else this.behavior.volume = this.behavior.volume - 10;
+        this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
+        btn.reply({
+          content: `<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${this.behavior.volume}%`,
+          ephemeral: true
+        }).catch(console.error);
+        break;
+
+      case "vol_up":
+        if (this.behavior.volume + 10 >= 100) this.behavior.volume = 100;
+        else this.behavior.volume = this.behavior.volume + 10;
+        this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
+        btn.reply({
+          content: `<:vol_up:827734772889157722> ┃ 音量上升，目前音量: ${this.behavior.volume}%`,
+          ephemeral: true
+        }).catch(console.error);
+        break;
+
+      case "stop":
+        this.stop();
+        btn.reply({
+          content: "<:stop:827734840891015189> ┃ 歌曲停止!",
+          ephemeral: true
+        }).catch(console.error);
+        break;
       }
     });
 
