@@ -95,3 +95,11 @@ jobs:
       uses: github/codeql-action/autobuild@v1
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
+  codecov:
+    name: Codecov
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
