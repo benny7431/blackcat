@@ -294,7 +294,7 @@ class Player {
         stdio: ['ignore', 'pipe', 'ignore']
       });
     if (!ytdlExec.stdout) {
-      this.text.send(`❌ ┃ 無法播放 ${this.now.title}`)
+      this.text.send(`❌ ┃ 無法播放 ${this.now.title}`);
       this.songList.shift();
       if (this.songList.length <= 0) {
         this.stop();
