@@ -288,8 +288,7 @@ class Player {
       {
         o: '-',
         q: '',
-        f: 'bestaudio[ext=m4a+asr=48000]/bestaudio',
-        r: '100K',
+        f: 'bestaudio[ext=aac+asr=48000]/bestaudio'
       }, {
         stdio: ['ignore', 'pipe', 'ignore']
       });
