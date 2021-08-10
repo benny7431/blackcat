@@ -286,6 +286,9 @@ class Player {
     });
 
     let encoderArgs = [
+      "-reconnect", "1",
+      "-reconnect_at_eof", "1",
+      "-reconnect_streamed", "1",
       "-analyzeduration", "0",
       "-loglevel", "0",
       "-i", matchUrl,
