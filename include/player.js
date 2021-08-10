@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const voice = require("@discordjs/voice");
-const { raw: ytdl } = require("youtube-dl-exec");
+const { getInfo } = require("ytdl-core");
 const { opus, FFmpeg, VolumeTransformer } = require("prism-media");
 const { canModifyQueue } = require("../util/Util");
 
@@ -71,7 +71,6 @@ class Player {
 
     // Converts
     this.opus = null;
-    this.ffmpeg = null;
     this.volumeTransformer = null;
 
     // Controller
@@ -274,52 +273,48 @@ class Player {
   async _getStream(url) {
     this.client.log(`${this.guild.name} Getting stream`);
     this.now = this.songList[0];
+
+    let videoURLs = await getInfo(url).formats;
+    let found = false;
+    let matchUrl = null;
+    videoURLs.forEach(streamUrl => {
+      if (found) return;
+      if (!streamUrl.hasAudio) return;
+      
+      matchUrl = streamUrl;
+      found = true;
+    });
+
     let encoderArgs = [
+      "-reconnect", "1",
+      "-reconnect_streamed", "1",
+      "-reconnect_delay_max", "5",
       "-analyzeduration", "0",
       "-loglevel", "0",
       "-f", "s16le",
       "-ar", "48000",
       "-ac", "2",
+      "-i", matchUrl
     ];
     if (this.behavior.filter.length !== 0) encoderArgs = encoderArgs.concat(["-af", this.behavior.filter.join(",")]);
     else encoderArgs.push("-af", "bass=g=2.5");
 
-    let ytdlExec = ytdl(url,
-      {
-        "o": "-",
-        "q": "",
-        "f": "bestaudio",
-        "no-playlist": ""
-      }, {
-        stdio: ["ignore", "pipe", "ignore"]
-      });
-    if (!ytdlExec.stdout) {
-      this.text.send(`❌ ┃ 無法播放 ${this.now.title}`);
-      this.songList.shift();
-      if (this.songList.length <= 0) {
-        this.stop();
-      }
-    }
-    this.stream = ytdlExec.stdout;
-    ytdlExec.once("spawn", () => {
-      this.ffmpeg = new FFmpeg({
-        args: encoderArgs
-      });
-      this.volumeTransformer = new VolumeTransformer({
-        type: "s16le",
-        volume: this.behavior.volume / 100
-      });
-      this.opus = new opus.Encoder({
-        rate: 48000,
-        channels: 2,
-        frameSize: 960
-      });
-      this.encoded = this.stream
-        .pipe(this.ffmpeg)
-        .pipe(this.volumeTransformer)
-        .pipe(this.opus);
-      this._playStream();
+    this.stream = new FFmpeg({
+      args: encoderArgs
     });
+    this.volumeTransformer = new VolumeTransformer({
+      type: "s16le",
+      volume: this.behavior.volume / 100
+    });
+    this.opus = new opus.Encoder({
+      rate: 48000,
+      channels: 2,
+      frameSize: 960
+    });
+    this.encoded = this.stream
+      .pipe(this.volumeTransformer)
+      .pipe(this.opus);
+    this._playStream();
   }
 
   /**
@@ -488,7 +483,6 @@ class Player {
       this.client.log(`${this.guild.name} State changed ${oldState.status} => ${newState.status}`);
       if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
         this.opus?.destroy();
-        this.ffmpeg?.destroy();
         this.volumeTransformer?.destroy();
         this.stream?.destroy();
         this.encoded?.destroy();
