@@ -276,10 +276,14 @@ class Player {
 
     let videoInfo = await getInfo(url);
     let matchUrl = null;
+    let found = false;
     videoInfo.formats.forEach(streamUrl => {
-      if (streamUrl.hasAudio) matchUrl = streamUrl.url;
+      if (found) return;
+      if (streamUrl.hasAudio) {
+        found = true;
+        matchUrl = streamUrl.url;
+      }
     });
-    console.log(matchUrl);
 
     let encoderArgs = [
       "-analyzeduration", "0",
