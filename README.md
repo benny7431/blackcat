@@ -51,7 +51,7 @@
     heroku stack:set heroku:20
     ```
 - 新增Node.js Buildpack
-  - ````sh
+  - ```sh
     heroku buildpacks:set heroku/nodejs
     ```
 - 部署程式

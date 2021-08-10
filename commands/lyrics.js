@@ -50,12 +50,12 @@ module.exports = {
     if (lyricsEmbed.description.length > 2048)
       lyricsEmbed.description = `${lyricsEmbed.description.substr(0, 2000)}...`;
     if (sent) sent.edit({
-        embeds: [lyricsEmbed]
-      })
+      embeds: [lyricsEmbed]
+    })
       .catch(console.error);
     else message.slash.edit({
-        embeds: [lyricsEmbed]
-      })
+      embeds: [lyricsEmbed]
+    })
       .catch(console.error);
   }
 };

@@ -22,5 +22,5 @@ then
   wget -O nodejs.deb https://deb.nodesource.com/node_16.x/pool/main/n/nodejs/nodejs_16.6.1-deb-1nodesource1_amd64.deb
   sudo apt install ./nodejs.deb
 else
-  pm2-runtime --secret "$PM2_SECRET" --public "$PM2_PUBLIC" --machine-name "Black cat Server" --deep-monitoring start /home/process.json
+  pm2-runtime --secret "$PM2_SECRET" --public "$PM2_PUBLIC" --machine-name "Black cat Server" --deep-monitoring start process.json
 fi
