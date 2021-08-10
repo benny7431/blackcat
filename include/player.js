@@ -282,15 +282,12 @@ class Player {
     console.log(matchUrl);
 
     let encoderArgs = [
-      "-reconnect", "1",
-      "-reconnect_streamed", "1",
-      "-reconnect_delay_max", "5",
       "-analyzeduration", "0",
       "-loglevel", "0",
+      "-i", matchUrl,
       "-f", "s16le",
       "-ar", "48000",
-      "-ac", "2",
-      "-i", matchUrl
+      "-ac", "2"
     ];
     if (this.behavior.filter.length !== 0) encoderArgs = encoderArgs.concat(["-af", this.behavior.filter.join(",")]);
     else encoderArgs.push("-af", "bass=g=2.5");
