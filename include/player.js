@@ -289,7 +289,6 @@ class Player {
         "o": "-",
         "q": "",
         "f": "bestaudio",
-        "x": "",
         "no-playlist": ""
       }, {
         stdio: ["ignore", "pipe", "ignore"]
