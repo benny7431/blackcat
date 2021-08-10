@@ -275,14 +275,10 @@ class Player {
     this.now = this.songList[0];
 
     let videoInfo = await getInfo(url);
-    let found = false;
     let matchUrl = null;
     videoInfo.formats.forEach(streamUrl => {
-      if (found) return;
       if (!streamUrl.hasAudio) return;
-      
       matchUrl = streamUrl;
-      found = true;
     });
 
     let encoderArgs = [
