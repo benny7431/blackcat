@@ -277,9 +277,9 @@ class Player {
     let videoInfo = await getInfo(url);
     let matchUrl = null;
     videoInfo.formats.forEach(streamUrl => {
-      if (!streamUrl.hasAudio) return;
-      matchUrl = streamUrl.url;
+      if (streamUrl.hasAudio) matchUrl = streamUrl.url;
     });
+    console.log(matchUrl);
 
     let encoderArgs = [
       "-reconnect", "1",
