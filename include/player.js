@@ -278,7 +278,7 @@ class Player {
     let matchUrl = null;
     videoInfo.formats.forEach(streamUrl => {
       if (!streamUrl.hasAudio) return;
-      matchUrl = streamUrl;
+      matchUrl = streamUrl.url;
     });
 
     let encoderArgs = [
