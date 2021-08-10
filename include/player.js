@@ -274,10 +274,10 @@ class Player {
     this.client.log(`${this.guild.name} Getting stream`);
     this.now = this.songList[0];
 
-    let videoURLs = await getInfo(url).formats;
+    let videoInfo = await getInfo(url);
     let found = false;
     let matchUrl = null;
-    videoURLs.forEach(streamUrl => {
+    videoInfo.formats.forEach(streamUrl => {
       if (found) return;
       if (!streamUrl.hasAudio) return;
       
