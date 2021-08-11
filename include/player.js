@@ -75,6 +75,10 @@ class Player {
 
     // Controller
     this.collector = null;
+    
+    // Lock vers
+    this.disconnected = false;
+    this.recivedEvent = false;
   }
 
   /**
@@ -175,11 +179,12 @@ class Player {
    * Destroy voice connection
    */
   destroy() {
-    if (this.collector) this.collector.stop();
+    this.collector?.stop();
     this.songList = [];
     this.audioPlayer.stop();
     if (this.voiceChannel.stageInstance) this.voiceChannel.stageInstance.delete();
-    this.connection.destroy();
+    if (!this.disconnected) this.connection.destroy();
+    this.disconnected = true;
     this.client.players.delete(this.text.guildId);
     this.client.log(`${this.guild.name} Queue ended`);
   }
@@ -326,6 +331,7 @@ class Player {
       inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.audioResource);
+    this.recivedEvent = false;
     if (this.voiceChannel.type === "GUILD_STAGE_VOICE") this.voiceChannel.stageInstance
       .setTopic(`🎶 ${this.now.title.substr(0, 112)}`)
       .catch((error) => {
@@ -479,6 +485,8 @@ class Player {
     this.audioPlayer.on("stateChange", (oldState, newState) => {
       this.client.log(`${this.guild.name} State changed ${oldState.status} => ${newState.status}`);
       if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
+        if (this.recivedEvent) return this.audioPlayer.removeAllListeners("stateChange");
+        this.audioPlayer.removeAllListeners("stateChange");
         this.opus?.destroy();
         this.volumeTransformer?.destroy();
         this.stream?.destroy();
@@ -491,7 +499,6 @@ class Player {
         } else if (!this.behavior.repeat) {
           this.songList.shift();
         }
-        this.audioPlayer.removeAllListeners("stateChange");
         if (this.songList.length === 0) {
           this.stop();
         } else {
