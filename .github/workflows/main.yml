@@ -73,6 +73,8 @@ jobs:
       run: npm i yarn -g
     - name: Install packages
       run: yarn
+    - name: Run build command
+      run: yarn run build
     - name: Test syntax
       run: bash bootstrap.sh test
   analyze:
@@ -93,4 +95,3 @@ jobs:
       uses: github/codeql-action/autobuild@v1
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
-

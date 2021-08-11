@@ -11,12 +11,13 @@ then
   node --check index.js
   node --check util/Util.js
   node --check include/player.js
-elif [ "$1" == "release" ]
-then
-  echo "您已成功部署黑貓!"
 elif [ "$1" == "build" ]
 then
   npm i -g pm2
+  wget -O ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+  tar -xvf ffmpeg.tar.xz
+  cp ffmpeg-4.4-amd64-static/ffmpeg ./ffmpeg
+  rm -rf ffmpeg.tar.xz ffmpeg-4.4-amd64-static
 elif ["$1" == "setup" ]
 then
   wget -O nodejs.deb https://deb.nodesource.com/node_16.x/pool/main/n/nodejs/nodejs_16.6.1-deb-1nodesource1_amd64.deb
