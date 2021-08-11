@@ -14,7 +14,7 @@ then
 elif [ "$1" == "build" ]
 then
   npm i -g pm2
-  wget -O ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+  curl -L -o ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
   tar -xvf ffmpeg.tar.xz
   cp ffmpeg-4.4-amd64-static/ffmpeg ./ffmpeg
   rm -rf ffmpeg.tar.xz ffmpeg-4.4-amd64-static
