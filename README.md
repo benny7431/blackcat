@@ -2,6 +2,7 @@
 ![GitHub Last commit](https://img.shields.io/github/last-commit/Discord-cat-dev/blackcat?color=%23181717&logo=GitHub&style=for-the-badge)
 ![GitHub License](https://img.shields.io/github/license/Discord-cat-dev/blackcat?color=%23F05032&logo=git&style=for-the-badge)
 ![CodeFactor](https://img.shields.io/codefactor/grade/github/Discord-cat-dev/blackcat/main?color=%23F44A6A&logo=codefactor&style=for-the-badge)
+![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/Discord-cat-dev/blackcat?color=%234C4A73&label=Synk%20Vulnerabilities&logo=snyk&style=for-the-badge)
 ![NodeJS](https://img.shields.io/badge/Node.js-%2343853D.svg?style=for-the-badge&logo=node.js&logoColor=white)
 
 **注意：此程式碼是為Black cat寫的，自行運行程式碼可能會發生錯誤**
