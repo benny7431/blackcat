@@ -102,3 +102,7 @@ dist
 
 # Tern ports
 .tern-port
+
+# FFmpeg static build temp files
+ffmpeg.tar.xz
+ffmpeg
