@@ -84,11 +84,27 @@
 ***
 
 ### 使用Node.js
-> 使用Windows環境可能會在安裝時發生錯誤，建議使用Ubuntu
 
-- 安裝所需套件
+所需環境:
+```yaml
+Node: >=16.6.0
+Yarn: >=1.22.10
+```
+> 使用Windows環境會在安裝時發生錯誤，請使用Linux環境
+
+- 所需套件:
+  - make
+  - automake
+  - autoconf
+  - python3
+  - g++
+  - libtool
+  - curl
+  - tar
+- 安裝套件
   - ```sh
-    npm install
+    yarn install
+    yarn run build
     ```
 - 將 `example.env` 裡的變數填寫完畢並重新命名該檔案成 `.env`
 - 啟動機器人

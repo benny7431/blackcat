@@ -24,7 +24,8 @@ class Player {
       playing: true,
       loop: false,
       repeat: false,
-      filter: []
+      filter: [],
+      mutedVolume: null
     };
 
     // Player
@@ -162,7 +163,7 @@ class Player {
    * Stop player
    */
   stop() {
-    this.text.send("👌 ┃ 播放完畢");
+    this.text.send("👌 ┃ 播放清單播放完畢");
     this.destroy();
   }
 
@@ -279,7 +280,24 @@ class Player {
     this.client.log(`${this.guild.name} Getting stream`);
     this.now = this.songList[0];
 
-    let videoInfo = await getInfo(url);
+    let videoInfo = null;
+    let streamUrl = null;
+    try {
+      videoInfo = await getInfo(url);
+    } catch (error) {
+      if (error.message.includes("private") || error.message.includes("403")) {
+        this.text.send("❌ ┃ 無法播放私人影片");
+      } else if (error.message.includes("429")) {
+        this.text.send("❌ ┃ 發生YouTube API錯誤...");
+      } else if (error.message.includes("404")) {
+        this.text.send("❌ ┃ 找不到影片或YouTube API已更新，請等待機器人更新!");
+      } else {
+        this.text.send("❌ ┃ 發生未知的錯誤");
+      }
+      
+      this.client.log(`${this.guild.name} ${error.message}`);
+      this.skip();
+    }
     let matchUrl = null;
     let found = false;
     videoInfo.formats.forEach(streamUrl => {
@@ -291,15 +309,24 @@ class Player {
     });
 
     let encoderArgs = [
+      "-reconnect", "1",
+      "-reconnect_at_eof", "1",
+      "-reconnect_streamed", "1",
+      "-reconnect_delay_max", "5",
       "-analyzeduration", "0",
       "-loglevel", "0",
       "-i", matchUrl,
       "-f", "s16le",
-      "-ar", "48000",
-      "-ac", "2"
+      "-af", "48000",
+      "-ac", "2",
+      "-b:a", "192k"
     ];
-    if (this.behavior.filter.length !== 0) encoderArgs = encoderArgs.concat(["-af", this.behavior.filter.join(",")]);
-    else encoderArgs.push("-af", "bass=g=2.5");
+    if (this.behavior.filter.length !== 0) {
+      encoderArgs = encoderArgs.concat(["-af", this.behavior.filter.join(",")]);
+    }
+    else {
+      encoderArgs.push("-af", "bass=g=2.5");
+    }
 
     this.stream = new FFmpeg({
       args: encoderArgs
@@ -331,6 +358,7 @@ class Player {
       inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.audioResource);
+    this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume);
     this.recivedEvent = false;
     if (this.voiceChannel.type === "GUILD_STAGE_VOICE") this.voiceChannel.stageInstance
       .setTopic(`🎶 ${this.now.title.substr(0, 112)}`)
@@ -414,6 +442,17 @@ class Player {
 
       case "pause":
         if (this.behavior.playing) {
+          pauseBtn
+            .setLabel("繼續")
+            .setEmoji("827734196243398668");
+          playControl = new Discord.MessageActionRow()
+            .addComponents(skipBtn)
+            .addComponents(pauseBtn)
+            .addComponents(stopBtn);
+          controller.edit({
+            embeds: [embed],
+            components: [playControl, volumeControl]
+          }).catch(console.error);
           this.behavior.playing = !this.behavior.playing;
           this.pause();
           btn.reply({
@@ -421,6 +460,17 @@ class Player {
             ephemeral: true
           }).catch(console.error);
         } else {
+          pauseBtn
+            .setLabel("暫停")
+            .setEmoji("827737900359745586");
+          playControl = new Discord.MessageActionRow()
+            .addComponents(skipBtn)
+            .addComponents(pauseBtn)
+            .addComponents(stopBtn);
+          controller.edit({
+            embeds: [embed],
+            components: [playControl, volumeControl]
+          }).catch(console.error);
           this.behavior.playing = !this.behavior.playing;
           this.resume();
           btn.reply({
@@ -432,15 +482,28 @@ class Player {
 
       case "mute":
         if (this.behavior.volume <= 0) {
-          this.behavior.volume = 60;
+          this.behavior.volume = this.behavior.mutedVolume;
+          this.behavior.mutedVolume = null;
           this.volumeTransformer.setVolumeLogarithmic(60 / 100);
           btn.reply({
             content: "<:vol_up:827734772889157722> ┃ 解除靜音音樂",
             ephemeral: true
           }).catch(console.error);
         } else {
+          this.behavior.mutedVolume = this.behavior.volume;
           this.behavior.volume = 0;
           this.volumeTransformer.setVolumeLogarithmic(0);
+          volupBtn.setDisabled(true);
+          voldownBtn.setDisabled(true);
+          muteBtn.setLabel("解除靜音");
+          let volumeControl = new Discord.MessageActionRow()
+            .addComponents(voldownBtn)
+            .addComponents(muteBtn)
+            .addComponents(volupBtn);
+          controller.edit({
+            embeds: [embed],
+            components: [playControl, volumeControl]
+          }).catch(console.error);
           btn.reply({
             content: "<:mute:827734384606052392> ┃ 靜音音樂",
             ephemeral: true
@@ -452,6 +515,9 @@ class Player {
         if (this.behavior.volume - 10 <= 0) this.behavior.volume = 0;
         else this.behavior.volume = this.behavior.volume - 10;
         this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
+        if (this.behavior.volume === 0) {
+          voldownBtn.setDisabled(true);
+        }
         btn.reply({
           content: `<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${this.behavior.volume}%`,
           ephemeral: true
@@ -459,7 +525,9 @@ class Player {
         break;
 
       case "vol_up":
-        if (this.behavior.volume + 10 >= 100) this.behavior.volume = 100;
+        if (this.behavior.volume + 10 >= 100) {
+          this.behavior.volume = 100;
+        }
         else this.behavior.volume = this.behavior.volume + 10;
         this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
         btn.reply({
