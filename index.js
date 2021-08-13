@@ -224,7 +224,30 @@ client.on("guildDelete", guild => {
 });
 
 client.on("interactionCreate", interaction => {
-  if (!interaction.isCommand()) return;
+  if (interaction.isContextMenu()) {
+    if (!interaction.inGuild()) return interaction.reply("❌ ┃ 請在伺服器中執行指令!");
+    let player = client.players.get(interaction);
+    if (!player) return interaction.reply({
+      content: "❌ ┃ 目前沒有任何音樂正在播放!",
+      ephemeral: true
+    }).catch(console.error);
+    let { canModifyQueue } = require("./util/Util");
+    if (!canModifyQueue(interaction.member)) return interaction.reply({
+      content: "❌ ┃ 你必須跟我在同一個頻道裡!",
+      ephemeral: true
+    }).catch(console.error);
+    switch (interaction.commandName) {
+      case "暫停音樂":
+        if (!player.playing) return interaction.reply({
+          content: "❌ ┃ 音樂已經暫停了!",
+          ephemeral: true
+        }).catch(console.error);
+        player.pause();
+        interaction.reply("<:pause:827737900359745586> ┃ 暫停音樂")
+        break;
+    }
+  }
+  else if (!interaction.isCommand()) return;
   if (!interaction.inGuild()) return interaction.reply("❌ ┃ 請在伺服器裡傳送指令!").catch(console.error);
   if (!interaction.guild) return interaction.reply("❌ ┃ 黑貓必須要在你的伺服器裡!").catch(console.error);
   if (!interaction.channel.permissionsFor(interaction.guild.me).has([

@@ -19,7 +19,9 @@ module.exports = {
       .setTitle(`${message.author.username}殺了${message.mentions.members.size >= 1 ? message.mentions.members.first().displayName : args.join(" ")}`)
       .setDescription(`${args.join(" ")}請安息`)
       .setColor("BLURPLE");
-    return message.channel.send(embed)
+    return message.channel.send({
+      embeds: [embed]
+    })
       .catch(console.error);
   }
 };
