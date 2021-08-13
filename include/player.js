@@ -597,10 +597,10 @@ class Player {
     this.collector.on("end", async () => {
       controller.delete().catch(console.error);
     });
-    
-    function handelUpdate(oldState, newState) {
+
+    this.audioPlayer.on("stateChange", (oldState, newState) => {
       if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
-        this.audioPlayer.removeListener("stateChange", this._handelChange);
+        this.audioPlayer.removeAllListener();
         this.opus?.destroy();
         this.volumeTransformer?.destroy();
         this.stream?.destroy();
@@ -619,9 +619,7 @@ class Player {
           this._getStream(this.songList[0].url);
         }
       }
-    }
-
-    this.audioPlayer.on("stateChange", handelUpdate);
+    });
   }
 }
 
