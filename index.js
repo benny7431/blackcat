@@ -327,7 +327,7 @@ client.on("interactionCreate", interaction => {
 client.on("voiceStateUpdate", (oldState, newState) => {
   let player = client.players.get(oldState.guild.id);
   if (!player) return;
-  let voiceChannel = oldState.guild.me.voice;
+  let voiceChannel = oldState.guild.me.voice.channel;
   let voiceMembers = voiceChannel.members.filter(member => !member.user.bot);
   if (voiceMembers.size <= 0) {
     setTimeout(() => {
