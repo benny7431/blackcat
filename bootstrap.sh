@@ -17,7 +17,7 @@ then
   echo "Installing pm2..."
   yarn global add pm2 --production=true --silent
   echo "Downloading latest ffmpeg static build..."
-  curl -L -s -o ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+  curl -L -o ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
   echo "Extracting..."
   tar -xf ffmpeg.tar.xz
   echo "Copying ffmpeg..."
