@@ -243,7 +243,7 @@ client.on("interactionCreate", interaction => {
           ephemeral: true
         }).catch(console.error);
         player.pause();
-        interaction.reply("<:pause:827737900359745586> ┃ 暫停音樂")
+        interaction.reply("<:pause:827737900359745586> ┃ 暫停音樂");
         break;
     }
   }
