@@ -178,7 +178,7 @@ client.on("messageCreate", async (message) => {
     let embed = new Discord.MessageEmbed()
       .setTitle("❌ ┃ 執行時發生錯誤")
       .setDescription(`\`${error.message}\``)
-      .setFooter("所有的錯誤都會自動回報給開發者")
+      .setFooter("所有的錯誤都會自動回報給開發者");
     message.channel.send({
       embeds: [embed]
     }).catch(console.error);
@@ -316,7 +316,7 @@ client.on("interactionCreate", interaction => {
     let embed = new Discord.MessageEmbed()
       .setTitle("❌ ┃ 執行時發生錯誤")
       .setDescription(`\`${error.message}\``)
-      .setFooter("所有的錯誤都會自動回報給開發者")
+      .setFooter("所有的錯誤都會自動回報給開發者");
     message.channel.send({
       embeds: [embed]
     }).catch(console.error);
@@ -335,7 +335,7 @@ client.on("voiceStateUpdate", (oldState, newState) => {
         player.textChannel.send("🎈 ┃ 頻道裡面已經沒人了，所以我離開了語音頻道");
         player.destory();
       }
-    }, 30000)
+    }, 30000);
   }
 });
 
