@@ -103,6 +103,9 @@ class Player {
         this.destroy();
         reject();
       }
+      this.audioPlayer.on("stateChange", (oldState, newState) => {
+        this.client.log(`${this.guild.name} State changed ${oldState.status} => ${newState.status}`);
+      });
       this._getStream(this.songList[0].url);
       reslove();
     });
@@ -604,7 +607,6 @@ class Player {
    * @param {Object} newState New voice state
    */
   _handelChange(oldState, newState) {
-    this.client.log(`${this.guild.name} State changed ${oldState.status} => ${newState.status}`);
     if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
       this.audioPlayer.removeListener("stateChange", this._handelChange);
       this.opus?.destroy();
