@@ -600,7 +600,7 @@ class Player {
 
     this.audioPlayer.on("stateChange", (oldState, newState) => {
       if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
-        this.audioPlayer.removeAllListener();
+        this.audioPlayer.removeAllListeners();
         this.opus?.destroy();
         this.volumeTransformer?.destroy();
         this.stream?.destroy();
