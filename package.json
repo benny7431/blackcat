@@ -8,7 +8,7 @@
   "homepage": "https://blackcatbot.tk",
   "engines": {
     "node": ">=16.6.1",
-    "yarn": ">=1.22.10"
+    "yarn": ">=3.0.1"
   },
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
