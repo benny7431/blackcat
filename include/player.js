@@ -357,7 +357,7 @@ class Player {
       inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.audioResource);
-    this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume);
+    this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
     if (this.voiceChannel.type === "GUILD_STAGE_VOICE") this.voiceChannel.stageInstance
       .setTopic(`🎶 ${this.now.title.substr(0, 112)}`)
       .catch((error) => {
