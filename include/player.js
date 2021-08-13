@@ -370,19 +370,18 @@ class Player {
     let embed = new Discord.MessageEmbed()
       .setColor("BLURPLE")
       .setTitle("🎵 音樂已開始")
-      .setDescription(
-        `<:music:825646714404077569> ┃ 正在播放 [${Discord.Util.escapeMarkdown(song.title)}](${song.url})` +
-        "\n\n[🎛️ 於網頁面板上控制]](https://app.blackcatbot.tk/?server=" + this.text.guild.id + ")")
+      .setDescription(`<:music:825646714404077569> ┃ 正在播放 [${Discord.Util.escapeMarkdown(song.title)}](${song.url})`)
       .setThumbnail(song.thumbnail)
-      .addField("🔊 目前音量", `${this.behavior.volume}`, true);
+      .addField("🔊 ┃ 目前音量", `${this.behavior.volume}%`, true);
     if (this.behavior.loop) {
-      embed.addField("🔁 全部重複", "將會重複所有歌曲", true);
+      embed.addField("🔁 ┃ 全部重複", "將會重複所有歌曲", true);
     }
     if (this.behavior.repeat) {
-      embed.addField("🔂 單曲重複", "將會重複目前播放的歌曲", true);
+      embed.addField("🔂 ┃ 單曲重複", "將會重複目前播放的歌曲", true);
     }
-    embed.addField("🕒 歌曲長度", new Date(song.duration * 1000).toISOString().substr(11, 8), true);
-    embed.addField("❓ 點歌者", Discord.Util.escapeMarkdown(song.by), true)
+    embed.addField("🕒 ┃ 歌曲長度", new Date(song.duration * 1000).toISOString().substr(11, 8), true);
+    embed.addField("❓ ┃ 點歌者", Discord.Util.escapeMarkdown(song.by), true);
+    embed.addField("🎛️ ┃ 在網頁上控制音樂", `https://app.blackcatbot.tk/?server=${this.text.guildId}`, true);
 
     let skipBtn = new Discord.MessageButton()
       .setLabel("跳過")
