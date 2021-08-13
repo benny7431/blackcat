@@ -18,7 +18,7 @@ RUN apt-get -qqy update && \
   apt install -qqy ./nodejs.deb && \
   rm -rf nodejs.deb && \
   npm i yarn -g && \
-  yarn && \
+  yarn install && \
   yarn global add pm2
 
 EXPOSE 8080

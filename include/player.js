@@ -536,13 +536,13 @@ class Player {
           else this.behavior.volume = this.behavior.volume - 10;
           volupBtn.setDisabled(false);
           volumeControl = new Discord.MessageActionRow()
-              .addComponents(voldownBtn)
-              .addComponents(muteBtn)
-              .addComponents(volupBtn);
-            controller.edit({
-              embeds: [embed],
-              components: [playControl, volumeControl]
-            }).catch(console.error);
+            .addComponents(voldownBtn)
+            .addComponents(muteBtn)
+            .addComponents(volupBtn);
+          controller.edit({
+            embeds: [embed],
+            components: [playControl, volumeControl]
+          }).catch(console.error);
           this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
           btn.reply({
             content: `<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${this.behavior.volume}%`,

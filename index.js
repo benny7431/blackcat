@@ -175,36 +175,16 @@ client.on("messageCreate", async (message) => {
     command.execute(message, args);
   } catch (error) {
     console.error(error);
-    message.channel.send(`❌ ┃ 執行時出現錯誤:${error.message}`).catch(console.error);
+    let embed = new Discord.MessageEmbed()
+      .setTitle("❌ ┃ 執行時發生錯誤")
+      .setDescription(`\`${error.message}\``)
+      .setFooter("所有的錯誤都會自動回報給開發者")
+    message.channel.send({
+      embeds: [embed]
+    }).catch(console.error);
     message.client.log(`${error.message} (Command:${command.name})`, "error");
   }
 });
-
-/*client.on("voiceStateUpdate", async (oldState, newState) => {
-  try {
-    if (!oldState.channelID && newState.channelID) return;
-    if (!oldState.guild || !newState.guild) return;
-    const queue = client.players.get(oldState.guild.id);
-    if (!queue) return;
-    if (!queue.connection) return;
-    if (!queue.songs.length || queue.songs.length === 0) return;
-    if (queue.channel.members.filter(user => !user.bot).size <= 1) {
-      setTimeout(function() {
-        if (queue.channel.members.filter(user => !user.bot).size <= 1) {
-          queue.textChannel.send("🎈 ┃ 因為頻道裡面已經沒人了，所以我離開了語音頻道").catch(console.error);
-          queue.songs = [];
-          try {
-            queue.stop();
-          } catch (e) {
-            console.log(e.message);
-          }
-        }
-      }, 15000);
-    }
-  } catch (error) {
-    console.log(error);
-  }
-});*/
 
 client.on("guildCreate", async guild => {
   client.user.setPresence({
@@ -310,8 +290,29 @@ client.on("interactionCreate", interaction => {
     command.execute(message, args);
   } catch (error) {
     console.error(error);
-    message.channel.send(`❌ ┃ 執行時出現錯誤:${error.message}`).catch(console.error);
+    let embed = new Discord.MessageEmbed()
+      .setTitle("❌ ┃ 執行時發生錯誤")
+      .setDescription(`\`${error.message}\``)
+      .setFooter("所有的錯誤都會自動回報給開發者")
+    message.channel.send({
+      embeds: [embed]
+    }).catch(console.error);
     message.client.log(`${error.message} (Command:${command.name})`, "error");
+  }
+});
+
+client.on("voiceStateUpdate", (oldState, newState) => {
+  let player = client.players.get(oldState.guild.id);
+  if (!player) return;
+  let voiceChannel = oldState.guild.me.voice;
+  let voiceMembers = voiceChannel.members.filter(member => !member.user.bot);
+  if (voiceMembers.size <= 0) {
+    setTimeout(() => {
+      if (voiceMembers.size <= 0) {
+        player.textChannel.send("🎈 ┃ 頻道裡面已經沒人了，所以我離開了語音頻道");
+        player.destory();
+      }
+    }, 30000)
   }
 });
 
