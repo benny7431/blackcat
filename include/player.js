@@ -597,36 +597,31 @@ class Player {
     this.collector.on("end", async () => {
       controller.delete().catch(console.error);
     });
-
-    this.audioPlayer.on("stateChange", this._handelChange);
-  }
-
-  /**
-   * handel state change
-   * @param {Object} oldState Old voice state
-   * @param {Object} newState New voice state
-   */
-  _handelChange(oldState, newState) {
-    if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
-      this.audioPlayer.removeListener("stateChange", this._handelChange);
-      this.opus?.destroy();
-      this.volumeTransformer?.destroy();
-      this.stream?.destroy();
-      this.encoded?.destroy();
-      this.audioResource = null;
-      this.collector.stop();
-      if (this.behavior.loop) {
-        let lastSong = this.songList.shift();
-        this.songList.push(lastSong);
-      } else if (!this.behavior.repeat) {
-        this.songList.shift();
-      }
-      if (this.songList.length === 0) {
-        this.stop();
-      } else {
-        this._getStream(this.songList[0].url);
+    
+    function handelUpdate(oldState, newState) {
+      if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
+        this.audioPlayer.removeListener("stateChange", this._handelChange);
+        this.opus?.destroy();
+        this.volumeTransformer?.destroy();
+        this.stream?.destroy();
+        this.encoded?.destroy();
+        this.audioResource = null;
+        this.collector.stop();
+        if (this.behavior.loop) {
+          let lastSong = this.songList.shift();
+          this.songList.push(lastSong);
+        } else if (!this.behavior.repeat) {
+          this.songList.shift();
+        }
+        if (this.songList.length === 0) {
+          this.stop();
+        } else {
+          this._getStream(this.songList[0].url);
+        }
       }
     }
+
+    this.audioPlayer.on("stateChange", handelUpdate);
   }
 }
 

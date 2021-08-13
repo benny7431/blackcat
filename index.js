@@ -324,21 +324,6 @@ client.on("interactionCreate", interaction => {
   }
 });
 
-client.on("voiceStateUpdate", (oldState, newState) => {
-  let player = client.players.get(oldState.guild.id);
-  if (!player) return;
-  let voiceChannel = oldState.guild.me.voice.channel;
-  let voiceMembers = voiceChannel.members.filter(member => !member.user.bot);
-  if (voiceMembers.size <= 0) {
-    setTimeout(() => {
-      if (voiceMembers.size <= 0) {
-        player.textChannel.send("🎈 ┃ 頻道裡面已經沒人了，所以我離開了語音頻道");
-        player.destroy();
-      }
-    }, 30000);
-  }
-});
-
 app.get("/", (req, res) => {
   res.sendFile(join(__dirname, "static", "200.html"));
 });
