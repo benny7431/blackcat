@@ -595,19 +595,18 @@ class Player {
       controller.delete().catch(console.error);
     });
 
-    this.audioPlayer.on("stateChange", (oldState, newState) => this.handelChange(oldState, newState));
+    this.audioPlayer.on("stateChange", this._handelChange);
   }
 
   /**
    * handel state change
    * @param {Object} oldState Old voice state
    * @param {Object} newState New voice state
-   * @private
    */
-  handelChange(oldState, newState) {
+  _handelChange(oldState, newState) {
     this.client.log(`${this.guild.name} State changed ${oldState.status} => ${newState.status}`);
     if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
-      this.audioPlayer.removeListener("stateChange", this.handelChange);
+      this.audioPlayer.removeListener("stateChange", this._handelChange);
       this.opus?.destroy();
       this.volumeTransformer?.destroy();
       this.stream?.destroy();
