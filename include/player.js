@@ -24,6 +24,7 @@ class Player {
       playing: true,
       loop: false,
       repeat: false,
+      muted: false,
       filter: [],
       mutedVolume: null
     };
@@ -179,6 +180,10 @@ class Player {
    * Destroy voice connection
    */
   destroy() {
+    this.opus?.destroy();
+    this.volumeTransformer?.destroy();
+    this.stream?.destroy();
+    this.encoded?.destroy();
     this.collector?.stop();
     this.songList = [];
     this.audioPlayer.stop();
@@ -316,7 +321,7 @@ class Player {
       "-loglevel", "0",
       "-i", matchUrl,
       "-f", "s16le",
-      "-af", "48000",
+      "-ar", "48000",
       "-ac", "2",
       "-b:a", "192k"
     ];
@@ -381,7 +386,7 @@ class Player {
     }
     embed.addField("🕒 ┃ 歌曲長度", new Date(song.duration * 1000).toISOString().substr(11, 8), true);
     embed.addField("❓ ┃ 點歌者", Discord.Util.escapeMarkdown(song.by), true);
-    embed.addField("🎛️ ┃ 在網頁上控制音樂", `https://app.blackcatbot.tk/?server=${this.text.guildId}`, true);
+    embed.addField("🎛️ ┃ 網頁面板", `https://app.blackcatbot.tk/?server=${this.text.guildId}`, true);
 
     let skipBtn = new Discord.MessageButton()
       .setLabel("跳過")
@@ -486,12 +491,15 @@ class Player {
           break;
 
         case "mute":
-          if (this.behavior.volume <= 0) {
+          if (this.behavior.muted) {
             this.behavior.volume = this.behavior.mutedVolume;
             this.behavior.mutedVolume = null;
+            this.behavior.muted = false;
             this.volumeTransformer.setVolumeLogarithmic(60 / 100);
-            volupBtn.setDisabled(false);
-            voldownBtn.setDisabled(false);
+            if (this.behavior.volume !== 100) volupBtn.setDisabled(true);
+            else volupBtn.setDisabled(false);
+            if (this.behavior.volume !== 0) voldownBtn.setDisabled(true);
+            else voldownBtn.setDisabled(false);
             muteBtn.setLabel("靜音");
             volumeControl = new Discord.MessageActionRow()
               .addComponents(voldownBtn)
@@ -506,11 +514,12 @@ class Player {
               ephemeral: true
             }).catch(console.error);
           } else {
+            this.behavior.muted = true;
             this.behavior.mutedVolume = this.behavior.volume;
             this.behavior.volume = 0;
             this.volumeTransformer.setVolumeLogarithmic(0);
-            if (this.behavior.volume !== 100) volupBtn.setDisabled(true);
-            if (this.behavior.volume !== 0) voldownBtn.setDisabled(true);
+            volupBtn.setDisabled(true);
+            voldownBtn.setDisabled(true);
             muteBtn.setLabel("解除靜音");
             volumeControl = new Discord.MessageActionRow()
               .addComponents(voldownBtn)
