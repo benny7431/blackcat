@@ -89,7 +89,8 @@ class Player {
     return new Promise(async (reslove, reject) => {
       this.behavior.playing = true;
       try {
-        if (this.voiceChannel.type === "GUILD_STAGE_VOICE" && !this.voiceChannel.stageInstance) {
+        if (this.voiceChannel.stageInstance) this.voiceChannel.stageInstance.delete()
+        if (this.voiceChannel.type === "GUILD_STAGE_VOICE") {
           await this.voiceChannel.createStageInstance({
             topic: "🎶 音樂即將開始!",
             privacyLevel: "GUILD_ONLY"
