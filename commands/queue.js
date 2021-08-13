@@ -18,7 +18,7 @@ module.exports = {
     const embeds = generateQueueEmbed(message, serverQueue.songs);
     const queueEmbed = await message.channel.send({
       content: `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
-      embeds: [currentPage]
+      embeds: [embeds[currentPage]]
     });
     await queueEmbed.react("<:left:828163434674651136>").catch(console.error);
     await queueEmbed.react("<:cancel_fill:828163722253041674>").catch(console.error);
