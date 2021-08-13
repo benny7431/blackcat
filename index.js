@@ -333,7 +333,7 @@ client.on("voiceStateUpdate", (oldState, newState) => {
     setTimeout(() => {
       if (voiceMembers.size <= 0) {
         player.textChannel.send("🎈 ┃ 頻道裡面已經沒人了，所以我離開了語音頻道");
-        player.destory();
+        player.destroy();
       }
     }, 30000);
   }
