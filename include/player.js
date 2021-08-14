@@ -103,9 +103,6 @@ class Player {
         this.destroy();
         reject();
       }
-      this.audioPlayer.on("stateChange", (oldState, newState) => {
-        this.client.log(`${this.guild.name} State changed ${oldState.status} => ${newState.status}`);
-      });
       this._getStream(this.songList[0].url);
       reslove();
     });
@@ -361,6 +358,7 @@ class Player {
    */
   async _playStream(stream) {
     this.client.log(`${this.guild.name} Start playing stream`);
+    this.audioPlayer.removeAllListeners();
     let song = this.songList[0];
     this.audioResource = voice.createAudioResource(this.encoded, {
       inputType: voice.StreamType.Opus
@@ -600,7 +598,6 @@ class Player {
 
     this.audioPlayer.on("stateChange", (oldState, newState) => {
       if (newState.status === voice.AudioPlayerStatus.Idle && oldState.status !== voice.AudioPlayerStatus.Idle) {
-        this.audioPlayer.removeAllListeners();
         this.opus?.destroy();
         this.volumeTransformer?.destroy();
         this.stream?.destroy();
