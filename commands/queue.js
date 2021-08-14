@@ -36,7 +36,9 @@ module.exports = {
         if (reaction.emoji.name === "right") {
           if (currentPage < embeds.length - 1) {
             currentPage++;
-            queueEmbed.edit(`📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`, embeds[currentPage]);
+            queueEmbed.edit(`📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`, {
+              embeds: embeds[currentPage]
+            });
             await reaction.users.remove(message.author.id).catch(console.error);
           } else {
             await reaction.users.remove(message.author.id).catch(console.error);
@@ -44,7 +46,9 @@ module.exports = {
         } else if (reaction.emoji.name === "left") {
           if (currentPage !== 0) {
             --currentPage;
-            queueEmbed.edit(`📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`, embeds[currentPage]);
+            queueEmbed.edit(`📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`, {
+              embeds: embeds[currentPage]
+            });
             await reaction.users.remove(message.author.id).catch(console.error);
           } else {
             await reaction.users.remove(message.author.id).catch(console.error);
