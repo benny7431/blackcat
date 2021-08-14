@@ -89,7 +89,7 @@ class Player {
     return new Promise(async (reslove, reject) => {
       this.behavior.playing = true;
       try {
-        if (this.voiceChannel.stageInstance) this.voiceChannel.stageInstance.delete()
+        if (this.voiceChannel.stageInstance) this.voiceChannel.stageInstance.delete();
         if (this.voiceChannel.type === "GUILD_STAGE_VOICE") {
           await this.voiceChannel.createStageInstance({
             topic: "🎵 Loading...",
