@@ -7,11 +7,11 @@
   "private": true,
   "homepage": "https://blackcatbot.tk",
   "engines": {
-    "node": ">=16.6.1",
+    "node": ">=16.7.0",
     "yarn": ">=1.22.10"
   },
   "dependencies": {
-    "@discordjs/opus": "^0.5.3",
+    "@discordjs/opus": "^0.6.0",
     "@discordjs/voice": "^0.6.0",
     "@pm2/io": "^5.0.0",
     "bufferutil": "^4.0.3",

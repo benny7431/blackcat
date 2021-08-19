@@ -4,6 +4,9 @@ const { getInfo } = require("ytdl-core");
 const { opus, FFmpeg, VolumeTransformer } = require("prism-media");
 const { canModifyQueue } = require("../util/Util");
 
+/**
+ * Player class
+ */
 class Player {
   /**
    * @param {Discord.VoiceChannel} channel Server voice channel
@@ -83,6 +86,17 @@ class Player {
   }
 
   /**
+   * Track data
+   * @typedef {Object} Track
+   * @property {String} title Song title
+   * @property {String} url Song URL
+   * @property {(Number|String|Void)} duration Song duration in seconds
+   * @property {String} thumbnail Song thumbnail
+   * @property {String} type Song type (song, playlist)
+   * @property {String} by Username who queued this song
+   */
+
+  /**
    * Start player
    */
   start() {
@@ -109,7 +123,7 @@ class Player {
 
   /**
    * Add songs
-   * @param {Object[]} songs Array of song data
+   * @param {Array<Track>} songs Array of song data
    */
   add(songs) {
     songs.forEach(song => {
@@ -187,7 +201,9 @@ class Player {
     this.collector?.stop();
     this.songList = [];
     this.audioPlayer.stop();
-    if (this.voiceChannel.stageInstance) this.voiceChannel.stageInstance.delete();
+    if (this.voiceChannel.stageInstance) {
+      this.voiceChannel.stageInstance.setTopic("🎵 音樂已結束");
+    }
     if (!this.disconnected) this.connection.destroy();
     this.disconnected = true;
     this.client.players.delete(this.text.guildId);
@@ -227,7 +243,7 @@ class Player {
 
   /**
    * Set filter
-   * @param {String[]} filterArray Filters
+   * @param {Array<String>} filterArray Filters
    */
   set filter(filterArray) {
     this.behavior.filter = filterArray;
@@ -294,7 +310,7 @@ class Player {
       } else if (error.message.includes("429")) {
         this.text.send("❌ ┃ 發生YouTube API錯誤...");
       } else if (error.message.includes("404")) {
-        this.text.send("❌ ┃ 找不到影片或YouTube API已更新，請等待機器人更新!");
+        this.text.send("❌ ┃ 找不到影片或YouTube ]API已更新，請等待機器人更新!");
       } else {
         this.text.send("❌ ┃ 發生未知的錯誤");
       }
@@ -319,17 +335,14 @@ class Player {
       "-reconnect_delay_max", "5",
       "-analyzeduration", "0",
       "-loglevel", "0",
-      "-i", matchUrl,
       "-f", "s16le",
       "-ar", "48000",
       "-ac", "2",
-      "-b:a", "192k"
+      "-b:a", "384k",
+      "-i", matchUrl
     ];
-    if (this.behavior.filter.length !== 0) {
+    if (this.behavior.filter.length > 0) {
       encoderArgs = encoderArgs.concat(["-af", this.behavior.filter.join(",")]);
-    }
-    else {
-      encoderArgs.push("-af", "bass=g=2.5");
     }
 
     this.stream = new FFmpeg({
@@ -353,9 +366,8 @@ class Player {
   /**
    * Play stream
    * @private
-   * @param {Readable} stream Stream to play
    */
-  async _playStream(stream) {
+  async _playStream() {
     this.client.log(`${this.guild.name} Start playing stream`);
     this.audioPlayer.removeAllListeners();
     let song = this.songList[0];
