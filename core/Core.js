@@ -1,5 +1,5 @@
 module.exports = {
   ffmpeg: require("./FFmpeg"),
   volumeController: require("./VolumeController"),
-  opusEncoder
+  opusEncoder: require("./Opus")
 }
