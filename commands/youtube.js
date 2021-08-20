@@ -31,7 +31,7 @@ module.exports = {
     embed.setDescription("成功創建頻道!");
     return sent.edit({
       embeds: [embed],
-      component: [component]
+      components: [component]
     }).catch(console.error);
   }
 };
