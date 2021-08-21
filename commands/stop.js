@@ -16,7 +16,7 @@ module.exports = {
     if (!queue) {
       if (message.slash) message.slash.send("❌ ┃ 目前沒有任何歌曲正在播放!")
         .catch(console.error);
-      return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!")
+      else return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!")
         .catch(console.error);
     }
     if (!canModifyQueue(message.member)) {

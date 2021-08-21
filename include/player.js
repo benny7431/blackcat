@@ -107,7 +107,6 @@ class Player {
     return new Promise(async (resolve, reject) => {
       this.behavior.playing = true;
       try {
-        if (this.voiceChannel.stageInstance) this.voiceChannel.stageInstance.delete();
         if (this.voiceChannel.type === "GUILD_STAGE_VOICE") {
           if (!this.voiceChannel.stageInstance) {
             await this.voiceChannel.createStageInstance({
@@ -395,7 +394,6 @@ class Player {
 
     let embed = new Discord.MessageEmbed()
       .setColor("BLURPLE")
-      .setTitle("🎵 音樂已開始")
       .setDescription(`<:music:825646714404077569> ┃ 正在播放 [${Discord.Util.escapeMarkdown(song.title)}](${song.url})`)
       .setThumbnail(song.thumbnail)
       .addField("🔊 ┃ 目前音量", `${this.behavior.volume}%`, true);

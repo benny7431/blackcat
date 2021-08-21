@@ -1,7 +1,13 @@
 if [ "$1" == "test" ]
 then
-  for file in commands/*.js ; do 
-    node --check "$file"
+  for file in commands/*.js ; do
+    if ! node --check "$file"
+    then
+      echo "Check failed on $file"
+      exit 1
+    fi
+  done
+  for file in core/*.js ; do
     if ! node --check "$file"
     then
       echo "Check failed on $file"
