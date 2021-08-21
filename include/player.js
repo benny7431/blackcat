@@ -1,7 +1,8 @@
 const Discord = require("discord.js");
 const voice = require("@discordjs/voice");
-const { getInfo } = require("ytdl-core");
 const core = require("../core/Core");
+const EventEmitter = require("events");
+const { getInfo } = require("ytdl-core");
 const { canModifyQueue } = require("../util/Util");
 
 /**
@@ -83,6 +84,9 @@ class Player {
 
     // Lock vers
     this.disconnected = false;
+
+    // Event cotroller
+    this.eventEmitter = new EventEmitter();
   }
 
   /**
@@ -156,6 +160,7 @@ class Player {
   pause() {
     this.behavior.playing = false;
     this.audioPlayer.pause();
+    this.eventEmitter.emit("embedUpdate");
   }
 
   /**
@@ -165,6 +170,7 @@ class Player {
   setVolume(volume) {
     this.behavior.volume = volume;
     this.volumeTransformer.setVolumeLogarithmic(volume / 100);
+    this.eventEmitter.emit("embedUpdate");
   }
 
   /**
@@ -172,6 +178,7 @@ class Player {
    */
   resume() {
     this.audioPlayer.unpause();
+    this.eventEmitter.emit("embedUpdate");
   }
 
   /**
@@ -189,6 +196,7 @@ class Player {
   toggleLoop(value = !this.behavior.loop) {
     this.behavior.repeat = false;
     this.behavior.loop = value;
+    this.eventEmitter.emit("embedUpdate");
   }
 
   /**
@@ -218,6 +226,7 @@ class Player {
   toggleRepeat(value = !this.behavior.repeat) {
     this.behavior.loop = false;
     this.behavior.repeat = value;
+    this.eventEmitter.emit("embedUpdate");
   }
 
   /**
@@ -311,7 +320,7 @@ class Player {
       } else if (error.message.includes("429")) {
         this.text.send("❌ ┃ 發生YouTube API錯誤...");
       } else if (error.message.includes("404")) {
-        this.text.send("❌ ┃ 找不到影片或YouTube ]API已更新，請等待機器人更新!");
+        this.text.send("❌ ┃ 找不到影片或YouTube API已更新，請等待機器人更新!");
       } else {
         this.text.send("❌ ┃ 發生未知的錯誤");
       }
@@ -331,7 +340,6 @@ class Player {
 
     let encoderArgs = [
       "-reconnect", "1",
-      "-reconnect_at_eof", "1",
       "-reconnect_streamed", "1",
       "-reconnect_delay_max", "5",
       "-analyzeduration", "0",
@@ -346,13 +354,8 @@ class Player {
       encoderArgs = encoderArgs.concat(["-af", this.behavior.filter.join(",")]);
     }
 
-    this.stream = new core.ffmpeg({
-      args: encoderArgs
-    });
-    this.volumeTransformer = new core.volumeController({
-      type: "s16le",
-      volume: this.behavior.volume / 100
-    });
+    this.stream = new core.ffmpeg(encoderArgs);
+    this.volumeTransformer = new core.volumeController(this.behavior.volume / 100);
     this.opus = new core.opusEncoder({
       rate: 48000,
       channels: 2,
@@ -376,7 +379,11 @@ class Player {
       inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.audioResource);
-    this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
+    if (this.behavior.muted) {
+      this.behavior.volume = this.behavior.mutedVolume;
+      this.behavior.muted = false;
+    }
+    this.volumeTransformer.setVolume(this.behavior.volume / 100);
     if (this.voiceChannel.type === "GUILD_STAGE_VOICE") this.voiceChannel.stageInstance
       .setTopic(`🎵 目前播放: ${this.now.title.substr(0, 110)}`)
       .catch((error) => {
@@ -509,7 +516,7 @@ class Player {
             this.behavior.volume = this.behavior.mutedVolume;
             this.behavior.mutedVolume = null;
             this.behavior.muted = false;
-            this.volumeTransformer.setVolumeLogarithmic(60 / 100);
+            this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
             if (this.behavior.volume !== 100) volupBtn.setDisabled(true);
             else volupBtn.setDisabled(false);
             if (this.behavior.volume !== 0) voldownBtn.setDisabled(true);
@@ -605,6 +612,7 @@ class Player {
     });
 
     this.collector.on("end", async () => {
+      this.eventEmitter.removeAllListeners();
       controller.delete().catch(console.error);
     });
 

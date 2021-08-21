@@ -59,6 +59,10 @@ class FFmpeg extends Duplex {
     cb();
   }
 
+  /**
+   * Kill FFmpeg process
+   * @private
+   */
   _cleanup() {
     if (this.process) {
       this.once('error', () => { });
@@ -74,9 +78,7 @@ class FFmpeg extends Duplex {
    * @private
    */
   create(args) {
-    return ChildProcess.spawn(FFmpeg.getInfo().command, args.concat("pipe:1"), {
-      windowsHide: true
-    });
+    return ChildProcess.spawn("./ffmpeg", args.concat("pipe:1"));
   }
 }
 
