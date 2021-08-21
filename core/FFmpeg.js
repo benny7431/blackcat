@@ -11,7 +11,7 @@ class FFmpeg extends Duplex {
    */
   constructor(args) {
     super();
-    this.process = FFmpeg.create(args);
+    this.process = this.create(args);
     const EVENTS = {
       readable: this._reader,
       data: this._reader,
@@ -52,7 +52,6 @@ class FFmpeg extends Duplex {
 
   _destroy(err, cb) {
     this._cleanup();
-    return cb ? cb(err) : undefined;
   }
 
   _final(cb) {
@@ -70,12 +69,12 @@ class FFmpeg extends Duplex {
 
   /**
    * Creates a new FFmpeg instance.
-   * @param {Array} args FFmpeg args
-   * @returns {ChildProcess}
+   * @param {Array<String>} args FFmpeg args
+   * @returns {ChildProcessWithoutNullStreams}
    * @private
    */
-  static create(args) {
-    return ChildProcess.spawn(FFmpeg.getInfo().command, args, {
+  create(args) {
+    return ChildProcess.spawn(FFmpeg.getInfo().command, args.concat("pipe:1"), {
       windowsHide: true
     });
   }

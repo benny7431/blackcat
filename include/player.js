@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const voice = require("@discordjs/voice");
 const { getInfo } = require("ytdl-core");
-const { opus, FFmpeg, VolumeTransformer } = require("prism-media");
+const core = require("../core/Core");
 const { canModifyQueue } = require("../util/Util");
 
 /**
@@ -9,7 +9,7 @@ const { canModifyQueue } = require("../util/Util");
  */
 class Player {
   /**
-   * @param {Discord.VoiceChannel} channel Server voice channel
+   * @param {(Discord.VoiceChannel|Discord.StageChannel)} channel Server voice channel
    * @param {Discord.TextChannel} textChannel Server text channel
    * @param {Discord.Client} client Discord.js Client
    */
@@ -90,7 +90,7 @@ class Player {
    * @typedef {Object} Track
    * @property {String} title Song title
    * @property {String} url Song URL
-   * @property {(Number|String|Void)} duration Song duration in seconds
+   * @property {(Number|String|null)} duration Song duration in millieseconds
    * @property {String} thumbnail Song thumbnail
    * @property {String} type Song type (song, playlist)
    * @property {String} by Username who queued this song
@@ -100,7 +100,7 @@ class Player {
    * Start player
    */
   start() {
-    return new Promise(async (reslove, reject) => {
+    return new Promise(async (resolve, reject) => {
       this.behavior.playing = true;
       try {
         if (this.voiceChannel.type === "GUILD_STAGE_VOICE") {
@@ -117,7 +117,7 @@ class Player {
         reject();
       }
       this._getStream(this.songList[0].url);
-      reslove();
+      resolve();
     });
   }
 
@@ -158,7 +158,7 @@ class Player {
   }
 
   /**
-   * Chnage current volume
+   * Change current volume
    * @param {Number} volume Volume
    */
   setVolume(volume) {
@@ -316,15 +316,15 @@ class Player {
       }
 
       this.client.log(`${this.guild.name} ${error.message}`);
-      this.skip();
+      return this.skip();
     }
     let matchUrl = null;
     let found = false;
-    videoInfo.formats.forEach(streamUrl => {
-      if (found) return;
-      if (streamUrl.hasAudio) {
+    videoInfo.formats.forEach(streamUrls => {
+      if (streamUrl) return;
+      if (streamUrls.hasAudio) {
         found = true;
-        matchUrl = streamUrl.url;
+        streamUrl = streamUrls.url;
       }
     });
 
@@ -345,14 +345,14 @@ class Player {
       encoderArgs = encoderArgs.concat(["-af", this.behavior.filter.join(",")]);
     }
 
-    this.stream = new FFmpeg({
+    this.stream = new core.ffmpeg({
       args: encoderArgs
     });
-    this.volumeTransformer = new VolumeTransformer({
+    this.volumeTransformer = new core.volumeController({
       type: "s16le",
       volume: this.behavior.volume / 100
     });
-    this.opus = new opus.Encoder({
+    this.opus = new core.opusEncoder({
       rate: 48000,
       channels: 2,
       frameSize: 960
