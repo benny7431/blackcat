@@ -47,7 +47,7 @@ const client = new Discord.Client({
 });
 client.login(process.env.TOKEN);
 client.together = new DiscordTogether(client);
-client.db = new mongo.Database(process.env.MONGO_DB_URL, "blackcat");;
+client.db = new mongo.Database(process.env.MONGO_DB_URL, "blackcat");
 client.commands = new Discord.Collection();
 client.locales = new Discord.Collection();
 client.players = new Map();
@@ -83,7 +83,7 @@ client.getLocale = function (locale) {
   let selectLocale = client.locales.get(locale);
   if (!selectLocale) return client.locales.get("zh_tw");
   return selectLocale;
-}
+};
 
 const app = express();
 const limiter = RateLimit({
@@ -167,7 +167,7 @@ client.on("messageCreate", async (message) => {
     .setDescription(
       "一般指令已被移除，請改用斜線指令\n" +
       "請嘗試輸入`/`，如沒有出現黑貓的指令列表，請[重新邀請機器人](https://blackcatbot.tk/blackcat)")
-    .setColor("BLURPLE")
+    .setColor("BLURPLE");
   return message.channel.send({
     embeds: [disabledEmbed]
   });
@@ -246,7 +246,7 @@ client.on("interactionCreate", interaction => {
 
   if (!command) return interaction.reply({
     content: "❌ ┃ 找不到指令... 請稍待Discord同步指令列表"
-  })
+  });
 
   if (!cooldowns.has(command.name)) {
     cooldowns.set(command.name, new Discord.Collection());
