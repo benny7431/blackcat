@@ -199,7 +199,7 @@ class Player {
   }
 
   /**
-   * Destroy voice connection
+   * Destroy voice connection and stream
    */
   destroy() {
     this.opus?.destroy();
@@ -230,6 +230,7 @@ class Player {
 
   /**
    * Get song list
+   * @return {Array<Track>} All queued song
    */
   get songs() {
     return this.songList;
@@ -245,6 +246,7 @@ class Player {
 
   /**
    * Get filters
+   * @return {Array<String>} Filters
    */
   get filter() {
     return this.behavior.filter;
@@ -260,6 +262,7 @@ class Player {
 
   /**
    * Get now play time
+   * @return {Number} Total playing time
    */
   get playTime() {
     return this.audioResource.playbackDuration / 1000;
@@ -267,6 +270,7 @@ class Player {
 
   /**
    * Get queue text channel
+   * @return {Discord.TextChannel} Text channel
    */
   get textChannel() {
     return this.text;
@@ -274,6 +278,7 @@ class Player {
 
   /**
    * Get current playing
+   * @return {Track} Current playing track
    */
   get current() {
     return this.now;
@@ -281,6 +286,7 @@ class Player {
 
   /**
    * Check is music playing
+   * @return {Boolean} Is music playing?
    */
   get playing() {
     return this.behavior.playing;
@@ -288,6 +294,7 @@ class Player {
 
   /**
    * Get repeat status
+   * @return {Boolean} Is repeat enabled?
    */
   get repeat() {
     return this.behavior.repeat;
@@ -295,6 +302,7 @@ class Player {
 
   /**
    * Get loop status
+   * @return {Boolen} Is loop enabled?
    */
   get loop() {
     return this.behavior.loop;
@@ -459,10 +467,7 @@ class Player {
         case "skip":
           this.behavior.playing = true;
           this.skip();
-          btn.reply({
-            content: "<:skip:827734282318905355> ┃ 跳過歌曲",
-            ephemeral: true
-          }).catch(console.error);
+          btn.reply("<:skip:827734282318905355> ┃ 跳過歌曲").catch(console.error);
           break;
 
         case "pause":
@@ -480,10 +485,7 @@ class Player {
             }).catch(console.error);
             this.behavior.playing = !this.behavior.playing;
             this.pause();
-            btn.reply({
-              content: "<:pause:827737900359745586> ┃ 歌曲暫停!",
-              ephemeral: true
-            }).catch(console.error);
+            btn.reply("<:pause:827737900359745586> ┃ 歌曲暫停!").catch(console.error);
           } else {
             pauseBtn
               .setLabel("暫停")
@@ -498,10 +500,7 @@ class Player {
             }).catch(console.error);
             this.behavior.playing = !this.behavior.playing;
             this.resume();
-            btn.reply({
-              content: "<:play:827734196243398668> ┃ 繼續播放歌曲!",
-              ephemeral: true
-            }).catch(console.error);
+            btn.reply("<:play:827734196243398668> ┃ 繼續播放歌曲!").catch(console.error);
           }
           break;
 
@@ -524,10 +523,7 @@ class Player {
               embeds: [embed],
               components: [playControl, volumeControl]
             }).catch(console.error);
-            btn.reply({
-              content: "<:vol_up:827734772889157722> ┃ 解除靜音音樂",
-              ephemeral: true
-            }).catch(console.error);
+            btn.reply("<:vol_up:827734772889157722> ┃ 解除靜音音樂").catch(console.error);
           } else {
             this.behavior.muted = true;
             this.behavior.mutedVolume = this.behavior.volume;
@@ -544,10 +540,7 @@ class Player {
               embeds: [embed],
               components: [playControl, volumeControl]
             }).catch(console.error);
-            btn.reply({
-              content: "<:mute:827734384606052392> ┃ 靜音音樂",
-              ephemeral: true
-            }).catch(console.error);
+            btn.reply("<:mute:827734384606052392> ┃ 靜音音樂").catch(console.error);
           }
           break;
 
@@ -567,10 +560,7 @@ class Player {
             components: [playControl, volumeControl]
           }).catch(console.error);
           this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
-          btn.reply({
-            content: `<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${this.behavior.volume}%`,
-            ephemeral: true
-          }).catch(console.error);
+          btn.reply(`<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${this.behavior.volume}%`).catch(console.error);
           break;
 
         case "vol_up":
@@ -589,18 +579,12 @@ class Player {
               components: [playControl, volumeControl]
             }).catch(console.error);
           this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
-          btn.reply({
-            content: `<:vol_up:827734772889157722> ┃ 音量上升，目前音量: ${this.behavior.volume}%`,
-            ephemeral: true
-          }).catch(console.error);
+          btn.reply(`<:vol_up:827734772889157722> ┃ 音量上升，目前音量: ${this.behavior.volume}%`).catch(console.error);
           break;
 
         case "stop":
           this.stop();
-          btn.reply({
-            content: "<:stop:827734840891015189> ┃ 歌曲停止!",
-            ephemeral: true
-          }).catch(console.error);
+          btn.reply("<:stop:827734840891015189> ┃ 歌曲停止!").catch(console.error);
           break;
       }
     });
