@@ -16,18 +16,18 @@ module.exports = {
       .catch(console.error);
     let currentPage = 0;
     let prevBtn = new MessageButton()
-      .setCustomId("next")
+      .setCustomId("left")
       .setLabel("上一頁")
       .setEmoji("828163434674651136")
       .setStyle("PRIMARY")
       .setDisabled(true);
     let nextBtn = new MessageButton()
-      .setCustomId("next")
+      .setCustomId("right")
       .setLabel("下一頁")
       .setEmoji("828163370603118622")
       .setStyle("PRIMARY");
     let cancelBtn = new MessageButton()
-      .setCustomId("next")
+      .setCustomId("cancel")
       .setLabel("取消")
       .setEmoji("828163722253041674")
       .setStyle("DANGER");
@@ -35,15 +35,16 @@ module.exports = {
       .addComponents(prevBtn, cancelBtn, nextBtn);
     const embeds = [];
     let k = 10;
-    for (let i = 0; i < queue.length; i += 10) {
-      const current = queue.slice(i, k);
+    let songList = serverQueue.songs;
+    for (let i = 0; i < songList.length; i += 10) {
+      const current = songList.slice(i, k);
       let j = i;
       k += 10;
       const info = current.map((track) => `${++j} - [${track.title}](${track.url})`).join("\n");
       const embed = new MessageEmbed()
         .setTitle("播放清單")
         .setColor("BLURPLE")
-        .setDescription(`**正在播放 - [${queue[0].title}](${queue[0].url})**\n\n${info}`)
+        .setDescription(`**正在播放 - [${serverQueue[0].title}](${serverQueue[0].url})**\n\n${info}`)
         .setTimestamp();
       embeds.push(embed);
     }
@@ -53,40 +54,30 @@ module.exports = {
       components: [btnRow]
     });
 
-    const filter = (reaction, user) => ["left", "cancel_fill", "right"].includes(reaction.emoji.name) && user.id === message.author.id;
     try {
       let collector = queueEmbed.createMessageComponentCollector({
-        filter,
         time: 60000,
         errors: ["time"]
       });
 
-      collector.on("collect", async (reaction) => {
-        if (reaction.emoji.name === "right") {
+      collector.on("collect", async (interaction) => {
+        if (interaction.customId === "right") {
           if (currentPage < embeds.length - 1) {
             currentPage++;
             queueEmbed.edit(`📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`, {
               embeds: embeds[currentPage]
             });
-            await reaction.users.remove(message.author.id).catch(console.error);
-          } else {
-            await reaction.users.remove(message.author.id).catch(console.error);
           }
-        } else if (reaction.emoji.name === "left") {
+        } else if (interaction.customId === "left") {
           if (currentPage !== 0) {
             --currentPage;
             queueEmbed.edit(`📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`, {
               embeds: embeds[currentPage]
             });
-            await reaction.users.remove(message.author.id).catch(console.error);
-          } else {
-            await reaction.users.remove(message.author.id).catch(console.error);
           }
-        } else if (reaction.emoji.name === "cancel_fill") {
+        } else if (interaction.customId === "cancel") {
           collector.stop();
           queueEmbed.delete().catch(console.error);
-        } else {
-          await reaction.users.remove(message.author.id).catch(console.error);
         }
       });
 
