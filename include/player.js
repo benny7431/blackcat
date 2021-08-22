@@ -438,13 +438,9 @@ class Player {
       .setEmoji("827734683340111913")
       .setCustomId("vol_down");
     let playControl = new Discord.MessageActionRow()
-      .addComponents(skipBtn)
-      .addComponents(pauseBtn)
-      .addComponents(stopBtn);
+      .addComponents(skipBtn, pauseBtn, stopBtn);
     let volumeControl = new Discord.MessageActionRow()
-      .addComponents(voldownBtn)
-      .addComponents(muteBtn)
-      .addComponents(volupBtn);
+      .addComponents(voldownBtn, muteBtn, volupBtn);
 
     let controller = await this.text.send({
       embeds: [embed],

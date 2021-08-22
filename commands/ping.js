@@ -19,7 +19,7 @@ module.exports = {
       let api = Date.now() - message.createdTimestamp;
       message.slash.edit(`🏓 ┃ Pong! API:${api}ms WebSocket:${message.client.ws.ping}ms Database:...ms`).catch(console.error);
       let dbPing = await message.client.db.ping();
-      message.slash.edit(`🏓 ┃ Pong! API:${api}ms WebSocket:${message.client.ws.ping}ms Database:${dbPing}ms`).catch(console.error);
+      message.slash.edit(`🏓 ┃ Pong! API:${api}ms WebSocket:${message.client.ws.ping}ms Database:${dbPing.average}ms`).catch(console.error);
     }
   }
 };

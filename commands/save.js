@@ -19,7 +19,7 @@ module.exports = {
     });
     try {
       await message.client.db.set(`stored.${message.author.id}`, songs);
-      message.client.log("Store queue", "info");
+      message.client.log("Store queue");
     } catch (e) {
       console.log(e);
       return sent.edit("❌ ┃ 儲存時發生錯誤").catch(console.error);

@@ -43,7 +43,7 @@ module.exports = {
     }
 
     const songs = await message.client.db.get(`stored.${args.length && args[0] !== "" ? args[0] : message.author.id}`);
-    message.client.log("Load queue", "info");
+    message.client.log("Load queue");
     if (!Array.isArray(songs)) return message.channel.send("❌ ┃ 你尚未儲存歌單，或是輸入了錯誤的ID!").catch(console.error);
     let sent = null;
     if (message.slash) message.channel.send(`<:load:833271811666870282> ┃ 正在讀取${songs.length}首歌曲`)

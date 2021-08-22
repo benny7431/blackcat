@@ -25,7 +25,7 @@ module.exports = {
     if (args.length) {
       if (isNaN(args[0])) return message.channel.send("❌ ┃ 請輸入正確的骰子面數!")
         .catch(console.error);
-      if (Number(args[0]) < 6) return message.channel.send("❌ ┃ 請輸入大於6的數字!")
+      if (parseInt(args[0]) < 6) return message.channel.send("❌ ┃ 請輸入大於6的數字!")
         .catch(console.error);
       const embed = new MessageEmbed()
         .setTitle("骰子!")
@@ -38,6 +38,7 @@ module.exports = {
       else sent = await message.channel.send({
         embeds: [embed]
       }).catch(console.error);
+      embed.setDescription(`🎲 ┃ 你得到了${getRandomNum(1, parseInt(args[0]))}!`);
       setTimeout(function() {
         if(sent) sent.edit({
           embeds: [embed]
@@ -58,8 +59,8 @@ module.exports = {
       else sent = await message.channel.send({
         embeds: [embed]
       }).catch(console.error);
+      embed.setDescription(`🎲 ┃ 你得到了${getRandomNum(1, 6)}!`);
       setTimeout(function() {
-        embed.setDescription(`🎲 ┃ 你得到了${getRandomNum(1, 6)}!`);
         if(sent) sent.edit({
           embeds: [embed]
         }).catch(console.error);

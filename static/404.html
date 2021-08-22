@@ -3,6 +3,7 @@
 <head>
   <meta charset=utf-8>
   <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name=viewport>
+  <meta name="robots" content="noindex,nofollow">
   <title>404 Not found</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
@@ -44,7 +45,7 @@
       margin-bottom: 8px;
     }
 
-    p {
+    .message__text {
       font-size: 15px;
       color: #7F828B;
       line-height: 21px;
@@ -58,6 +59,17 @@
     body.friendly p {
       color: rgba(255, 255, 255, 0.6);
     }
+    
+    footer {
+      position: absolute;
+      bottom: 0;
+      text-align: center;
+    }
+    
+    .footer__message {
+      color: #FFF;
+      font-size: 12px;
+    }
   </style>
   <base target=_parent />
 </head>
@@ -67,9 +79,16 @@
   <div class=message__title>
     404 Not found
   </div>
-  <p>
-    Cannot found requested resource
+  <p class="message__text">
+    The requested resource could not be found
   </p>
 </div>
+<footer>
+  <p class="footer__message">
+    Black cat
+    <br>
+    Professional Discord music bot
+  </p>
+</footer>
 </body>
 </html>

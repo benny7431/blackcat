@@ -1,6 +1,6 @@
 {
   "name": "blackcat",
-  "version": "13.1.0",
+  "version": "14.0.0",
   "description": "Discord black cat music bot",
   "main": "index.js",
   "author": "Wolf yuan",
@@ -12,10 +12,12 @@
   },
   "dependencies": {
     "@discordjs/opus": "^0.6.0",
+    "@discordjs/rest": "^0.1.0-canary.0",
     "@discordjs/voice": "^0.6.0",
     "@pm2/io": "^5.0.0",
     "bufferutil": "^4.0.3",
     "cookie-parser": "^1.4.5",
+    "discord-api-types": "^0.22.0",
     "discord-together": "^1.1.62",
     "discord.js": "^13.1.0",
     "dotenv": "^10.0.0",

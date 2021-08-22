@@ -12,40 +12,46 @@ const
   io = require("@pm2/io"),
   SoundCloud = require("soundcloud-scraper"),
   RateLimit = require("express-rate-limit"),
-  { readdirSync } = require("fs"),
+  { readdirSync, readFileSync } = require("fs"),
   { DiscordTogether } = require("discord-together"),
   { join } = require("path");
 
 const PREFIX = process.env.PREFIX;
 let bootStart = Date.now();
 
-const intents = new Discord.Intents([
-  "GUILDS",
-  "GUILD_MEMBERS",
-  "GUILD_BANS",
-  "GUILD_INTEGRATIONS",
-  "GUILD_WEBHOOKS",
-  "GUILD_INVITES",
-  "GUILD_VOICE_STATES",
-  "GUILD_MESSAGES",
-  "GUILD_MESSAGE_REACTIONS",
-  "GUILD_MESSAGE_TYPING",
-  "DIRECT_MESSAGES",
-]);
 const client = new Discord.Client({
-  allowedMentions: { parse: ["users", "roles"], repliedUser: true },
-  restTimeOffset: 0,
-  disableMentions: "everyone",
-  intents: intents
+  allowedMentions: {
+    parse: ["users", "roles"],
+    repliedUser: true
+  },
+  intents: [
+    "GUILDS",
+    "GUILD_MEMBERS",
+    "GUILD_BANS",
+    "GUILD_INTEGRATIONS",
+    "GUILD_WEBHOOKS",
+    "GUILD_INVITES",
+    "GUILD_VOICE_STATES",
+    "GUILD_MESSAGES",
+    "GUILD_MESSAGE_REACTIONS"
+  ],
+  presence: {
+    status: "idle",
+    afk: true,
+    activities: [{
+      name: "Loading...",
+      type: "COMPETING"
+    }]
+  },
+  userAgentSuffix: "Black cat 14.0.0"
 });
-const db = new mongo.Database(process.env.MONGO_DB_URL, "blackcat");
-global.fetch = require("node-fetch");
 client.login(process.env.TOKEN);
 client.together = new DiscordTogether(client);
-client.db = db;
+client.db = new mongo.Database(process.env.MONGO_DB_URL, "blackcat");;
 client.commands = new Discord.Collection();
-client.prefix = PREFIX;
+client.locales = new Discord.Collection();
 client.players = new Map();
+client.streamCache = new Map();
 client.log = async function(msgContent, type) {
   const webhook = new Discord.WebhookClient({
     id: process.env.WEBHOOK_ID,
@@ -53,38 +59,37 @@ client.log = async function(msgContent, type) {
   });
   let content = `[Black cat] ${msgContent}`;
   switch (type) {
-  case "info":
-    webhook.send(content, {
-      username: "Black cat log",
-      avatarURL: "https://blackcatbot.tk/assets/info.png"
-    });
-    break;
   case "warn":
     webhook.send(content, {
-      username: "Black cat log",
+      username: "[Warn]",
       avatarURL: "https://blackcatbot.tk/assets/warn.png"
     });
     break;
   case "error":
     webhook.send(content, {
-      username: "Black cat log",
+      username: "[Error]",
       avatarURL: "https://blackcatbot.tk/assets/error.png"
     });
     break;
   default:
     webhook.send(content, {
-      username: "Black cat log",
+      username: "[Info]",
       avatarURL: "https://blackcatbot.tk/assets/info.png"
     });
     break;
   }
 };
+client.getLocale = function (locale) {
+  let selectLocale = client.locales.get(locale);
+  if (!selectLocale) return client.locales.get("zh_tw");
+  return selectLocale;
+}
 
 const app = express();
 const limiter = RateLimit({
   windowMs: 60 * 60 * 1000,
   max: 100,
-  message: "429 Too many requests",
+  message: "Status code 429",
   onLimitReached: function(req) {
     client.log(`${req.headers["x-forwarded-for"]} has been rate-limited`, "warn");
   }
@@ -100,19 +105,19 @@ const cooldowns = new Discord.Collection();
 SoundCloud.keygen()
   .then(key => {
     client.scKey = key;
-    client.log(`Fetched SoundCloud key \`${key}\``, "info");
+    client.log(`Fetched SoundCloud key \`${key}\``);
   })
   .catch(console.error);
 
 client.on("ready", async () => {
   console.log(`Logged as ${client.user.username}`);
   console.log(`Bot is in ${client.guilds.cache.size} server(s)`);
-  client.log(`Black cat ready, boot took ${Date.now() - bootStart}ms`, "info");
+  client.log(`Black cat ready, boot took ${Date.now() - bootStart}ms`);
   delete bootStart;
-  client.log(`Using FFmpeg engine \`${require("prism-media").FFmpeg.getInfo().version}\``, "info");
+  client.log(`Using FFmpeg engine \`${require("prism-media").FFmpeg.getInfo().version}\``);
   client.user.setPresence({
     activities: [{
-      name: `b.help | ${client.guilds.cache.size}個伺服器`,
+      name: `b.help | 正在服務${client.guilds.cache.size}個伺服器`,
       type: "STREAMING",
       url: "https://youtube.com/watch?v=lK-i-Ak0EAE"
     }],
@@ -120,21 +125,36 @@ client.on("ready", async () => {
   });
 });
 
-db.on("ready", () => {
+client.db.on("ready", () => {
   console.log("Connected to DB");
-  client.log("connected to DB", "info");
+  client.log("connected to DB");
 });
 
 client.on("warn", (info) => console.log(info));
 client.on("error", console.error);
 
+let gcInterval = setInterval(() => {
+  try {
+    global.gc();
+  } catch(e) {
+    clearInterval(gcInterval);
+    console.error("Some thing went wrong when starting garbage collector");
+    console.error(e.message);
+  }
+}, 60000);
+
 const commandFiles = readdirSync(join(__dirname, "commands")).filter((file) => file.endsWith(".js"));
-console.log("Loading all commands...");
 for (const file of commandFiles) {
-  const command = require(join(__dirname, "commands", `${file}`));
+  const command = require(join(__dirname, "commands", file.toString()));
   client.commands.set(command.name, command);
 }
-console.log("All commands are loaded.");
+
+const localeFiles = readdirSync(join(__dirname, "locales")).filter((file) => file.endsWith(".json"));
+for (const file of localeFiles) {
+  let localeRaw = readFileSync(file.toString(), "utf8");
+  let localeJson = JSON.parse(localeRaw);
+  client.locales.set(file.replace(".json", "").toLowerCase(), localeJson);
+}
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
@@ -142,48 +162,15 @@ client.on("messageCreate", async (message) => {
 
   if (!(message.content.startsWith(PREFIX) || message.content.startsWith(PREFIX.toUpperCase()))) return;
 
-  const args = message.content.slice(PREFIX.length).trim().split(" ");
-  const commandName = args.shift().toLowerCase();
-
-  const command =
-    client.commands.get(commandName) ||
-    client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
-
-  if (!command) return;
-
-  if (!cooldowns.has(command.name)) {
-    cooldowns.set(command.name, new Discord.Collection());
-  }
-
-  const now = Date.now();
-  const timestamps = cooldowns.get(command.name);
-  const cooldownAmount = (command.cooldown || 1) * 1000;
-
-  if (timestamps.has(message.author.id)) {
-    const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
-
-    if (now < expirationTime) {
-      const timeLeft = (expirationTime - now) / 1000;
-      return message.channel.send(`🕒 ┃ 請等待${Math.ceil(timeLeft.toFixed(1))}秒後再使用${command.name}指令!!!`);
-    }
-  }
-
-  timestamps.set(message.author.id, now);
-  setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
-
-  try {
-    command.execute(message, args);
-  } catch (error) {
-    console.error(error);
-    let embed = new Discord.MessageEmbed()
-      .setTitle("❌ ┃ 執行時發生錯誤")
-      .setDescription(`\`${error.message}\``)
-      .setFooter("所有的錯誤都會自動回報給開發者");
-    message.channel.send({
-      embeds: [embed]
-    }).catch(console.error);
-    message.client.log(`${error.message} (Command:${command.name})`, "error");
-  }
+  let disabledEmbed = new Discord.MessageEmbed()
+    .setTitle("❗ ┃ 一般指令已被移除")
+    .setDescription(
+      "一般指令已被移除，請改用斜線指令\n" +
+      "請嘗試輸入`/`，如沒有出現黑貓的指令列表，請[重新邀請機器人](https://blackcatbot.tk/blackcat)")
+    .setColor("BLURPLE")
+  return message.channel.send({
+    embeds: [disabledEmbed]
+  });
 });
 
 client.on("guildCreate", async guild => {
@@ -202,13 +189,11 @@ client.on("guildCreate", async guild => {
       "非常謝謝你邀請我進來這個伺服器!**OWO**\n\n" +
       "[加入官方Discord伺服器](https://blackcatbot.tk/blackcat)\n" +
       "我們強烈建議您加入我們的Discord伺服器，以便接受通知\n\n" +
-      "想要開始探索嗎?輸入`b.help`吧!\n" +
-      "發生問題?輸入`b.support`!")
-    .setColor("BLURPLE")
-    .setFooter("注意:斜線指令僅支援音樂指令以及部分其他指令")
-    .setFooter("By lollipop dev team");
+      "想要開始探索嗎?輸入`/help`吧!\n" +
+      "發生問題?輸入`/support`!")
+    .setColor("BLURPLE");
   guild.systemChannel.send(embed);
-  client.log(`Joined ${guild.name}`, "info");
+  client.log(`Joined ${guild.name}`);
 });
 
 client.on("guildDelete", guild => {
@@ -220,13 +205,13 @@ client.on("guildDelete", guild => {
     }],
     status: "dnd"
   });
-  client.log(`Leave ${guild.name}`, "info");
+  client.log(`Leave ${guild.name}`);
 });
 
 client.on("interactionCreate", interaction => {
   if (interaction.isContextMenu()) {
     if (!interaction.inGuild()) return interaction.reply("❌ ┃ 請在伺服器中執行指令!");
-    let player = client.players.get(interaction);
+    let player = client.players.get(interaction.guild.id);
     if (!player) return interaction.reply({
       content: "❌ ┃ 目前沒有任何音樂正在播放!",
       ephemeral: true
@@ -249,37 +234,19 @@ client.on("interactionCreate", interaction => {
   }
   else if (!interaction.isCommand()) return;
   if (!interaction.inGuild()) return interaction.reply("❌ ┃ 請在伺服器裡傳送指令!").catch(console.error);
-  if (!interaction.guild) return interaction.reply("❌ ┃ 黑貓必須要在你的伺服器裡!").catch(console.error);
+  if (!interaction.guild) return inte!==raction.reply("❌ ┃ 黑貓必須要在你的伺服器裡!").catch(console.error);
   if (!interaction.channel.permissionsFor(interaction.guild.me).has([
     Discord.Permissions.FLAGS.EMBED_LINKS,
     Discord.Permissions.FLAGS.SEND_MESSAGES
   ])) return interaction.reply("❌ ┃ 我沒有權限在此頻道發送訊息!").catch(console.error);
-  const message = {
-    channel: interaction.channel,
-    guild: interaction.guild,
-    author: interaction.user,
-    client,
-    content: null,
-    member: interaction.member,
-    createdTimestamp: interaction.createdTimestamp,
-    slash: {
-      send: function(data) {
-        return interaction.reply(data);
-      },
-      edit: function(data) {
-        return interaction.editReply(data);
-      },
-      delete: function() {
-        return interaction.deleteReply();
-      }
-    }
-  };
 
   const commandName = interaction.commandName.toLowerCase();
 
   const command = client.commands.get(commandName);
 
-  if (!command) return;
+  if (!command) return interaction.reply({
+    content: "❌ ┃ 找不到指令... 請稍待Discord同步指令列表"
+  })
 
   if (!cooldowns.has(command.name)) {
     cooldowns.set(command.name, new Discord.Collection());
@@ -306,8 +273,6 @@ client.on("interactionCreate", interaction => {
     args.push(option.value);
   });
   message.content = `b. ${args.join(" ")}`;
-
-  if(!command.slashReply) interaction.reply("請稍等...");
 
   try {
     command.execute(message, args);
