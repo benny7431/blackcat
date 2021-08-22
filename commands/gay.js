@@ -3,12 +3,6 @@ const { MessageEmbed } = require("discord.js");
 module.exports = {
   name: "gay",
   description: "查看自己的Gay指數",
-  regsiter: true,
-  slash: {
-    name: "gay",
-    description: "查看自己的Gay指數"
-  },
-  slashReply: true,
   execute(message) {
     function getRandomNum(start, end) {
       return start + Math.random() * (end - start + 1);
@@ -18,41 +12,14 @@ module.exports = {
     const gayPercent = Math.floor(gay / 10);
     const bar = ("🏳️‍🌈 ".repeat(gayPercent) + "❌ ".repeat(10 - gayPercent)).trim();
 
-    if (!message.slash) {
-      if (message.mentions.members.size > 0) {
-        const embed = new MessageEmbed()
-          .setTitle(`${message.mentions.members.first().displayName}的Gay指數`)
-          .setDescription(`🏳️‍🌈 ┃ ${message.mentions.members.first().displayName}的Gay指數是${gay}\n\n${bar}`)
-          .setColor("BLURPLE");
-        if (message.slash) return message.slash.send({
-          embeds: [embed]
-        }).catch(console.error);
-        else return message.channel.send({
-          embeds: [embed]
-        }).catch(console.error);
-      } else {
-        const embed = new MessageEmbed()
-          .setTitle(`${message.author.username}的Gay指數`)
-          .setDescription(`🏳️‍🌈 ┃ 你的Gay指數是${gay}\n\n${bar}`)
-          .setColor("BLURPLE");
-        if (message.slash) return message.slash.send({
-          embeds: [embed]
-        }).catch(console.error);
-        else return message.channel.send({
-          embeds: [embed]
-        }).catch(console.error);
-      }
-    } else {
-      const embed = new MessageEmbed()
-        .setTitle(`${message.author.username}的Gay指數`)
-        .setDescription(`🏳️‍🌈 ┃ 你的Gay指數是${gay}\n\n${bar}`)
-        .setColor("BLURPLE");
-      if (message.slash) return message.slash.send({
-        embeds: [embed]
-      }).catch(console.error);
-      else return message.channel.send({
-        embeds: [embed]
-      }).catch(console.error);
-    }
+    let name = message.getUser("用戶").username || message.user.username
+
+    const embed = new MessageEmbed()
+      .setTitle(`${name}的Gay指數`)
+      .setDescription(`🏳️‍🌈 ┃ ${name}的Gay指數是${gay}\n\n${bar}`)
+      .setColor("BLURPLE");
+    message.reply({
+      embeds: [embed]
+    }).catch(console.error);
   }
 };

@@ -3,35 +3,6 @@ const { MessageEmbed } = require("discord.js");
 module.exports = {
   name: "commands",
   description: "指令列表",
-  register: true,
-  slash: {
-    name: "commands",
-    description: "指令列表",
-    options: [
-      {
-        name: "指令類別",
-        description: "要查看的指令類別",
-        type: "STRING",
-        required: true,
-        choices: [
-          {
-            name: "音樂指令",
-            value: "music"
-          }, {
-            name: "遊戲指令",
-            value: "game"
-          }, {
-            name: "工具指令",
-            value: "util"
-          }, {
-            name: "其他指令",
-            value: "other"
-          }
-        ]
-      }
-    ]
-  },
-  slashReply: true,
   execute(message, args) {
     let embed = null;
     if (!args.length) {
@@ -43,10 +14,7 @@ module.exports = {
           "`b.commands util` 工具指令\n" +
           "`b.commands other` 其他指令")
         .setColor("BLURPLE");
-      if (message.slash) return message.slash.send({
-        embeds: [embed]
-      }).catch(console.error);
-      else return message.channel.send({
+      return message.reply({
         embeds: [embed]
       }).catch(console.error);
     }
@@ -110,10 +78,7 @@ module.exports = {
       return message.channel.send("❌ ┃ 請輸入正確的指令類別!")
         .catch(console.error);
     }
-    if (message.slash) return message.slash.send({
-      embeds: [embed]
-    }).catch(console.error);
-    else return message.channel.send({
+    return message.reply({
       embeds: [embed]
     }).catch(console.error);
   }

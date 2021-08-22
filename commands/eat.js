@@ -3,29 +3,12 @@ const { MessageEmbed } = require("discord.js");
 module.exports = {
   name: "eat",
   description: "吃東西...",
-  register: true,
-  slash: {
-    name: "eat",
-    description: "吃東西...",
-    options: [
-      {
-        name: "要吃的東西",
-        description: "你要給我吃的東西",
-        type: "STRING",
-        required: true
-      }
-    ]
-  },
-  slashReply: true,
   async execute(message, args) {
     function getRandomNum(start, end) {
       return Math.floor(Math.random() * end) + start;
     }
 
-    if (!args.length) return message.channel.send("❌ ┃ 請輸入食物名稱!或是...標注一個人")
-      .catch(console.error);
-
-    const respone = [
+    const response = [
       "還不錯",
       "好吃!!!",
       "嗯",
@@ -41,22 +24,15 @@ module.exports = {
       .setTitle("享用食物...")
       .setDescription(`🍽️ ┃ 正在吃${food}`)
       .setColor("BLURPLE");
-    let sent = null;
-    if (message.slash) message.slash.send({
-      embeds: [embed]
-    }).catch(console.error);
-    else sent = await message.channel.send({
+    message.reply({
       embeds: [embed]
     }).catch(console.error);
     const timeout = getRandomNum(2000, 10000);
-    embed.setDescription(`🍽️ ┃ 對於${food}我的評價是:${respone[getRandomNum(0, respone.length)]}`);
+    embed.setDescription(`🍽️ ┃ 對於${food}我的評價是:${response[getRandomNum(0, response.length)]}`);
     setTimeout(function() {
-      if (sent) sent.edit({
+      message.editReply({
         embeds: [embed]
-      }).catch(console.error);
-      else message.slash.edit({
-        embeds: [embed]
-      }).catch(console.error);
+      })
     }, timeout);
   }
 };

@@ -234,7 +234,7 @@ client.on("interactionCreate", interaction => {
   }
   else if (!interaction.isCommand()) return;
   if (!interaction.inGuild()) return interaction.reply("❌ ┃ 請在伺服器裡傳送指令!").catch(console.error);
-  if (!interaction.guild) return inte!==raction.reply("❌ ┃ 黑貓必須要在你的伺服器裡!").catch(console.error);
+  if (!interaction.guild) return interaction.reply("❌ ┃ 黑貓必須要在你的伺服器裡!").catch(console.error);
   if (!interaction.channel.permissionsFor(interaction.guild.me).has([
     Discord.Permissions.FLAGS.EMBED_LINKS,
     Discord.Permissions.FLAGS.SEND_MESSAGES
@@ -272,17 +272,16 @@ client.on("interactionCreate", interaction => {
   interaction.options.data.forEach(option => {
     args.push(option.value);
   });
-  message.content = `b. ${args.join(" ")}`;
 
   try {
-    command.execute(message, args);
+    command.execute(interaction, args);
   } catch (error) {
     console.error(error);
     let embed = new Discord.MessageEmbed()
       .setTitle("❌ ┃ 執行時發生錯誤")
       .setDescription(`\`${error.message}\``)
       .setFooter("所有的錯誤都會自動回報給開發者");
-    message.channel.send({
+    interaction.reply({
       embeds: [embed]
     }).catch(console.error);
     message.client.log(`${error.message} (Command:${command.name})`, "error");
