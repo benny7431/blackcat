@@ -32,7 +32,7 @@ module.exports = {
     setTimeout(function() {
       message.editReply({
         embeds: [embed]
-      })
+      });
     }, timeout);
   }
 };
