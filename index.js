@@ -1,20 +1,20 @@
 require("dotenv").config();
 
 const
-  Discord                         = require("discord.js"),
-  mongo                           = require("quickmongo"),
-  fetch                           = require("node-fetch"),
-  express                         = require("express"),
-  lyricsFinder                    = require("lyrics-finder"),
-  ws                              = require("express-ws"),
-  crypto                          = require("crypto"),
-  helmet                          = require("helmet"),
-  io                              = require("@pm2/io"),
-  SoundCloud                      = require("soundcloud-scraper"),
-  RateLimit                       = require("express-rate-limit"),
-  { readdirSync, readFileSync }   = require("fs"),
-  { DiscordTogether }             = require("discord-together"),
-  { join }                        = require("path");
+  Discord = require("discord.js"),
+  mongo = require("quickmongo"),
+  fetch = require("node-fetch"),
+  express = require("express"),
+  lyricsFinder = require("lyrics-finder"),
+  ws = require("express-ws"),
+  crypto = require("crypto"),
+  helmet = require("helmet"),
+  io = require("@pm2/io"),
+  SoundCloud = require("soundcloud-scraper"),
+  RateLimit = require("express-rate-limit"),
+  { readdirSync, readFileSync } = require("fs"),
+  { DiscordTogether } = require("discord-together"),
+  { join } = require("path");
 
 const PREFIX = process.env.PREFIX;
 let bootStart = Date.now();
@@ -43,7 +43,10 @@ const client = new Discord.Client({
       type: "COMPETING"
     }]
   },
-  userAgentSuffix: "Black cat 14.0.0"
+  userAgentSuffix: [
+    "BlackCat/14.0.0 (https://blackcatbot.tk/)",
+    "DiscordJS/13.1.0 (https://discord.js.org)"
+  ]
 });
 client.login(process.env.TOKEN);
 client.together = new DiscordTogether(client);
@@ -52,31 +55,31 @@ client.commands = new Discord.Collection();
 client.locales = new Discord.Collection();
 client.players = new Map();
 client.streamCache = new Map();
-client.log = async function(msgContent, type) {
+client.log = async function (msgContent, type) {
   const webhook = new Discord.WebhookClient({
     id: process.env.WEBHOOK_ID,
     token: process.env.WEBHOOK_SECRET
   });
   let content = `[Black cat] ${msgContent}`;
   switch (type) {
-  case "warn":
-    webhook.send(content, {
-      username: "[Warn]",
-      avatarURL: "https://blackcatbot.tk/assets/warn.png"
-    });
-    break;
-  case "error":
-    webhook.send(content, {
-      username: "[Error]",
-      avatarURL: "https://blackcatbot.tk/assets/error.png"
-    });
-    break;
-  default:
-    webhook.send(content, {
-      username: "[Info]",
-      avatarURL: "https://blackcatbot.tk/assets/info.png"
-    });
-    break;
+    case "warn":
+      webhook.send(content, {
+        username: "[Warn]",
+        avatarURL: "https://blackcatbot.tk/assets/warn.png"
+      });
+      break;
+    case "error":
+      webhook.send(content, {
+        username: "[Error]",
+        avatarURL: "https://blackcatbot.tk/assets/error.png"
+      });
+      break;
+    default:
+      webhook.send(content, {
+        username: "[Info]",
+        avatarURL: "https://blackcatbot.tk/assets/info.png"
+      });
+      break;
   }
 };
 client.getLocale = function (locale) {
@@ -90,7 +93,7 @@ const limiter = RateLimit({
   windowMs: 60 * 60 * 1000,
   max: 100,
   message: "Status code 429",
-  onLimitReached: function(req) {
+  onLimitReached: function (req) {
     client.log(`${req.headers["x-forwarded-for"]} has been rate-limited`, "warn");
   }
 });
@@ -136,7 +139,7 @@ client.on("error", console.error);
 let gcInterval = setInterval(() => {
   try {
     global.gc();
-  } catch(e) {
+  } catch (e) {
     clearInterval(gcInterval);
     console.error("Some thing went wrong when starting garbage collector");
     console.error(e.message);
@@ -350,7 +353,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/api/status", function(req, res) {
+app.get("/api/status", function (req, res) {
   res.send("online");
 });
 
@@ -358,14 +361,14 @@ app.get("/loaderio-3cfcf9891b2ae7e544b9d6cdd3220394", (req, res) => {
   res.send("loaderio-3cfcf9891b2ae7e544b9d6cdd3220394");
 });
 
-app.get("/api/exist", async function(req, res) {
+app.get("/api/exist", async function (req, res) {
   if (!req.query.server) return res.send({ exist: false });
   let guild = client.guilds.cache.get(req.query.server);
   if (!guild) return res.send({ exist: false });
   res.send({ exist: true });
 });
 
-app.get("/api/lyrics", async function(req, res) {
+app.get("/api/lyrics", async function (req, res) {
   if (!req.query.title) return res.send({ error: true, code: 101 });
   let lyrics;
   try {
@@ -398,7 +401,7 @@ app.use((req, res, next) => {
 
 app.use(require("cookie-parser")());
 
-app.get("/api/auth/login", function(req, res) {
+app.get("/api/auth/login", function (req, res) {
   if (!req.query.code) return res.status(302).send({ token: null });
   const data = {
     client_id: client.application.id,
@@ -433,7 +436,7 @@ app.get("/api/auth/login", function(req, res) {
     });
 });
 
-app.get("/api/auth/info", function(req, res) {
+app.get("/api/auth/info", function (req, res) {
   if (!req.userToken) return res.status(400).send({ error: true, message: "沒有提供Token，請重新登入" });
   const token = req.userToken;
   fetch("https://discord.com/api/users/@me", {
@@ -466,20 +469,20 @@ async function checkModify(token, guildID) {
   });
 }
 
-app.get("/api/pause", async function(req, res) {
+app.get("/api/pause", async function (req, res) {
   if (!req.userToken || !req.query.guild) return res.send({ message: "發生錯誤，請重新整理頁面", red: true });
   const premission = await checkModify(req.userToken, req.query.guild);
   switch (premission) {
-  case 1:
-    return res.send({ message: "請先加入這個伺服器!", red: true });
-  case 2:
-    return res.send({ message: "請先加入一個語音頻道!", red: true });
-  case 3:
-    return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
-  case 4:
-    return res.send({ message: "沒有找到伺服器", red: true });
-  case 5:
-    return res.send({ error: true, code: 101 });
+    case 1:
+      return res.send({ message: "請先加入這個伺服器!", red: true });
+    case 2:
+      return res.send({ message: "請先加入一個語音頻道!", red: true });
+    case 3:
+      return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
+    case 4:
+      return res.send({ message: "沒有找到伺服器", red: true });
+    case 5:
+      return res.send({ error: true, code: 101 });
   }
   try {
     const queue = client.players.get(req.query.guild);
@@ -488,7 +491,7 @@ app.get("/api/pause", async function(req, res) {
       queue.playing = false;
       queue.pause();
       queue.textChannel.send("<:pause:827737900359745586> ┃ 歌曲已由網頁面板暫停").then(sent => {
-        setTimeout(function() {
+        setTimeout(function () {
           sent.delete();
         }, 60000);
       }).catch(console.error);
@@ -501,20 +504,20 @@ app.get("/api/pause", async function(req, res) {
   }
 });
 
-app.get("/api/resume", async function(req, res) {
+app.get("/api/resume", async function (req, res) {
   if (!req.userToken || !req.query.guild) return res.send({ message: "發生錯誤，請重新整理頁面", red: true });
   const premission = await checkModify(req.userToken, req.query.guild);
   switch (premission) {
-  case 1:
-    return res.send({ message: "請先加入這個伺服器!", red: true });
-  case 2:
-    return res.send({ message: "請先加入一個語音頻道!", red: true });
-  case 3:
-    return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
-  case 4:
-    return res.send({ message: "沒有找到伺服器", red: true });
-  case 5:
-    return res.send({ error: true, code: 101 });
+    case 1:
+      return res.send({ message: "請先加入這個伺服器!", red: true });
+    case 2:
+      return res.send({ message: "請先加入一個語音頻道!", red: true });
+    case 3:
+      return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
+    case 4:
+      return res.send({ message: "沒有找到伺服器", red: true });
+    case 5:
+      return res.send({ error: true, code: 101 });
   }
   try {
     const queue = client.players.get(req.query.guild);
@@ -523,7 +526,7 @@ app.get("/api/resume", async function(req, res) {
       queue.playing = true;
       queue.resume();
       queue.textChannel.send("<:play:827734196243398668> ┃ 由網頁面板繼續播放歌曲").then(sent => {
-        setTimeout(function() {
+        setTimeout(function () {
           sent.delete();
         }, 60000);
       }).catch(console.error);
@@ -536,20 +539,20 @@ app.get("/api/resume", async function(req, res) {
   }
 });
 
-app.get("/api/skip", async function(req, res) {
+app.get("/api/skip", async function (req, res) {
   if (!req.userToken || !req.query.guild) return res.send({ message: "發生錯誤，請重新整理頁面", red: true });
   const premission = await checkModify(req.userToken, req.query.guild);
   switch (premission) {
-  case 1:
-    return res.send({ message: "請先加入這個伺服器!", red: true });
-  case 2:
-    return res.send({ message: "請先加入一個語音頻道!", red: true });
-  case 3:
-    return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
-  case 4:
-    return res.send({ message: "沒有找到伺服器", red: true });
-  case 5:
-    return res.send({ error: true, code: 101 });
+    case 1:
+      return res.send({ message: "請先加入這個伺服器!", red: true });
+    case 2:
+      return res.send({ message: "請先加入一個語音頻道!", red: true });
+    case 3:
+      return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
+    case 4:
+      return res.send({ message: "沒有找到伺服器", red: true });
+    case 5:
+      return res.send({ error: true, code: 101 });
   }
   try {
     const queue = client.players.get(req.query.guild);
@@ -557,7 +560,7 @@ app.get("/api/skip", async function(req, res) {
     queue.playing = true;
     queue.skip();
     queue.textChannel.send("<:next:766802340538875964> ┃ 由網頁面板跳過目前歌曲").then(sent => {
-      setTimeout(function() {
+      setTimeout(function () {
         sent.delete();
       }, 60000);
     }).catch(console.error);
