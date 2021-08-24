@@ -1,20 +1,20 @@
 require("dotenv").config();
 
 const
-  Discord = require("discord.js"),
-  mongo = require("quickmongo"),
-  fetch = require("node-fetch"),
-  express = require("express"),
-  lyricsFinder = require("lyrics-finder"),
-  ws = require("express-ws"),
-  crypto = require("crypto"),
-  helmet = require("helmet"),
-  io = require("@pm2/io"),
-  SoundCloud = require("soundcloud-scraper"),
-  RateLimit = require("express-rate-limit"),
-  { readdirSync, readFileSync } = require("fs"),
-  { DiscordTogether } = require("discord-together"),
-  { join } = require("path");
+  Discord                         = require("discord.js"),
+  mongo                           = require("quickmongo"),
+  fetch                           = require("node-fetch"),
+  express                         = require("express"),
+  lyricsFinder                    = require("lyrics-finder"),
+  ws                              = require("express-ws"),
+  crypto                          = require("crypto"),
+  helmet                          = require("helmet"),
+  io                              = require("@pm2/io"),
+  SoundCloud                      = require("soundcloud-scraper"),
+  RateLimit                       = require("express-rate-limit"),
+  { readdirSync, readFileSync }   = require("fs"),
+  { DiscordTogether }             = require("discord-together"),
+  { join }                        = require("path");
 
 const PREFIX = process.env.PREFIX;
 let bootStart = Date.now();
