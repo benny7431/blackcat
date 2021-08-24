@@ -5,18 +5,10 @@ module.exports = {
   name: "nowplaying",
   aliases: ["np"],
   description: "顯示目前正在播放的歌曲",
-  register: true,
-  slash: {
-    name: "nowplaying",
-    description: "顯示目前正在播放的歌曲",
-  },
-  slashReply: true,
   execute(message) {
     const queue = message.client.players.get(message.guild.id);
     if (!queue) {
-      if (message.slash) message.slash.send("❌ ┃ 目前沒有任何歌曲正在播放!")
-        .catch(console.error);
-      return message.channel.send("❌ ┃ 目前沒有任何歌曲正在播放!")
+      message.reply("❌ ┃ 目前沒有任何歌曲正在播放!")
         .catch(console.error);
     }
     const song = queue.current;
@@ -37,10 +29,7 @@ module.exports = {
 
     if (song.duration > 0) nowPlaying.setFooter("還剩下" + new Date(left * 1000).toISOString().substr(11, 8));
 
-    if (message.slash) return message.slash.send({
-      embeds: [nowPlaying]
-    }).catch(console.error);
-    else return message.channel.send({
+    return message.reply({
       embeds: [nowPlaying]
     }).catch(console.error);
   }

@@ -4,11 +4,11 @@ module.exports = {
   register: false,
   async execute(message) {
     const queue = message.client.players.get(message.guild.id);
-    if (!queue) return message.channel.send("❌ ┃ 目前沒有歌曲正在播放!")
+    if (!queue) return message.reply("❌ ┃ 目前沒有歌曲正在播放!")
       .catch(console.error);
 
     let songs = [];
-    let sent = await message.channel.send("<:upload:833246000818552852> ┃ 正在上傳歌曲清單...").catch(console.error);
+    message.reply("<:upload:833246000818552852> ┃ 正在上傳歌曲清單...").catch(console.error);
     queue.songs.forEach(song => {
       songs.push({
         title: song.title,
@@ -22,8 +22,8 @@ module.exports = {
       message.client.log("Store queue");
     } catch (e) {
       console.log(e);
-      return sent.edit("❌ ┃ 儲存時發生錯誤").catch(console.error);
+      return message.editReply("❌ ┃ 儲存時發生錯誤").catch(console.error);
     }
-    sent.edit(`<:uploaded:833261675511021588> ┃ 上傳成功, 可使用\`b.load\`或是\`b.load ${message.author.id}\`來讀取清單!`);
+    message.editReply(`<:uploaded:833261675511021588> ┃ 上傳成功, 可使用\`b.load\`或是\`b.load ${message.author.id}\`來讀取清單!`);
   }
 };

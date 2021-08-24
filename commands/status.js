@@ -25,7 +25,7 @@ module.exports = {
     let memTotal = Math.round(memInfo.totalMemMb / 1024 * 10) / 10;
     let memUsed = Math.round(memInfo.usedMemMb / 1024 * 10) / 10;
     let memBot = Math.round((processUsage.memory / 1024 / 1024) * 100) / 100;
-    let memPercent = 100 - Math.round(memInfo.freeMemPercentage * 10) / 10;
+    let memPercent = Math.round(100 - memInfo.freeMemPercentage * 10 / 10);
     let seconds = Math.floor(message.client.uptime / 1000);
     let minutes = Math.floor(seconds / 60);
     let hours = Math.floor(minutes / 60);
@@ -53,10 +53,7 @@ module.exports = {
       .addField("<:music:825646714404077569> ┃ 音樂播放狀態", `有${message.client.players.size}個伺服器正在播放音樂`)
       .setColor("BLURPLE");
 
-    if(message.slash) return message.slash.send({
-      embeds: [embed]
-    }).catch(console.error);
-    else return message.channel.send({
+    return message.reply({
       embeds: [embed]
     }).catch(console.error);
   }

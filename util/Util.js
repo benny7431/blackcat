@@ -4,7 +4,9 @@ module.exports = {
     const botChannel = member.guild.me.voice.channel;
     const queue = member.client.players.get(member.guild.id);
 
-    if (channel.id !== botChannel.id && member.id !== "669194742218752070") {
+    if (!channel) return false;
+
+    if (channel.id !== botChannel.id) {
       return false;
     }
 

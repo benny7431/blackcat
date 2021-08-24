@@ -48,7 +48,7 @@ module.exports = {
         .setTimestamp();
       embeds.push(embed);
     }
-    const queueEmbed = await message.channel.send({
+    const queueEmbed = await message.reply({
       content: `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
       embeds: [embeds[currentPage]],
       components: [btnRow]
@@ -64,14 +64,14 @@ module.exports = {
         if (interaction.customId === "right") {
           if (currentPage < embeds.length - 1) {
             currentPage++;
-            queueEmbed.edit(`📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`, {
+            interaction.update(`📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`, {
               embeds: embeds[currentPage]
             });
           }
         } else if (interaction.customId === "left") {
           if (currentPage !== 0) {
             --currentPage;
-            queueEmbed.edit(`📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`, {
+            interaction.update(`📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`, {
               embeds: embeds[currentPage]
             });
           }
@@ -82,10 +82,20 @@ module.exports = {
       });
 
       collector.on("end", () => {
-        queueEmbed.delete().catch(console.error);
+        let closedEmbed = new MessageEmbed()
+          .setTitle("已關閉")
+          .setColor("RED");
+        message.editReply({
+          embeds: [closedEmbed]
+        });
       });
     } catch (e) {
-      queueEmbed.delete().catch(console.error);
+      let closedEmbed = new MessageEmbed()
+        .setTitle("已關閉")
+        .setColor("RED");
+      message.editReply({
+        embeds: [closedEmbed]
+      });
     }
   }
 };

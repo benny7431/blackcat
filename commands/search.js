@@ -19,8 +19,7 @@ module.exports = {
   },
   slashReply: false,
   async execute(message, args) {
-    if (!args.length) return message.channel.send("❌ ┃ 請輸入歌曲名稱").catch(console.error);
-    if (!message.member.voice.channel) return message.channel.send("❌ ┃ 你必須先加入一個語音頻道!").catch(console.error);
+    if (!message.member.voice.channel) return message.reply("❌ ┃ 你必須先加入一個語音頻道!").catch(console.error);
 
     const search = args.join(" ");
 
@@ -45,12 +44,12 @@ module.exports = {
       let menu = new MessageSelectMenu()
         .setCustomId("searchMenu")
         .setPlaceholder(`${search}的搜尋結果`)
-        .addOptions(options);
+        .addOptions(...options);
       let component = new MessageActionRow()
         .addComponents(menu);
 
-      const filter = (interaction) => interaction.clicker.id === message.author.id;
-      let resultsMessage = await message.channel.send("<:music_search:827735016254734346> ┃ 搜尋結果:", {
+      const filter = (interaction) => interaction.user.id === message.user.id;
+      let resultsMessage = await message.reply("<:music_search:827735016254734346> ┃ 搜尋結果:", {
         components: [component]
       }).catch(console.error);
       try {
@@ -99,7 +98,7 @@ module.exports = {
         collector.on("end", () => {
           if (choiceIndex !== 0 && choiceIndex) {
             let choice = `https://youtu.be/${results[choiceIndex - 1].id}`;
-            message.client.commands.get("play").execute(message, [choice]);
+            message.client.commands.get("play").execute(message, choice);
           }
           resultsMessage.delete().catch(console.error);
         });
@@ -108,7 +107,7 @@ module.exports = {
         resultsMessage.delete();
       }
     } catch (error) {
-      message.channel.send("❌ 搜尋時發生錯誤!").catch(console.error);
+      message.editReply("❌ 搜尋時發生錯誤!").catch(console.error);
       console.error(error);
     }
   }
