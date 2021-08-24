@@ -186,7 +186,7 @@ client.on("guildCreate", async guild => {
   const embed = new Discord.MessageEmbed()
     .setTitle("感謝邀請Black cat")
     .setDescription(
-      "非常謝謝你邀請我進來這個伺服器!**OWO**\n\n" +
+      "非常謝謝你邀請我進來這個伺服器!\n\n" +
       "[加入官方Discord伺服器](https://blackcatbot.tk/blackcat)\n" +
       "我們強烈建議您加入我們的Discord伺服器，以便接受通知\n\n" +
       "想要開始探索嗎?輸入`/help`吧!\n" +
