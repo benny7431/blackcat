@@ -188,7 +188,7 @@ client.on("voiceStateUpdate", (oldState, newState) => {
       if (!voiceChannel) return;
       let members = voiceChannel.members.filter(member => !member.user.bot);
 
-      if (members.size === 1) {
+      if (members.size <= 0) {
         player.textChannel.send("🎈 ┃ 語音頻道沒人了");
         player.destroy();
       }
