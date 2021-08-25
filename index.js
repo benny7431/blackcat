@@ -189,7 +189,7 @@ client.on("voiceStateUpdate", (oldState, newState) => {
       let members = voiceChannel.members.filter(member => !member.user.bot);
 
       if (members.size <= 0) {
-        player.textChannel.send("🎈 ┃ 語音頻道沒人了");
+        player.textChannel.send("🎈 ┃ 語音頻道沒人了，音樂已自動停止");
         player.destroy();
       }
     }, 15000);
