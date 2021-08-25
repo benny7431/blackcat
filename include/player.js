@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const voice = require("@discordjs/voice");
-const core = require("../core/Core");
+const { opus, FFmpeg, VolumeTransformer } = require("prism-media");
 const EventEmitter = require("events");
 const { getInfo } = require("ytdl-core");
 const { canModifyQueue } = require("../util/Util");
@@ -343,6 +343,7 @@ class Player {
     });
 
     let encoderArgs = [
+      "-i", streamUrl,
       "-reconnect", "1",
       "-reconnect_streamed", "1",
       "-reconnect_delay_max", "5",
@@ -350,17 +351,20 @@ class Player {
       "-loglevel", "0",
       "-f", "s16le",
       "-ar", "48000",
-      "-ac", "2",
-      "-b:a", "384k",
-      "-i", streamUrl
+      "-ac", "2"
     ];
     if (this.behavior.filter.length > 0) {
       encoderArgs = encoderArgs.concat(["-af", this.behavior.filter.join(",")]);
     }
 
-    this.stream = new core.ffmpeg(encoderArgs);
-    this.volumeTransformer = new core.volumeController(this.behavior.volume / 100);
-    this.opus = new core.opusEncoder({
+    this.stream = new FFmpeg({
+      args: encoderArgs
+    });
+    this.volumeTransformer = new VolumeTransformer({
+      volume: this.behavior.volume / 100,
+      type: "s16le"
+    });
+    this.opus = new opus.Encoder({
       rate: 48000,
       channels: 2,
       frameSize: 960

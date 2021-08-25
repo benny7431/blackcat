@@ -60,7 +60,7 @@ module.exports = {
           duration: songInfo.videoDetails.lengthSeconds,
           thumbnail: songInfo.videoDetails.thumbnails.pop().url,
           type: "song",
-          by: message.author.username,
+          by: message.user.username,
           id: songInfo.videoDetails.videoId
         };
       } catch (error) {
@@ -93,7 +93,7 @@ module.exports = {
           duration: songInfo.videoDetails.lengthSeconds,
           thumbnail: songInfo.videoDetails.thumbnails.pop().url,
           type: "song",
-          by: message.author.username,
+          by: message.user.username,
           id: songInfo.videoDetails.videoId
         };
       } catch (error) {
