@@ -152,12 +152,12 @@ for (const file of commandFiles) {
   client.commands.set(command.name, command);
 }
 
-const localeFiles = readdirSync(join(__dirname, "locales")).filter((file) => file.endsWith(".json"));
+/*const localeFiles = readdirSync(join(__dirname, "locales")).filter((file) => file.endsWith(".json"));
 for (const file of localeFiles) {
   let localeRaw = readFileSync(file.toString(), "utf8");
   let localeJson = JSON.parse(localeRaw);
   client.locales.set(file.replace(".json", "").toLowerCase(), localeJson);
-}
+}*/
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
@@ -176,10 +176,32 @@ client.on("messageCreate", async (message) => {
   });
 });
 
+client.on("voiceStateUpdate", (oldState, newState) => {
+  try {
+    if (!oldState.channel) return;
+
+    let player = client.players.get(oldState.guild.id);
+    if (!player) return;
+
+    setTimeout(() => {
+      let voiceChannel = oldState.guild.me.voice.channel;
+      if (!voiceChannel) return;
+      let members = voiceChannel.members.filter(member => !member.user.bot);
+
+      if (members.size === 1) {
+        player.textChannel.send("🎈 ┃ 語音頻道沒人了");
+        player.destroy();
+      }
+    }, 15000);
+  } catch (e) {
+    console.error(e);
+}
+})
+
 client.on("guildCreate", async guild => {
   client.user.setPresence({
     activities: [{
-      name: `b.help | ${client.guilds.cache.size}個伺服器`,
+      name: `b.help | 正在服務${client.guilds.cache.size}個伺服器`,
       type: "STREAMING",
       url: "https://youtube.com/watch?v=lK-i-Ak0EAE"
     }],
@@ -202,7 +224,7 @@ client.on("guildCreate", async guild => {
 client.on("guildDelete", guild => {
   client.user.setPresence({
     activities: [{
-      name: `b.help | ${client.guilds.cache.size}個伺服器`,
+      name: `b.help | 正在服務${client.guilds.cache.size}個伺服器`,
       type: "STREAMING",
       url: "https://youtube.com/watch?v=lK-i-Ak0EAE"
     }],
@@ -211,44 +233,72 @@ client.on("guildDelete", guild => {
   client.log(`Leave ${guild.name}`);
 });
 
-client.on("interactionCreate", interaction => {
-  if (interaction.isContextMenu()) {
-    if (!interaction.inGuild()) return interaction.reply("❌ ┃ 請在伺服器中執行指令!");
-    let player = client.players.get(interaction.guild.id);
-    if (!player) return interaction.reply({
-      content: "❌ ┃ 目前沒有任何音樂正在播放!",
-      ephemeral: true
-    }).catch(console.error);
-    let { canModifyQueue } = require("./util/Util");
-    if (!canModifyQueue(interaction.member)) return interaction.reply({
-      content: "❌ ┃ 你必須跟我在同一個頻道裡!",
-      ephemeral: true
-    }).catch(console.error);
-    switch (interaction.commandName) {
-      case "暫停音樂":
-        if (!player.playing) return interaction.reply({
-          content: "❌ ┃ 音樂已經暫停了!",
-          ephemeral: true
-        }).catch(console.error);
-        player.pause();
-        interaction.reply("<:pause:827737900359745586> ┃ 暫停音樂");
-        break;
-    }
-  }
-  else if (!interaction.isCommand()) return;
+client.on("interactionCreate", (interaction) => {
   if (!interaction.inGuild()) return interaction.reply("❌ ┃ 請在伺服器裡傳送指令!").catch(console.error);
   if (!interaction.guild) return interaction.reply("❌ ┃ 黑貓必須要在你的伺服器裡!").catch(console.error);
-  if (!interaction.channel.permissionsFor(interaction.guild.me).has([
-    Discord.Permissions.FLAGS.EMBED_LINKS,
-    Discord.Permissions.FLAGS.SEND_MESSAGES
-  ])) return interaction.reply("❌ ┃ 我沒有權限在此頻道發送訊息!").catch(console.error);
 
+  if (interaction.isContextMenu) {
+    client.emit("menuInteraction", interaction);
+  } else if (interaction.isCommand) {
+    if (!interaction.channel.permissionsFor(interaction.guild.me).has([
+      Discord.Permissions.FLAGS.EMBED_LINKS,
+      Discord.Permissions.FLAGS.SEND_MESSAGES
+    ])) return interaction.reply("❌ ┃ 我沒有權限在此頻道發送訊息!").catch(console.error);
+
+    client.emit("commandInteraction", interaction);
+  }
+});
+
+client.on("menuInteraction", interaction => {
+  const { canModifyQueue } = require("./util/Util");
+
+  let player = client.players.get(interaction.guild.id)
+  if (!player) return interaction.reply({
+    content: "❌ ┃ 目前沒有歌曲正在播放!",
+    ephemeral: true
+  });
+
+  if (!canModifyQueue(interaction.member)) return interaction.reply({
+    content: "❌ ┃ 你必須跟我在同一個頻道裡!",
+    ephemeral: true
+  });
+  switch (interaction.commandName) {
+    case "暫停音樂":
+      if (!player.playing) return interaction.reply({
+        content: "❌ ┃ 歌曲已經暫停了",
+        ephemeral: true
+      });
+      player.pause();
+      interaction.reply(`<:pause:827737900359745586> ┃ 歌曲被 **${Discord.Util.escapeMarkdown(interaction.user.username)}** 暫停了`).catch(console.error);
+      break;
+    case "繼續播放音樂":
+      if (player.playing) return interaction.reply({
+        content: "❌ ┃ 歌曲已經在播放了",
+        ephemeral: true
+      }).catch(console.error);
+      player.resume();
+      interaction.reply(`<:play:827734196243398668> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 繼續播放目前的歌曲`).catch(console.error);
+      break;
+    case "跳過歌曲":
+      player.skip();
+      interaction.reply(`<:skip:827734282318905355> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 跳過了這一首歌曲`).catch(console.error);
+      break;
+    default:
+      interaction.reply({
+        content: "❌ ┃ 未知的指令",
+        ephemeral: true
+      });
+  }
+});
+
+client.on("commandInteraction", interaction => {
   const commandName = interaction.commandName.toLowerCase();
 
   const command = client.commands.get(commandName);
 
   if (!command) return interaction.reply({
-    content: "❌ ┃ 找不到指令... 請稍待Discord同步指令列表"
+    content: "❌ ┃ 找不到指令... 請稍待Discord同步指令列表",
+    ephemeral: true
   });
 
   if (!cooldowns.has(command.name)) {
@@ -264,7 +314,10 @@ client.on("interactionCreate", interaction => {
 
     if (now < expirationTime) {
       const timeLeft = (expirationTime - now) / 1000;
-      return interaction.reply(`🕒 請等待${Math.ceil(timeLeft.toFixed(1))}秒後再使用${command.name}指令!!!`);
+      return interaction.reply({
+        content: `🕒 請等待${Math.ceil(timeLeft.toFixed(1))}秒後再使用${command.name}指令!!!`,
+        ephemeral: true
+      });
     }
   }
 
@@ -285,7 +338,8 @@ client.on("interactionCreate", interaction => {
       .setDescription(`\`${error.message}\``)
       .setFooter("所有的錯誤都會自動回報給開發者");
     interaction.reply({
-      embeds: [embed]
+      embeds: [embed],
+      ephemeral: true
     }).catch(console.error);
     message.client.log(`${error.message} (Command:${command.name})`, "error");
   }

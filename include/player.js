@@ -335,12 +335,9 @@ class Player {
       this.client.log(`${this.guild.name} ${error.message}`);
       return this.skip();
     }
-    let matchUrl = null;
-    let found = false;
     videoInfo.formats.forEach(streamUrls => {
       if (streamUrl) return;
       if (streamUrls.hasAudio) {
-        found = true;
         streamUrl = streamUrls.url;
       }
     });
@@ -355,7 +352,7 @@ class Player {
       "-ar", "48000",
       "-ac", "2",
       "-b:a", "384k",
-      "-i", matchUrl
+      "-i", streamUrl
     ];
     if (this.behavior.filter.length > 0) {
       encoderArgs = encoderArgs.concat(["-af", this.behavior.filter.join(",")]);
@@ -455,6 +452,35 @@ class Player {
       components: [playControl, volumeControl]
     });
 
+    this.eventEmitter.on("embedUpdate", () => {
+      if (this.behavior.playing) {
+        pauseBtn
+          .setLabel("暫停")
+          .setEmoji("827737900359745586");
+      } else {
+        pauseBtn
+          .setLabel("繼續播放")
+          .setEmoji("827734196243398668");
+      }
+      playControl = new Discord.MessageActionRow()
+        .addComponents(skipBtn, pauseBtn, stopBtn);
+
+      if (this.behavior.muted) {
+        volupBtn.setDisabled(true);
+        voldownBtn.setDisabled(true);
+        muteBtn.setLabel("解除靜音");
+      } else {
+        if (this.behavior.volume !== 100) volupBtn.setDisabled(true);
+        else volupBtn.setDisabled(false);
+        if (this.behavior.volume !== 0) voldownBtn.setDisabled(true);
+        else voldownBtn.setDisabled(false);
+
+        muteBtn.setLabel("靜音");
+      }
+      volumeControl = new Discord.MessageActionRow()
+        .addComponents(voldownBtn, muteBtn, volupBtn);
+    })
+
     this.collector = controller.createMessageComponentCollector();
     this.collector.on("collect", async btn => {
       const member = btn.member;
@@ -467,13 +493,13 @@ class Player {
         case "skip":
           this.behavior.playing = true;
           this.skip();
-          btn.reply("<:skip:827734282318905355> ┃ 跳過歌曲").catch(console.error);
+          btn.reply(`<:skip:827734282318905355> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 跳過了這一首歌曲`).catch(console.error);
           break;
 
         case "pause":
           if (this.behavior.playing) {
             pauseBtn
-              .setLabel("繼續")
+              .setLabel("繼續播放")
               .setEmoji("827734196243398668");
             playControl = new Discord.MessageActionRow()
               .addComponents(skipBtn)
@@ -485,7 +511,7 @@ class Player {
             }).catch(console.error);
             this.behavior.playing = !this.behavior.playing;
             this.pause();
-            btn.reply("<:pause:827737900359745586> ┃ 歌曲暫停!").catch(console.error);
+            btn.reply(`<:pause:827737900359745586> ┃ 歌曲被 **${Discord.Util.escapeMarkdown(btn.user.username)}** 暫停了`).catch(console.error);
           } else {
             pauseBtn
               .setLabel("暫停")
@@ -500,7 +526,7 @@ class Player {
             }).catch(console.error);
             this.behavior.playing = !this.behavior.playing;
             this.resume();
-            btn.reply("<:play:827734196243398668> ┃ 繼續播放歌曲!").catch(console.error);
+            btn.reply(`<:play:827734196243398668> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 繼續播放目前的歌曲`).catch(console.error);
           }
           break;
 
@@ -523,7 +549,7 @@ class Player {
               embeds: [embed],
               components: [playControl, volumeControl]
             }).catch(console.error);
-            btn.reply("<:vol_up:827734772889157722> ┃ 解除靜音音樂").catch(console.error);
+            btn.reply(`<:vol_up:827734772889157722> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 將音樂解除靜音`).catch(console.error);
           } else {
             this.behavior.muted = true;
             this.behavior.mutedVolume = this.behavior.volume;
@@ -540,7 +566,7 @@ class Player {
               embeds: [embed],
               components: [playControl, volumeControl]
             }).catch(console.error);
-            btn.reply("<:mute:827734384606052392> ┃ 靜音音樂").catch(console.error);
+            btn.reply(`<:mute:827734384606052392> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 將音樂靜音了`).catch(console.error);
           }
           break;
 
@@ -560,7 +586,7 @@ class Player {
             components: [playControl, volumeControl]
           }).catch(console.error);
           this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
-          btn.reply(`<:vol_down:827734683340111913> ┃ 音量下降，目前音量: ${this.behavior.volume}%`).catch(console.error);
+          btn.reply(`<:vol_down:827734683340111913> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 降低了音量, 目前音量為 ${this.behavior.volume}%`).catch(console.error);
           break;
 
         case "vol_up":
@@ -579,12 +605,12 @@ class Player {
               components: [playControl, volumeControl]
             }).catch(console.error);
           this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
-          btn.reply(`<:vol_up:827734772889157722> ┃ 音量上升，目前音量: ${this.behavior.volume}%`).catch(console.error);
+          btn.reply(`<:vol_up:827734772889157722> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 提高了音量, 目前音量為 ${this.behavior.volume}%`).catch(console.error);
           break;
 
         case "stop":
           this.stop();
-          btn.reply("<:stop:827734840891015189> ┃ 歌曲停止!").catch(console.error);
+          btn.reply(`<:stop:827734840891015189> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 將音樂停止了`).catch(console.error);
           break;
       }
     });
