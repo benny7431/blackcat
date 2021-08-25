@@ -237,9 +237,9 @@ client.on("interactionCreate", (interaction) => {
   if (!interaction.inGuild()) return interaction.reply("❌ ┃ 請在伺服器裡傳送指令!").catch(console.error);
   if (!interaction.guild) return interaction.reply("❌ ┃ 黑貓必須要在你的伺服器裡!").catch(console.error);
 
-  if (interaction.isContextMenu) {
+  if (interaction.isContextMenu()) {
     client.emit("menuInteraction", interaction);
-  } else if (interaction.isCommand) {
+  } else if (interaction.isCommand()) {
     if (!interaction.channel.permissionsFor(interaction.guild.me).has([
       Discord.Permissions.FLAGS.EMBED_LINKS,
       Discord.Permissions.FLAGS.SEND_MESSAGES
@@ -309,8 +309,8 @@ client.on("commandInteraction", interaction => {
   const timestamps = cooldowns.get(command.name);
   const cooldownAmount = (command.cooldown || 1) * 1000;
 
-  if (timestamps.has(message.author.id)) {
-    const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+  if (timestamps.has(interaction.user.id)) {
+    const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount;
 
     if (now < expirationTime) {
       const timeLeft = (expirationTime - now) / 1000;
@@ -321,8 +321,8 @@ client.on("commandInteraction", interaction => {
     }
   }
 
-  timestamps.set(message.author.id, now);
-  setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+  timestamps.set(interaction.user.id, now);
+  setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
 
   let args = [];
   interaction.options.data.forEach(option => {
@@ -341,7 +341,7 @@ client.on("commandInteraction", interaction => {
       embeds: [embed],
       ephemeral: true
     }).catch(console.error);
-    message.client.log(`${error.message} (Command:${command.name})`, "error");
+    client.log(`${error.message} (Command:${command.name})`, "error");
   }
 });
 

@@ -83,7 +83,7 @@ module.exports = {
         duration: video.duration / 1000,
         thumbnail: video.thumbnail.url,
         type: "playlist_song",
-        by: message.author.username,
+        by: message.user.username,
         id: video.id
       };
       songList.push(song);
