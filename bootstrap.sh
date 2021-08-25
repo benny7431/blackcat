@@ -1,18 +1,8 @@
 if [ "$1" == "test" ]
 then
+  set -e
   for file in commands/*.js ; do
-    if ! node --check "$file"
-    then
-      echo "Check failed on $file"
-      exit 1
-    fi
-  done
-  for file in core/*.js ; do
-    if ! node --check "$file"
-    then
-      echo "Check failed on $file"
-      exit 1
-    fi
+    node --check "$file"
   done
   node --check index.js
   node --check util/Util.js
