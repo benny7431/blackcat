@@ -479,7 +479,7 @@ class Player {
       }
       volumeControl = new Discord.MessageActionRow()
         .addComponents(voldownBtn, muteBtn, volupBtn);
-    })
+    });
 
     this.collector = controller.createMessageComponentCollector();
     this.collector.on("collect", async btn => {

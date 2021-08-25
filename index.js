@@ -196,7 +196,7 @@ client.on("voiceStateUpdate", (oldState, newState) => {
   } catch (e) {
     console.error(e);
 }
-})
+});
 
 client.on("guildCreate", async guild => {
   client.user.setPresence({
@@ -252,7 +252,7 @@ client.on("interactionCreate", (interaction) => {
 client.on("menuInteraction", interaction => {
   const { canModifyQueue } = require("./util/Util");
 
-  let player = client.players.get(interaction.guild.id)
+  let player = client.players.get(interaction.guild.id);
   if (!player) return interaction.reply({
     content: "❌ ┃ 目前沒有歌曲正在播放!",
     ephemeral: true
