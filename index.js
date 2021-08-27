@@ -188,15 +188,15 @@ client.on("voiceStateUpdate", (oldState, newState) => {
       if (!voiceChannel) return;
       let members = voiceChannel.members.filter(member => !member.user.bot);
 
-      if (members.size === 1) {
-        player.textChannel.send("🎈 ┃ 語音頻道沒人了");
+      if (members.size <= 0) {
+        player.textChannel.send("🎈 ┃ 語音頻道沒人了，音樂已自動停止");
         player.destroy();
       }
     }, 15000);
   } catch (e) {
     console.error(e);
 }
-})
+});
 
 client.on("guildCreate", async guild => {
   client.user.setPresence({
@@ -252,7 +252,7 @@ client.on("interactionCreate", (interaction) => {
 client.on("menuInteraction", interaction => {
   const { canModifyQueue } = require("./util/Util");
 
-  let player = client.players.get(interaction.guild.id)
+  let player = client.players.get(interaction.guild.id);
   if (!player) return interaction.reply({
     content: "❌ ┃ 目前沒有歌曲正在播放!",
     ephemeral: true
