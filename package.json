@@ -46,10 +46,11 @@
   "scripts": {
     "start": "bash bootstrap.sh",
     "build": "bash bootstrap.sh build",
-    "test": "bash bootstrap.sh test"
+    "test": "snyk test && bash bootstrap.sh test"
   },
   "devDependencies": {
     "add-dependencies": "^1.1.0",
-    "eslint": "^7.32.0"
+    "eslint": "^7.32.0",
+    "snyk": "^1.693.0"
   }
 }
