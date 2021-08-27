@@ -5,7 +5,7 @@ module.exports = {
   description: "殺一個人",
   register: false,
   execute(message, args) {
-    let user = message.getUser("用戶") || args[0];
+    let user = message.options.getUser("用戶") || args[0];
     if (message.mentions.members.size >= 1) {
       if (message.mentions.members.first().id === message.author.id) return message.channel.send("❌ ┃ 請尊重生命，不要自殺...")
         .catch(console.error);

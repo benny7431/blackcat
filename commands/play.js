@@ -61,7 +61,7 @@ module.exports = {
           thumbnail: songInfo.videoDetails.thumbnails.pop().url,
           type: "song",
           by: message.user.username,
-          id: songInfo.videoDetails.videoId
+          info: songInfo
         };
       } catch (error) {
         message.client.log(error.message, "error");
@@ -94,7 +94,7 @@ module.exports = {
           thumbnail: songInfo.videoDetails.thumbnails.pop().url,
           type: "song",
           by: message.user.username,
-          id: songInfo.videoDetails.videoId
+          info: songInfo
         };
       } catch (error) {
         message.client.log(error.message, "error");

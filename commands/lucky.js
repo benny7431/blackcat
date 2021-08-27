@@ -11,7 +11,7 @@ module.exports = {
     const lucky = Math.ceil(getRandomNum(1, 100));
     const luckyPercent = Math.ceil(lucky / 10);
     const bar = ("🍀 ".repeat(luckyPercent) + "❌ ".repeat(10 - luckyPercent)).trim();
-    const user = message.getUser("用戶") ?? message.user;
+    const user = message.options.getUser("用戶") ?? message.user;
 
     const embed = new MessageEmbed()
       .setTitle(`${user.username}的幸運指數`)

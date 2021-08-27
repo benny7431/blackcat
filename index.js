@@ -169,14 +169,14 @@ client.on("messageCreate", async (message) => {
     .setTitle("❗ ┃ 一般指令已被移除")
     .setDescription(
       "一般指令已被移除，請改用斜線指令\n" +
-      "請嘗試輸入`/`，如沒有出現黑貓的指令列表，請[重新邀請機器人](https://blackcatbot.tk/blackcat)")
+      "請嘗試輸入`/`，如沒有出現黑貓的指令列表，請[重新邀請機器人](https://blackcatbot.tk/blackcat)或檢查權限")
     .setColor("BLURPLE");
   return message.channel.send({
     embeds: [disabledEmbed]
   });
 });
 
-client.on("voiceStateUpdate", (oldState, newState) => {
+client.on("voiceStateUpdate", (oldState) => {
   try {
     if (!oldState.channel) return;
 

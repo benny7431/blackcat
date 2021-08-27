@@ -382,6 +382,7 @@ class Player {
   async _playStream() {
     this.client.log(`${this.guild.name} Start playing stream`);
     this.audioPlayer.removeAllListeners();
+    this.eventEmitter.removeAllListeners();
     let song = this.songList[0];
     this.audioResource = voice.createAudioResource(this.encoded, {
       inputType: voice.StreamType.Opus
