@@ -319,8 +319,11 @@ class Player {
 
     let videoInfo = null;
     let streamUrl = null;
+
+    if (this.now.info) videoInfo = this.now.info;
+
     try {
-      videoInfo = await getInfo(url);
+      if (!videoInfo) videoInfo = await getInfo(url);
     } catch (error) {
       if (error.message.includes("private") || error.message.includes("403")) {
         this.text.send("❌ ┃ 無法播放私人影片");
