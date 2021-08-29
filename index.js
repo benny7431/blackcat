@@ -39,7 +39,7 @@ const client = new Discord.Client({
     status: "idle",
     afk: true,
     activities: [{
-      name: "Loading...",
+      name: "🔁 正在準備",
       type: "COMPETING"
     }]
   },
@@ -116,13 +116,11 @@ client.on("ready", async () => {
   console.log(`Logged as ${client.user.username}`);
   console.log(`Bot is in ${client.guilds.cache.size} server(s)`);
   client.log(`Black cat ready, boot took ${Date.now() - bootStart}ms`);
-  delete bootStart;
   client.log(`Using FFmpeg engine \`${require("prism-media").FFmpeg.getInfo().version}\``);
   client.user.setPresence({
     activities: [{
-      name: `b.help | 正在服務${client.guilds.cache.size}個伺服器`,
-      type: "STREAMING",
-      url: "https://youtube.com/watch?v=lK-i-Ak0EAE"
+      name: `/help ● 在${client.guilds.cache.size}個伺服器`,
+      type: "LISTENING"
     }],
     status: "dnd"
   });
@@ -169,7 +167,7 @@ client.on("messageCreate", async (message) => {
     .setTitle("❗ ┃ 一般指令已被移除")
     .setDescription(
       "一般指令已被移除，請改用斜線指令\n" +
-      "請嘗試輸入`/`，如沒有出現黑貓的指令列表，請[重新邀請機器人](https://blackcatbot.tk/blackcat)或檢查權限")
+      "請嘗試輸入`/`，如沒有出現黑貓的指令列表，請[重新邀請機器人](https://blackcatbot.tk/blackcat)或重新檢查權限")
     .setColor("BLURPLE");
   return message.channel.send({
     embeds: [disabledEmbed]
@@ -347,12 +345,6 @@ client.on("commandInteraction", interaction => {
 
 app.get("/", (req, res) => {
   res.sendFile(join(__dirname, "static", "200.html"));
-});
-
-app.ws("/api/ws/test", (ws) => {
-  ws.on("message", msg => {
-    ws.send(msg);
-  });
 });
 
 app.ws("/api/ws/playing", (ws) => {

@@ -3,7 +3,7 @@ const voice = require("@discordjs/voice");
 const { opus, FFmpeg, VolumeTransformer } = require("prism-media");
 const EventEmitter = require("events");
 const { getInfo } = require("ytdl-core");
-const { canModifyQueue } = require("../util/Util");
+const util = require("../util/Util");
 
 /**
  * Player class
@@ -487,12 +487,32 @@ class Player {
       }
       volumeControl = new Discord.MessageActionRow()
         .addComponents(voldownBtn, muteBtn, volupBtn);
+
+      embed = new Discord.MessageEmbed()
+        .setColor("BLURPLE")
+        .setDescription(`<:music:825646714404077569> ┃ 正在播放 [${Discord.Util.escapeMarkdown(song.title)}](${song.url})`)
+        .setThumbnail(song.thumbnail)
+        .addField("🔊 ┃ 目前音量", `${this.behavior.volume}%`, true);
+      if (this.behavior.loop) {
+        embed.addField("🔁 ┃ 全部重複", "將會重複所有歌曲", true);
+      }
+      if (this.behavior.repeat) {
+        embed.addField("🔂 ┃ 單曲重複", "將會重複目前播放的歌曲", true);
+      }
+      embed.addField("🕒 ┃ 歌曲長度", new Date(song.duration * 1000).toISOString().substr(11, 8), true);
+      embed.addField("❓ ┃ 點歌者", Discord.Util.escapeMarkdown(song.by), true);
+      embed.addField("🎛️ ┃ 網頁面板", `https://app.blackcatbot.tk/?server=${this.text.guildId}`, true);
+
+      controller.edit({
+        embeds: [embed],
+        components: [playControl, volumeControl]
+      });
     });
 
     this.collector = controller.createMessageComponentCollector();
     this.collector.on("collect", async btn => {
       const member = btn.member;
-      if (!canModifyQueue(member)) return btn.reply({
+      if (!util.canModifyQueue(member)) return btn.reply({
         content: "❌ ┃ 請加入語音頻道!",
         ephemeral: true
       });

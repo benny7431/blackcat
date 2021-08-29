@@ -1,4 +1,4 @@
-if [ "$1" == "test" ]
+if [ "$1" == "--ci" ]
 then
   set -e
   for file in commands/*.js ; do
@@ -7,7 +7,7 @@ then
   node --check index.js
   node --check util/Util.js
   node --check include/player.js
-elif [ "$1" == "build" ]
+elif [ "$1" == "--build" ]
 then
   set -e
   echo "Installing pm2..."
@@ -21,12 +21,12 @@ then
   echo "Cleaning up..."
   rm -rf ffmpeg.tar.xz ffmpeg-4.4-amd64-static
   echo "Done!"
-elif [ "$1" == "setup" ]
+elif [ "$1" == "--init" ]
 then
-  wget -O nodejs.deb https://deb.nodesource.com/node_16.x/pool/main/n/nodejs/nodejs_16.6.1-deb-1nodesource1_amd64.deb
-  sudo apt install ./nodejs.deb
-else
-  if [ -f "PM2_TOKEN"]
+  yarn install --forzen-lockfile
+elif [ "$1" == "--start" ]
+then
+  if [ -f "PM2_TOKEN" ]
   then
     source PM2_TOKEN
   fi

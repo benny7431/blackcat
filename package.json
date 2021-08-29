@@ -46,7 +46,7 @@
   "scripts": {
     "start": "bash bootstrap.sh",
     "build": "bash bootstrap.sh build",
-    "test": "snyk test && bash bootstrap.sh test"
+    "test": "snyk test && bash bootstrap.sh --ci"
   },
   "devDependencies": {
     "add-dependencies": "^1.1.0",
