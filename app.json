@@ -1,9 +1,13 @@
 {
   "name": "Discord black cat bot",
-  "description": "在自己的伺服器上運行Black cat",
+  "description": "此程式碼有可能會無法正確運行",
   "repository": "https://github.com/wolf-yuan-6115/blackcat",
-  "logo": "https://blackcat-web.vercel.app/boticon.png",
-  "keywords": ["blackcat", "discord"],
+  "logo": "https://blackcat-web.pages.dev/boticon.png",
+  "keywords": [
+    "黑貓",
+    "音樂機器人",
+    "中文音樂機器人"
+   ],
   "website": "https://blackcatbot.tk",
   "env": {
     "TOKEN": {
@@ -41,6 +45,17 @@
       "description": "Heroku App名稱或ID"
     }
   },
-  "stack": "container",
-  "success_url": "/"
+  "stack": "heroku:20",
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "success_url": "/",
+  "addons": [
+    {
+      "plan": "logtail:free",
+      "as": "LogTail"
+    }
+  ]
 }
