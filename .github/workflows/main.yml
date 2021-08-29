@@ -12,7 +12,7 @@ on:
 
 jobs:
   update-lockfile:
-    name: Update package-lock.json
+    name: Update lockfile
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repo
@@ -72,11 +72,11 @@ jobs:
     - name: Install latest yarn
       run: npm i yarn -g
     - name: Install packages
-      run: yarn
+      run: yarn install --frozen-lockfile
     - name: Test syntax
       run: bash bootstrap.sh test
   analyze:
-    name: Code QL analyze
+    name: Run code QL scan
     runs-on: ubuntu-latest
     permissions:
       actions: read
