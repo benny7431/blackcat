@@ -16,7 +16,7 @@ module.exports = {
   },
   async loop(times, cb, delay) {
     for (let step = 0; step < times; step++) {
-      if (delay) await module.exports.delay(delay)
+      if (delay) await module.exports.delay(delay);
       cb();
     }
   }
