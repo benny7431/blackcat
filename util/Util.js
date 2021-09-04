@@ -3,7 +3,7 @@ module.exports = {
     const { channel } = member.voice;
     const botChannel = member.guild.me.voice.channel;
 
-    if (!channel || botChannel) return false;
+    if (!channel || !botChannel) return false;
 
     return channel.id === botChannel.id;
   },
@@ -16,7 +16,7 @@ module.exports = {
   },
   async loop(times, cb, delay) {
     for (let step = 0; step < times; step++) {
-      if (delay) await module.exports.delay(delay)
+      if (delay) await module.exports.delay(delay);
       cb();
     }
   }
