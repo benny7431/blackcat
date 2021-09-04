@@ -44,8 +44,8 @@
     "ytdl-core": "^4.9.1"
   },
   "scripts": {
-    "start": "bash bootstrap.sh",
-    "build": "bash bootstrap.sh build",
+    "start": "bash bootstrap.sh --start",
+    "build": "bash bootstrap.sh --build",
     "test": "snyk test && bash bootstrap.sh --ci"
   },
   "devDependencies": {
