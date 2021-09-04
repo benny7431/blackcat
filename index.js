@@ -244,6 +244,12 @@ client.on("interactionCreate", (interaction) => {
     ])) return interaction.reply("❌ ┃ 我沒有權限在此頻道發送訊息!").catch(console.error);
 
     client.emit("commandInteraction", interaction);
+  } else if (interaction.isButton()) {
+    client.emit("buttonInteraction")
+  } else if (interaction.isSelectMenu()) {
+    client.emit("selectInteraction");
+  } else if (interaction.isMessageComponent()) {
+    client.emit("componentInteraction")
   }
 });
 
