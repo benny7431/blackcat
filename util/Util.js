@@ -3,7 +3,7 @@ module.exports = {
     const { channel } = member.voice;
     const botChannel = member.guild.me.voice.channel;
 
-    if (!channel || botChannel) return false;
+    if (!channel || !botChannel) return false;
 
     return channel.id === botChannel.id;
   },
