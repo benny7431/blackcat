@@ -119,7 +119,7 @@ client.on("ready", async () => {
   client.log(`Using FFmpeg engine \`${require("prism-media").FFmpeg.getInfo().version}\``);
   client.user.setPresence({
     activities: [{
-      name: `/help ● 在${client.guilds.cache.size}個伺服器`,
+      name: `/help • 在${client.guilds.cache.size}個伺服器`,
       type: "LISTENING"
     }],
     status: "dnd"
@@ -199,9 +199,8 @@ client.on("voiceStateUpdate", (oldState) => {
 client.on("guildCreate", async guild => {
   client.user.setPresence({
     activities: [{
-      name: `b.help | 正在服務${client.guilds.cache.size}個伺服器`,
-      type: "STREAMING",
-      url: "https://youtube.com/watch?v=lK-i-Ak0EAE"
+      name: `/help • 在${client.guilds.cache.size}個伺服器`,
+      type: "LISTENING"
     }],
     status: "dnd"
   });
@@ -222,9 +221,8 @@ client.on("guildCreate", async guild => {
 client.on("guildDelete", guild => {
   client.user.setPresence({
     activities: [{
-      name: `b.help | 正在服務${client.guilds.cache.size}個伺服器`,
-      type: "STREAMING",
-      url: "https://youtube.com/watch?v=lK-i-Ak0EAE"
+      name: `/help • 在${client.guilds.cache.size}個伺服器`,
+      type: "LISTENING"
     }],
     status: "dnd"
   });
