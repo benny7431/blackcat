@@ -48,11 +48,14 @@ module.exports = {
       let component = new MessageActionRow()
         .addComponents(menu);
 
-      const filter = (interaction) => interaction.user.id === message.user.id;
-      let resultsMessage = await message.reply("<:music_search:827735016254734346> ┃ 搜尋結果:", {
+      const filter = (interaction) => (
+        interaction.user.id === message.user.id && interaction.guild.id === message.guild.id && interaction.channel.id === message.channel.id
+      );
+      message.reply("<:music_search:827735016254734346> ┃ 搜尋結果:", {
         components: [component]
       }).catch(console.error);
-      try {
+
+      /**try {
         let collector = resultsMessage.createMessageComponentCollector({
           filter,
           max: 1,
@@ -105,7 +108,7 @@ module.exports = {
       } catch (e) {
         console.log(e);
         resultsMessage.delete();
-      }
+      }**/
     } catch (error) {
       message.editReply("❌ 搜尋時發生錯誤!").catch(console.error);
       console.error(error);
