@@ -181,6 +181,17 @@ client.on("voiceStateUpdate", (oldState) => {
     let player = client.players.get(oldState.guild.id);
     if (!player) return;
 
+    let notDefered = oldState.channel.members.filter(member => !member.voice.deaf).filter(member => !member.user.bot);
+    if (notDefered.size <= 0) {
+      player.textChannel.send("🎧 ┃ 音樂已自動暫停，因為頻道裡的成員都開啟了拒聽").catch(console.error);
+      player.pause();
+      player.deafPause = true;
+    } else if (!player.playing && player.deafPause) {
+      player.textChannel.send("🎧 ┃ 已自動繼續播放音樂").catch(console.error);
+      player.resume();
+      player.deafPause = false;
+    }
+
     setTimeout(() => {
       let voiceChannel = oldState.guild.me.voice.channel;
       if (!voiceChannel) return;
@@ -193,7 +204,7 @@ client.on("voiceStateUpdate", (oldState) => {
     }, 15000);
   } catch (e) {
     console.error(e);
-}
+  }
 });
 
 client.on("guildCreate", async guild => {
@@ -407,10 +418,6 @@ app.use((req, res, next) => {
 
 app.get("/api/status", function (req, res) {
   res.send("online");
-});
-
-app.get("/loaderio-3cfcf9891b2ae7e544b9d6cdd3220394", (req, res) => {
-  res.send("loaderio-3cfcf9891b2ae7e544b9d6cdd3220394");
 });
 
 app.get("/api/exist", async function (req, res) {
