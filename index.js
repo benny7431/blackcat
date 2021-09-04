@@ -245,11 +245,11 @@ client.on("interactionCreate", (interaction) => {
 
     client.emit("commandInteraction", interaction);
   } else if (interaction.isButton()) {
-    client.emit("buttonInteraction")
+    client.emit("buttonInteraction");
   } else if (interaction.isSelectMenu()) {
     client.emit("selectInteraction");
   } else if (interaction.isMessageComponent()) {
-    client.emit("componentInteraction")
+    client.emit("componentInteraction");
   }
 });
 
