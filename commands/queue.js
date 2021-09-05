@@ -45,7 +45,7 @@ module.exports = {
         .setTitle("播放清單")
         .setColor("BLURPLE")
         .setDescription(`**正在播放 - [${songList[0].title}](${songList[0].url})**\n\n${info}`)
-        .setFooter("閒置15秒鐘後此訊息會自動關閉")
+        .setFooter("閒置15秒鐘後此訊息會自動關閉");
       embeds.push(embed);
     }
 
