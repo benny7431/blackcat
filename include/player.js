@@ -478,9 +478,9 @@ class Player {
         voldownBtn.setDisabled(true);
         muteBtn.setLabel("解除靜音");
       } else {
-        if (this.behavior.volume !== 100) volupBtn.setDisabled(true);
+        if (this.behavior.volume >= 100) volupBtn.setDisabled(true);
         else volupBtn.setDisabled(false);
-        if (this.behavior.volume !== 0) voldownBtn.setDisabled(true);
+        if (this.behavior.volume <= 0) voldownBtn.setDisabled(true);
         else voldownBtn.setDisabled(false);
 
         muteBtn.setLabel("靜音");
