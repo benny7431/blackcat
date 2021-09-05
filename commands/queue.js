@@ -49,7 +49,7 @@ module.exports = {
       embeds.push(embed);
     }
 
-    message.reply({
+    await message.reply({
       content: `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
       embeds: [embeds[currentPage]],
       components: [btnRow]

@@ -8,7 +8,7 @@ module.exports = {
       .catch(console.error);
 
     let songs = [];
-    message.reply("<:upload:833246000818552852> ┃ 正在上傳歌曲清單...").catch(console.error);
+    await message.reply("<:upload:833246000818552852> ┃ 正在上傳歌曲清單...").catch(console.error);
     queue.songs.forEach(song => {
       songs.push({
         title: song.title,

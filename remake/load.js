@@ -35,10 +35,10 @@ module.exports = {
     message.client.log("Load queue");
     if (!Array.isArray(songs)) return message.channel.send("❌ ┃ 你尚未儲存歌單，或是輸入了錯誤的ID!").catch(console.error);
 
-    message.reply(`<:load:833271811666870282> ┃ 正在讀取${songs.length}首歌曲`)
+    await message.reply(`<:load:833271811666870282> ┃ 正在讀取${songs.length}首歌曲`)
       .catch(console.error);
     let songList = [];
-    songs.forEach(async song => {
+    songs.forEach(song => {
       let songData = {
         title: song.title,
         url: song.url,

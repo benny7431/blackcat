@@ -46,7 +46,7 @@ module.exports = {
       .setTitle("正在讀取播放清單, 請稍等...")
       .setColor("BLURPLE");
 
-    message.reply({
+    await message.reply({
       embeds: [playlistEmbed]
     }).catch(console.error);
 
