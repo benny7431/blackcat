@@ -44,7 +44,8 @@ module.exports = {
       let embed = new MessageEmbed()
         .setTitle("播放清單")
         .setColor("BLURPLE")
-        .setDescription(`**正在播放 - [${songList[0].title}](${songList[0].url})**\n\n${info}`);
+        .setDescription(`**正在播放 - [${songList[0].title}](${songList[0].url})**\n\n${info}`)
+        .setFooter("閒置15秒鐘後此訊息會自動關閉")
       embeds.push(embed);
     }
 
@@ -82,14 +83,17 @@ module.exports = {
           break;
         case "cancel" :
           collector.end();
-          let embed = new MessageEmbed()
-            .setTitle("已關閉，再次重新輸入指令以重新開啟")
-            .setColor("RED");
-          interaction.update({
-            embeds: [embed]
-          });
           break;
       }
+    });
+
+    collector.on("end", () => {
+      let embed = new MessageEmbed()
+        .setTitle("已關閉，再次重新輸入指令以重新開啟")
+        .setColor("RED");
+      message.editReply({
+        embeds: [embed]
+      });
     });
   }
 };

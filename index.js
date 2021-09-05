@@ -290,11 +290,11 @@ client.on("menuInteraction", interaction => {
         ephemeral: true
       }).catch(console.error);
       player.resume();
-      interaction.reply(`<:play:827734196243398668> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 繼續播放目前的歌曲`).catch(console.error);
+      interaction.reply(`<:play:827734196243398668> ┃ **${Discord.Util.escapeMarkdown(interaction.user.username)}** 繼續播放目前的歌曲`).catch(console.error);
       break;
     case "跳過歌曲":
       player.skip();
-      interaction.reply(`<:skip:827734282318905355> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 跳過了這一首歌曲`).catch(console.error);
+      interaction.reply(`<:skip:827734282318905355> ┃ **${Discord.Util.escapeMarkdown(interaction.user.username)}** 跳過了這一首歌曲`).catch(console.error);
       break;
     default:
       interaction.reply({

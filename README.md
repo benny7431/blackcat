@@ -1,4 +1,5 @@
 # Black cat Discord bot
+![Lines of code](https://img.shields.io/tokei/lines/github/Discord-cat-dev/blackcat?style=for-the-badge)
 ![GitHub Last commit](https://img.shields.io/github/last-commit/Discord-cat-dev/blackcat?color=%23181717&logo=GitHub&style=for-the-badge)
 ![GitHub License](https://img.shields.io/github/license/Discord-cat-dev/blackcat?color=%23F05032&logo=git&style=for-the-badge)
 ![CodeFactor](https://img.shields.io/codefactor/grade/github/Discord-cat-dev/blackcat/main?color=%23F44A6A&logo=codefactor&style=for-the-badge)
