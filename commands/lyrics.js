@@ -12,7 +12,7 @@ module.exports = {
     }
     const songtitle = !args.length ? queue.songs[0].title : args.join(" ");
     let lyrics = null;
-    var lyricsEmbed = new MessageEmbed()
+    let lyricsEmbed = new MessageEmbed()
       .setTitle(`📃 ┃ ${songtitle}歌詞`)
       .setDescription("🔄 ┃ 正在尋找歌詞...")
       .setColor("BLURPLE");

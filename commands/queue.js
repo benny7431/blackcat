@@ -16,18 +16,18 @@ module.exports = {
       .catch(console.error);
     let currentPage = 0;
     let prevBtn = new MessageButton()
-      .setCustomId("left")
+      .setCustomId(`${message.id}-left`)
       .setLabel("上一頁")
       .setEmoji("828163434674651136")
       .setStyle("PRIMARY")
       .setDisabled(true);
     let nextBtn = new MessageButton()
-      .setCustomId("right")
+      .setCustomId(`${message.id}-right`)
       .setLabel("下一頁")
       .setEmoji("828163370603118622")
       .setStyle("PRIMARY");
     let cancelBtn = new MessageButton()
-      .setCustomId("cancel")
+      .setCustomId(`${message.id}-cancel`)
       .setLabel("取消")
       .setEmoji("828163722253041674")
       .setStyle("DANGER");
@@ -40,62 +40,56 @@ module.exports = {
       const current = songList.slice(i, k);
       let j = i;
       k += 10;
-      const info = current.map((track) => `${++j} - [${track.title}](${track.url})`).join("\n");
-      const embed = new MessageEmbed()
+      let info = current.map((track) => `${++j} - [${track.title}](${track.url})`).join("\n");
+      let embed = new MessageEmbed()
         .setTitle("播放清單")
         .setColor("BLURPLE")
-        .setDescription(`**正在播放 - [${serverQueue[0].title}](${serverQueue[0].url})**\n\n${info}`)
-        .setTimestamp();
+        .setDescription(`**正在播放 - [${songList[0].title}](${songList[0].url})**\n\n${info}`);
       embeds.push(embed);
     }
-    const queueEmbed = await message.reply({
+
+    message.reply({
       content: `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
       embeds: [embeds[currentPage]],
       components: [btnRow]
     });
 
-    try {
-      let collector = queueEmbed.createMessageComponentCollector({
-        time: 60000,
-        errors: ["time"]
-      });
+    let filter = (interaction) => interaction.customId.startsWith(message.id);
+    let collector = message.channel.createMessageComponentCollector({
+      idle: 15000,
+      filter
+    });
 
-      collector.on("collect", async (interaction) => {
-        if (interaction.customId === "right") {
+    collector.on("collect", async (interaction) => {
+      switch (interaction.customId.replace(`${message.id}-`, "")) {
+        case "right":
           if (currentPage < embeds.length - 1) {
             currentPage++;
-            interaction.update(`📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`, {
+            interaction.update({
+              content: `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
               embeds: embeds[currentPage]
             });
           }
-        } else if (interaction.customId === "left") {
+          break;
+        case "left":
           if (currentPage !== 0) {
             --currentPage;
-            interaction.update(`📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`, {
+            interaction.update({
+              content: `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
               embeds: embeds[currentPage]
             });
           }
-        } else if (interaction.customId === "cancel") {
-          collector.stop();
-          queueEmbed.delete().catch(console.error);
-        }
-      });
-
-      collector.on("end", () => {
-        let closedEmbed = new MessageEmbed()
-          .setTitle("已關閉")
-          .setColor("RED");
-        message.editReply({
-          embeds: [closedEmbed]
-        });
-      });
-    } catch (e) {
-      let closedEmbed = new MessageEmbed()
-        .setTitle("已關閉")
-        .setColor("RED");
-      message.editReply({
-        embeds: [closedEmbed]
-      });
-    }
+          break;
+        case "cancel" :
+          collector.end();
+          let embed = new MessageEmbed()
+            .setTitle("已關閉，再次重新輸入指令以重新開啟")
+            .setColor("RED");
+          interaction.update({
+            embeds: [embed]
+          });
+          break;
+      }
+    });
   }
 };
