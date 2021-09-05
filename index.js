@@ -181,17 +181,6 @@ client.on("voiceStateUpdate", (oldState) => {
     let player = client.players.get(oldState.guild.id);
     if (!player) return;
 
-    let notDefered = oldState.channel.members.filter(member => !member.voice.deaf).filter(member => !member.user.bot);
-    if (notDefered.size <= 0) {
-      player.textChannel.send("🎧 ┃ 音樂已自動暫停，因為頻道裡的成員都開啟了拒聽").catch(console.error);
-      player.pause();
-      player.deafPause = true;
-    } else if (!player.playing && player.deafPause) {
-      player.textChannel.send("🎧 ┃ 已自動繼續播放音樂").catch(console.error);
-      player.resume();
-      player.deafPause = false;
-    }
-
     setTimeout(() => {
       let voiceChannel = oldState.guild.me.voice.channel;
       if (!voiceChannel) return;

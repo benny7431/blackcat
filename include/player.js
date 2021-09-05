@@ -29,7 +29,6 @@ class Player {
       loop: false,
       repeat: false,
       muted: false,
-      deferPause: false,
       filter: [],
       mutedVolume: null
     };
@@ -168,8 +167,8 @@ class Player {
    * @param {Number} volume Volume
    */
   setVolume(volume) {
-    this.behavior.volume = volume;
-    this.volumeTransformer.setVolumeLogarithmic(volume / 100);
+    this.behavior.volume = parseInt(volume);
+    this.volumeTransformer.setVolumeLogarithmic(parseInt(volume) / 100);
     this.eventEmitter.emit("embedUpdate");
   }
 
@@ -259,22 +258,6 @@ class Player {
    */
   set filter(filterArray) {
     this.behavior.filter = filterArray;
-  }
-
-  /**
-   * Get is music auto paused
-   * @return {boolean}
-   */
-  get deafPause() {
-    return this.behavior.deferPause;
-  }
-
-  /**
-   * Set is music auto paused
-   * @param {Boolean} state Deafer paused state
-   */
-  set deafPause(state) {
-    this.behavior.deferPause = state;
   }
 
   /**
