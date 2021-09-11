@@ -51,6 +51,6 @@
   "devDependencies": {
     "add-dependencies": "^1.1.0",
     "eslint": "^7.32.0",
-    "snyk": "^1.696.0"
+    "snyk": "^1.704.0"
   }
 }
