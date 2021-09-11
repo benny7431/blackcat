@@ -21,7 +21,7 @@ module.exports = {
         .catch(console.error);
     }
     if (parseInt(args[0]) > 100 || parseInt(args[0]) < 0) {
-      if (message.slash) message.reply("❌ ┃ 請輸入 0 ~ 100 之間的數字!")
+      message.reply("❌ ┃ 請輸入 0 ~ 100 之間的數字!")
         .catch(console.error);
     }
 
