@@ -1,8 +1,8 @@
 {
   "apps": [
     {
-      "name": "Black cat bot",
-      "script": "node --trace-warnings --optimize_for_size --max_old_space_size=450 --gc_interval=100 --inspect --expose-gc index.js",
+      "name": "Black cat",
+      "script": "node --trace-warnings --optimize_for_size --max_old_space_size=500 --gc_interval=100 --inspect --expose-gc index.js",
       "vizion": true
     }
   ]

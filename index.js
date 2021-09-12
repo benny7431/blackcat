@@ -150,13 +150,6 @@ for (const file of commandFiles) {
   client.commands.set(command.name, command);
 }
 
-/*const localeFiles = readdirSync(join(__dirname, "locales")).filter((file) => file.endsWith(".json"));
-for (const file of localeFiles) {
-  let localeRaw = readFileSync(file.toString(), "utf8");
-  let localeJson = JSON.parse(localeRaw);
-  client.locales.set(file.replace(".json", "").toLowerCase(), localeJson);
-}*/
-
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
   if (!message.guild) return;

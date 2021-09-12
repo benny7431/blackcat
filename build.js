@@ -1,4 +1,4 @@
-const https = require("https");
+const { https } = require("follow-redirects");
 const chalk = require("chalk");
 const fs = require("fs");
 
@@ -18,6 +18,8 @@ if (platform === "android") {
   platform = "linux";
   console.log("\n");
 }
+
+console.log(chalk.blue.bold(`Downloading ffmpeg for ${platform} with ${arch} architecture support`))
 
 let writeStream = fs.createWriteStream("./ffmpeg");
 https.get(`https://github.com/eugeneware/ffmpeg-static/releases/download/b4.4/${platform}-${arch}`, (res) => {

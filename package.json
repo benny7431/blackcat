@@ -8,13 +8,15 @@
   "homepage": "https://blackcatbot.tk",
   "engines": {
     "node": ">=16.7.0",
-    "yarn": ">=1.22.10"
+    "yarn": ">=1.22.10",
+    "npm": ">=7"
   },
   "dependencies": {
     "@discordjs/opus": "^0.6.0",
     "@discordjs/rest": "^0.1.0-canary.0",
     "@discordjs/voice": "^0.6.0",
     "@pm2/io": "^5.0.0",
+    "@pm2/node-runtime-stats": "^0.3.2",
     "bufferutil": "^4.0.3",
     "cookie-parser": "^1.4.5",
     "discord-api-types": "^0.22.0",
@@ -44,14 +46,16 @@
     "ytdl-core": "^4.9.1"
   },
   "scripts": {
-    "start": "bash bootstrap.sh --start",
-    "build": "bash bootstrap.sh --build",
-    "test": "snyk test && bash bootstrap.sh --ci"
+    "start": "pm2-runtime start process.json",
+    "build": "node build.js",
+    "test": "snyk test && node check.js"
   },
   "devDependencies": {
     "add-dependencies": "^1.1.0",
     "chalk": "^4.1.2",
     "eslint": "^7.32.0",
-    "snyk": "^1.704.0"
+    "follow-redirects": "^1.14.3",
+    "snyk": "^1.704.0",
+    "syntax-error": "^1.4.0"
   }
 }
