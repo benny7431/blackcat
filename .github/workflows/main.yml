@@ -20,7 +20,7 @@ jobs:
     - name: Setup Node.js runtime
       uses: actions/setup-node@v2
       with:
-        node-version: "16.9.1"
+        node-version: 16
     - name: Cache packages
       uses: actions/cache@v2
       with:
@@ -57,10 +57,10 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
-    - name: Setup Node.js V.${{ matrix.node-version }}
+    - name: Setup Node.js 16
       uses: actions/setup-node@v2
       with:
-        node-version: "16.9.1"
+        node-version: 16
     - name: Cache packages
       uses: actions/cache@v2
       with:
