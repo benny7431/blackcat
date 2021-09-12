@@ -14,7 +14,7 @@ RUN apt-get -qqy update && \
   autoconf \
   automake \
   curl && \
-  npm i yarn -g && \
+  npm i yarn -g --force && \
   yarn install && \
   yarn run build && \
   yarn global add pm2
