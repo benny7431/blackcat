@@ -19,7 +19,7 @@
     "@pm2/node-runtime-stats": "^0.3.2",
     "bufferutil": "^4.0.3",
     "cookie-parser": "^1.4.5",
-    "discord-api-types": "^0.22.0",
+    "discord-api-types": "^0.23.1",
     "discord-together": "^1.1.62",
     "discord.js": "^13.1.0",
     "dotenv": "^10.0.0",
