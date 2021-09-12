@@ -19,7 +19,7 @@ if (platform === "android") {
   console.log("\n");
 }
 
-console.log(chalk.blue.bold(`Downloading ffmpeg for ${platform} with ${arch} architecture support`))
+console.log(chalk.blue.bold(`Downloading ffmpeg for ${platform} with ${arch} architecture support`));
 
 let writeStream = fs.createWriteStream("./ffmpeg");
 https.get(`https://github.com/eugeneware/ffmpeg-static/releases/download/b4.4/${platform}-${arch}`, (res) => {
