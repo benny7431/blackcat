@@ -2,9 +2,8 @@
 ![Lines of code](https://img.shields.io/tokei/lines/github/blackcatbot/blackcat)
 ![GitHub Last commit](https://img.shields.io/github/last-commit/blackcatbot/blackcat?color=%23181717&logo=GitHub)
 ![GitHub License](https://img.shields.io/github/license/blackcatbot/blackcat?color=%23F05032&logo=git)
-![CodeFactor](https://img.shields.io/codefactor/grade/github/blackcatbot/blackcat/main?color=%23F44A6A&logo=codefactor)
-![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/blackcatbot/blackcat?color=%234C4A73&label=Synk%20Vulnerabilities&logo=snyk)
-![NodeJS](https://img.shields.io/badge/Node.js-%2343853D.svg?logo=node.js&logoColor=white)
+[![codebeat badge](https://codebeat.co/badges/53344995-87d3-420a-a5e5-0fcfd4b8f7ee)](https://codebeat.co/projects/github-com-discord-cat-dev-blackcat-main)
+[![NodeJS](https://img.shields.io/badge/Node.js-%2343853D.svg?logo=node.js&logoColor=white)](https://nodejs.org)
 
 **注意：此程式碼並非設計來自行託管，如要自行託管，設定過程可能會很繁瑣，請自行考慮**
 
