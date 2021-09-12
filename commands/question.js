@@ -21,7 +21,7 @@ module.exports = {
       .setTitle("問答!")
       .setDescription(`❓ ┃ ${question}的答案...`)
       .setColor("BLURPLE");
-    message.reply({
+    await message.reply({
       embeds: [embed]
     }).catch(console.error);
     embed.setDescription(`❓ ┃ 對於${question}我的回答是${randomAnswer}`);

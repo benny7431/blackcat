@@ -16,7 +16,7 @@ module.exports = {
       .setTitle(`📃 ┃ ${songtitle}歌詞`)
       .setDescription("🔄 ┃ 正在尋找歌詞...")
       .setColor("BLURPLE");
-    message.reply({
+    await message.reply({
       embeds: [lyricsEmbed]
     }).catch(console.error);
     try {

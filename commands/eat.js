@@ -24,7 +24,7 @@ module.exports = {
       .setTitle("享用食物...")
       .setDescription(`🍽️ ┃ 正在吃${food}`)
       .setColor("BLURPLE");
-    message.reply({
+    await message.reply({
       embeds: [embed]
     }).catch(console.error);
     const timeout = getRandomNum(2000, 10000);
