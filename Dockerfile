@@ -16,6 +16,7 @@ RUN apt-get -qqy update && \
   curl && \
   npm i yarn -g && \
   yarn install && \
+  yarn run build && \
   yarn global add pm2
 
 EXPOSE 8080
