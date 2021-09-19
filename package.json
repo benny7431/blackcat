@@ -55,7 +55,7 @@
     "chalk": "^4.1.2",
     "eslint": "^7.32.0",
     "follow-redirects": "^1.14.4",
-    "snyk": "^1.704.0",
+    "snyk": "^1.717.0",
     "syntax-error": "^1.4.0"
   }
 }
