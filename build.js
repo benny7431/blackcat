@@ -14,7 +14,7 @@ if (platform === "aix" || platform === "sunos") {
 }
 
 if (platform === "android") {
-  console.log(chalk.orange.bold("Selecting system type 'linux' instead 'android'"));
+  console.log(chalk.blue.bold("Selecting system type 'linux' instead 'android'"));
   platform = "linux";
   console.log("\n");
 }

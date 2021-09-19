@@ -101,6 +101,13 @@ class Player {
    */
 
   /**
+   * Voice connection ping data
+   * @typedef {Object} connectionPing
+   * @property {(undefined|Number)} udp UDP connection ping
+   * @property {(undefined|Number)} ws WebSocket connection ping
+   */
+
+  /**
    * Start player
    */
   start() {
@@ -306,6 +313,14 @@ class Player {
    */
   get loop() {
     return this.behavior.loop;
+  }
+
+  /**
+   * Get voice connection ping
+   * @return {connectionPing} voice connection ping
+   */
+  get ping() {
+    
   }
 
   /**
