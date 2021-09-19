@@ -12,7 +12,7 @@ module.exports = {
   async execute(message) {
     let player = message.client.queue.get(message.guild.id);
     let embed = new MessageEmbed()
-      .setTitle("🏓 ┃ 延遲")
+      .setTitle("🏓 ┃ 延遲");
     await message.reply({
       embeds: [embed]
     }).catch(console.error);
