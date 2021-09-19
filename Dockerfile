@@ -17,7 +17,9 @@ RUN apt-get -qqy update && \
   npm i yarn -g --force && \
   yarn install && \
   yarn run build && \
-  yarn global add pm2
+  yarn install --production --ignore-scripts --prefer-offline && \
+  yarn global add pm2 && \
+  yarn cache clean
 
 EXPOSE 8080
 
