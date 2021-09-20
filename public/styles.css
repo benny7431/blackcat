@@ -1,13 +1,16 @@
-@media screen and (min-width: 600px)  {
+@media screen and (min-width: 600px) {
   .mobile-break { display: none; }
 }
 
 html, body {
   font-family: 'Noto Sans TC', sans-serif;
-  height: 100%;
-  margin: 0;
   overflow-x: hidden;
   color: white;
+}
+
+body {
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 a:link {
