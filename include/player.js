@@ -320,7 +320,15 @@ class Player {
    * @return {connectionPing} voice connection ping
    */
   get ping() {
-    
+    return this.connection.ping
+  }
+
+  /**
+   * Get volume
+   * @return {Number} Get current volume
+   */
+  get volume() {
+    return this.behavior.volume;
   }
 
   /**
