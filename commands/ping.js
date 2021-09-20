@@ -10,7 +10,7 @@ module.exports = {
   },
   slashReply: true,
   async execute(message) {
-    let player = message.client.queue.get(message.guild.id);
+    let player = message.client.players.get(message.guild.id);
     let embed = new MessageEmbed()
       .setTitle("🏓 ┃ 延遲");
     await message.reply({
