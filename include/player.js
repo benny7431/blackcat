@@ -408,8 +408,8 @@ class Player {
       inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.audioResource);
-    if (this.behavior.muted) {
-      this.behavior.volume = this.behavior.mutedVolume;
+    if (this.behavior.muted && this.behavior.mutedVolume) {
+      this.behavior.volume = this.behavior.mutedVolume ?? 60;
       this.behavior.muted = false;
     }
     this.volumeTransformer.setVolume(this.behavior.volume / 100);
