@@ -320,7 +320,7 @@ class Player {
    * @return {connectionPing} voice connection ping
    */
   get ping() {
-    return this.connection.ping
+    return this.connection.ping;
   }
 
   /**
