@@ -1,14 +1,11 @@
 {
   "name": "blackcat-web",
   "version": "1.0.0",
-  "description": "",
-  "main": ".",
+  "description": "Black cat web",
+  "main": "N/A",
   "scripts": {
-    "test": "echo \"No test command\""
+    "build": "bash build.sh"
   },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "node-fetch": "^3.0.0"
-  }
+  "author": "Wolf yuan",
+  "license": "ISC"
 }

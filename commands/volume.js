@@ -25,7 +25,7 @@ module.exports = {
         .catch(console.error);
     }
 
-    queue.setVolume(parseInt(args[0]));
+    queue.setVolume(args[0]);
 
     message.reply(`<:vol_up:827734772889157722> ┃ 設定音量至: ${args[0]}%`)
       .catch(console.error);

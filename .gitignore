@@ -107,3 +107,6 @@ dist
 ffmpeg.tar.xz
 ffmpeg
 public/css
+
+# Node.js core dump
+core*

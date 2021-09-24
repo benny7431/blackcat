@@ -104,6 +104,13 @@ class Player {
    */
 
   /**
+   * Voice connection ping data
+   * @typedef {Object} connectionPing
+   * @property {(undefined|Number)} udp UDP connection ping
+   * @property {(undefined|Number)} ws WebSocket connection ping
+   */
+
+  /**
    * Start player
    */
   start() {
@@ -312,6 +319,22 @@ class Player {
   }
 
   /**
+   * Get voice connection ping
+   * @return {connectionPing} voice connection ping
+   */
+  get ping() {
+    return this.connection.ping;
+  }
+
+  /**
+   * Get volume
+   * @return {Number} Get current volume
+   */
+  get volume() {
+    return this.behavior.volume;
+  }
+
+  /**
    * Get audio stream and play it
    * @private
    * @param {String} url YouTube video URL
@@ -403,8 +426,8 @@ class Player {
       inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.audioResource);
-    if (this.behavior.muted) {
-      this.behavior.volume = this.behavior.mutedVolume;
+    if (this.behavior.muted && this.behavior.mutedVolume) {
+      this.behavior.volume = this.behavior.mutedVolume ?? 60;
       this.behavior.muted = false;
     }
     this.volumeTransformer.setVolume(this.behavior.volume / 100);
