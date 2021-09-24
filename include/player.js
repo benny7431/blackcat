@@ -1,9 +1,12 @@
 const Discord = require("discord.js");
 const voice = require("@discordjs/voice");
-const { opus, FFmpeg, VolumeTransformer } = require("prism-media");
+const miniget = require("miniget");
+const m3u8 = require("m3u8stream");
 const EventEmitter = require("events");
-const { getInfo } = require("ytdl-core");
 const util = require("../util/Util");
+const { opus, FFmpeg, VolumeTransformer } = require("prism-media");
+const { getInfo } = require("ytdl-core");
+const m3u8stream = require("m3u8stream");
 
 /**
  * Player class
@@ -318,7 +321,7 @@ class Player {
     this.now = this.songList[0];
 
     let videoInfo = null;
-    let streamUrl = null;
+    let streamInfo = null;
 
     if (this.now.info) videoInfo = this.now.info;
 
@@ -341,28 +344,34 @@ class Player {
     videoInfo.formats.forEach(streamUrls => {
       if (streamUrl) return;
       if (streamUrls.hasAudio) {
-        streamUrl = streamUrls.url;
+        streamInfo = streamUrls.url;
       }
     });
 
+    if (streamInfo.isDashMPD || streamInfo.isHLS) {
+      this.stream = m3u8(streamInfo.url, {
+        parser: format.isDashMPD ? 'dash-mpd' : 'm3u8',
+        highWaterMark: 1 << 20
+      });
+    } else {
+      this.stream = miniget(streamInfo.url, {
+        maxReconnects: 3,
+        highWaterMark: 1 << 20
+      });
+    }
+
     let encoderArgs = [
-      "-i", streamUrl,
-      "-reconnect", "1",
-      "-reconnect_streamed", "1",
-      "-reconnect_at_eof", "1",
-      "-reconnect_delay_max", "5",
       "-analyzeduration", "0",
       "-loglevel", "0",
       "-f", "s16le",
       "-ar", "48000",
-      "-ac", "2",
-      "-b:a", "192k"
+      "-ac", "2"
     ];
     if (this.behavior.filter.length > 0) {
       encoderArgs = encoderArgs.concat(["-af", this.behavior.filter.join(",")]);
     }
 
-    this.stream = new FFmpeg({
+    this.encoded = new FFmpeg({
       args: encoderArgs
     });
     this.volumeTransformer = new VolumeTransformer({
@@ -374,7 +383,8 @@ class Player {
       channels: 2,
       frameSize: 960
     });
-    this.encoded = this.stream
+    this.stream
+      .pipe(this.encoded)
       .pipe(this.volumeTransformer)
       .pipe(this.opus);
     this._playStream();
