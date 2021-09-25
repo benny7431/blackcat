@@ -1,12 +1,9 @@
 const Discord = require("discord.js");
 const voice = require("@discordjs/voice");
-const miniget = require("miniget");
-const m3u8 = require("m3u8stream");
+const ytdl = require("ytdl-core");
 const EventEmitter = require("events");
 const util = require("../util/Util");
 const { opus, FFmpeg, VolumeTransformer } = require("prism-media");
-const { getInfo } = require("ytdl-core");
-const m3u8stream = require("m3u8stream");
 
 /**
  * Player class
@@ -344,12 +341,11 @@ class Player {
     this.now = this.songList[0];
 
     let videoInfo = null;
-    let streamInfo = null;
 
     if (this.now.info) videoInfo = this.now.info;
 
     try {
-      if (!videoInfo) videoInfo = await getInfo(url);
+      if (!videoInfo) videoInfo = await ytdl.getInfo(url);
     } catch (error) {
       if (error.message.includes("private") || error.message.includes("403")) {
         this.text.send("❌ ┃ 無法播放私人影片");
@@ -364,24 +360,19 @@ class Player {
       this.client.log(`${this.guild.name} ${error.message}`);
       return this.skip();
     }
-    videoInfo.formats.forEach(streamUrls => {
-      if (streamUrl) return;
-      if (streamUrls.hasAudio) {
-        streamInfo = streamUrls.url;
+
+    let itag = null;
+    videoInfo.formats.forEach(streams => {
+      if (itag) return;
+      if (streams.hasAudio) {
+        itag = streams.itag;
       }
     });
 
-    if (streamInfo.isDashMPD || streamInfo.isHLS) {
-      this.stream = m3u8(streamInfo.url, {
-        parser: format.isDashMPD ? 'dash-mpd' : 'm3u8',
-        highWaterMark: 1 << 20
-      });
-    } else {
-      this.stream = miniget(streamInfo.url, {
-        maxReconnects: 3,
-        highWaterMark: 1 << 20
-      });
-    }
+    this.stream = ytdl.downloadFromInfo(videoInfo, {
+      filter: (formats) => formats.itag === itag,
+      highWaterMark: 1 << 20
+    });
 
     let encoderArgs = [
       "-analyzeduration", "0",
