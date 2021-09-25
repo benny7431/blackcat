@@ -64,8 +64,8 @@ class Player {
     this.connection.on(voice.VoiceConnectionStatus.Disconnected, async () => {
       try {
         await Promise.race([
-          voice.entersState(this.connection, voice.VoiceConnectionStatus.Signalling, 7000),
-          voice.entersState(this.connection, voice.VoiceConnectionStatus.Connecting, 7000),
+          voice.entersState(this.connection, voice.VoiceConnectionStatus.Signalling, 5000),
+          voice.entersState(this.connection, voice.VoiceConnectionStatus.Connecting, 5000),
         ]);
       } catch (error) {
         this.client.players.delete(this.text.guildId);
@@ -208,8 +208,9 @@ class Player {
 
   /**
    * Destroy voice connection and stream
+   * @param {Boolean} force Force destroy voice connection
    */
-  destroy() {
+  destroy(force) {
     this.opus?.destroy();
     this.volumeTransformer?.destroy();
     this.stream?.destroy();
@@ -220,7 +221,7 @@ class Player {
     if (this.voiceChannel.stageInstance) {
       this.voiceChannel.stageInstance.setTopic("🎵 音樂已結束");
     }
-    if (!this.disconnected) this.connection.destroy();
+    if (!this.disconnected && !force) this.connection.destroy();
     this.disconnected = true;
     this.client.players.delete(this.text.guildId);
     this.client.log(`${this.guild.name} Queue ended`);
