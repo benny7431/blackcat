@@ -14,6 +14,8 @@ RUN apt-get -qqy update && \
   autoconf \
   automake \
   curl && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* && \
   npm i yarn -g --force && \
   yarn install --ignore-engines && \
   yarn run build && \
