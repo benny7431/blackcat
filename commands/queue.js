@@ -61,7 +61,7 @@ module.exports = {
     });
 
     let filter = (interaction) => interaction.user.id === message.user.id;
-    let collector = new InteractionCollector({
+    let collector = new InteractionCollector(message.client, {
       message: sent,
       interactionType: "MESSAGE_COMPONENT",
       filter,
