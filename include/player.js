@@ -362,14 +362,6 @@ class Player {
       return this.skip();
     }
 
-    let itag = null;
-    videoInfo.formats.forEach(streams => {
-      if (itag) return;
-      if (streams.hasAudio) {
-        itag = streams.itag;
-      }
-    });
-
     this.stream = ytdl.downloadFromInfo(videoInfo, {
       highWaterMark: 1 << 20
     });
