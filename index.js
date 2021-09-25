@@ -222,6 +222,8 @@ client.on("guildDelete", guild => {
     status: "dnd"
   });
   client.log(`Leave ${guild.name}`);
+  let existingPlayer = client.players.get(guild.id);
+  if (existingPlayer) client.players.delete(guild.id);
 });
 
 client.on("interactionCreate", (interaction) => {
