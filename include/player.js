@@ -369,7 +369,7 @@ class Player {
       }
     });
 
-    this.stream = ytdl.downloadFromInfo(videoInfo, {
+    this.stream = ytdl(videoInfo.url, {
       highWaterMark: 1 << 20
     });
 
