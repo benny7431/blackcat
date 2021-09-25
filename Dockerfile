@@ -1,4 +1,4 @@
-FROM node:current
+FROM node:14.16.1
 
 WORKDIR /home
 COPY . .
@@ -15,7 +15,7 @@ RUN apt-get -qqy update && \
   automake \
   curl && \
   npm i yarn -g --force && \
-  yarn install && \
+  yarn install --ignore-engines && \
   yarn run build && \
   yarn global add pm2 && \
   yarn cache clean
