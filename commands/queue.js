@@ -1,4 +1,9 @@
-const { MessageEmbed, MessageButton, MessageActionRow } = require("discord.js");
+const {
+  InteractionCollector,
+  MessageEmbed,
+  MessageButton,
+  MessageActionRow
+} = require("discord.js");
 
 module.exports = {
   name: "queue",
@@ -16,18 +21,18 @@ module.exports = {
       .catch(console.error);
     let currentPage = 0;
     let prevBtn = new MessageButton()
-      .setCustomId(`${message.id}-left`)
+      .setCustomId("left")
       .setLabel("上一頁")
       .setEmoji("828163434674651136")
       .setStyle("PRIMARY")
       .setDisabled(true);
     let nextBtn = new MessageButton()
-      .setCustomId(`${message.id}-right`)
+      .setCustomId("right")
       .setLabel("下一頁")
       .setEmoji("828163370603118622")
       .setStyle("PRIMARY");
     let cancelBtn = new MessageButton()
-      .setCustomId(`${message.id}-cancel`)
+      .setCustomId("cancel")
       .setLabel("取消")
       .setEmoji("828163722253041674")
       .setStyle("DANGER");
@@ -49,20 +54,22 @@ module.exports = {
       embeds.push(embed);
     }
 
-    await message.reply({
+    let sent = await message.reply({
       content: `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
       embeds: [embeds[currentPage]],
       components: [btnRow]
     });
 
-    let filter = (interaction) => interaction.customId.startsWith(message.id);
-    let collector = message.channel.createMessageComponentCollector({
-      idle: 15000,
-      filter
+    let filter = (interaction) => interaction.user.id === message.user.id
+    let collector = new InteractionCollector({
+      message: sent,
+      interactionType: "MESSAGE_COMPONENT",
+      filter,
+      idle: 15000
     });
 
     collector.on("collect", async (interaction) => {
-      switch (interaction.customId.replace(`${message.id}-`, "")) {
+      switch (interaction.customId) {
         case "right":
           if (currentPage < embeds.length - 1) {
             currentPage++;
