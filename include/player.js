@@ -370,7 +370,6 @@ class Player {
     });
 
     this.stream = ytdl.downloadFromInfo(videoInfo, {
-      filter: (formats) => formats.itag === itag,
       highWaterMark: 1 << 20
     });
 
