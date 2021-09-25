@@ -1,4 +1,6 @@
 require("dotenv").config();
+global.fetch = require("node-fetch");
+global.AbortController = require("abort-controller");
 
 const
   Discord = require("discord.js"),

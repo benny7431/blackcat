@@ -7,7 +7,7 @@
   "private": true,
   "homepage": "https://blackcatbot.tk",
   "engines": {
-    "node": ">=16.7.0",
+    "node": ">=14.16.1",
     "yarn": ">=1.22.10",
     "npm": ">=7"
   },
@@ -17,6 +17,7 @@
     "@discordjs/voice": "^0.6.0",
     "@pm2/io": "^5.0.0",
     "@pm2/node-runtime-stats": "^0.3.2",
+    "abort-controller": "^3.0.0",
     "bufferutil": "^4.0.3",
     "cookie-parser": "^1.4.5",
     "discord-api-types": "^0.23.1",
