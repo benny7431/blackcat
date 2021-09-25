@@ -76,6 +76,7 @@ class Player {
     });
 
     // Converts
+    this.ffmpeg = null;
     this.opus = null;
     this.volumeTransformer = null;
 
@@ -369,7 +370,7 @@ class Player {
       }
     });
 
-    let videoStream = ytdl(url, {
+    this.stream = ytdl.downloadFromInfo(videoInfo, {
       highWaterMark: 1 << 20
     });
 
@@ -384,7 +385,7 @@ class Player {
       encoderArgs = encoderArgs.concat(["-af", this.behavior.filter.join(",")]);
     }
 
-    this.encoded = new FFmpeg({
+    this.ffmpeg = new FFmpeg({
       args: encoderArgs
     });
     this.volumeTransformer = new VolumeTransformer({
@@ -396,8 +397,8 @@ class Player {
       channels: 2,
       frameSize: 960
     });
-    this.stream = videoStream
-      .pipe(this.encoded)
+    this.encoded = this.stream
+      .pipe(this.ffmpeg)
       .pipe(this.volumeTransformer)
       .pipe(this.opus);
     this._playStream();
@@ -412,7 +413,7 @@ class Player {
     this.audioPlayer.removeAllListeners();
     this.eventEmitter.removeAllListeners();
     let song = this.songList[0];
-    this.audioResource = voice.createAudioResource(this.stream, {
+    this.audioResource = voice.createAudioResource(this.encoded, {
       inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.audioResource);
@@ -679,6 +680,7 @@ class Player {
         this.volumeTransformer?.destroy();
         this.stream?.destroy();
         this.encoded?.destroy();
+        this.ffmpeg?.destroy();
         this.audioResource = null;
         this.collector.stop();
         if (this.behavior.loop) {
