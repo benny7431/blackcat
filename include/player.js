@@ -412,7 +412,7 @@ class Player {
     this.audioPlayer.removeAllListeners();
     this.eventEmitter.removeAllListeners();
     let song = this.songList[0];
-    this.audioResource = voice.createAudioResource(this.encoded, {
+    this.audioResource = voice.createAudioResource(this.stream, {
       inputType: voice.StreamType.Opus
     });
     this.audioPlayer.play(this.audioResource);
