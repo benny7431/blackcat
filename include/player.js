@@ -369,7 +369,7 @@ class Player {
       }
     });
 
-    this.stream = ytdl(url, {
+    let videoStream = ytdl(url, {
       highWaterMark: 1 << 20
     });
 
@@ -396,7 +396,7 @@ class Player {
       channels: 2,
       frameSize: 960
     });
-    this.stream
+    this.stream = videoStream
       .pipe(this.encoded)
       .pipe(this.volumeTransformer)
       .pipe(this.opus);
