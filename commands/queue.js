@@ -60,7 +60,7 @@ module.exports = {
       components: [btnRow]
     });
 
-    let filter = (interaction) => interaction.user.id === message.user.id
+    let filter = (interaction) => interaction.user.id === message.user.id;
     let collector = new InteractionCollector({
       message: sent,
       interactionType: "MESSAGE_COMPONENT",
