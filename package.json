@@ -51,15 +51,10 @@
   },
   "scripts": {
     "start": "pm2-runtime start process.json",
-    "build": "node build.js",
     "test": "node check.js"
   },
   "devDependencies": {
-    "add-dependencies": "^1.1.0",
     "chalk": "^4.1.2",
-    "eslint": "^7.32.0",
-    "follow-redirects": "^1.14.4",
-    "snyk": "^1.720.0",
     "syntax-error": "^1.4.0"
   }
 }

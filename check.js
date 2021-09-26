@@ -1,18 +1,21 @@
 const fs = require("fs");
 const path = require("path");
 const syntax = require("syntax-error");
+const chalk = require("chalk");
+
+console.log(chalk.blue("Brgin checking JavaScript syntax"));
 
 function check (source, file) {
   let error = syntax(source);
+  console.log(("=").repeat(60));
   if (error) {
-    console.error(`${file} have syntax error`);
-    console.log(("=").repeat(60));
-    console.error(error.annotated);
-    console.log(("=").repeat(60));
+    console.error(chalk.red.bold(`${file} have syntax error`));
+    console.error(chalk.red.bold(error.annotated));
     process.exit(1);
   } else {
-    console.log(`${file} check passed`);
+    console.log(chalk.green(`${file} check passed`));
   }
+  console.log(("=").repeat(60));
 }
 
 check(fs.readFileSync("./index.js"), "index.js");

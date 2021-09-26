@@ -75,8 +75,6 @@ jobs:
       run: npm i yarn -g
     - name: Install packages
       run: yarn install --frozen-lockfile --ignore-engines
-    - name: Run build
-      run: yarn run build
     - name: Test syntax
       run: yarn run test
   analyze:
