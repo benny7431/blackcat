@@ -64,24 +64,24 @@ client.log = async function (msgContent, type) {
   });
   let content = `[Black cat] ${msgContent}`;
   switch (type) {
-    case "warn":
-      webhook.send(content, {
-        username: "[Warn]",
-        avatarURL: "https://blackcatbot.tk/assets/warn.png"
-      });
-      break;
-    case "error":
-      webhook.send(content, {
-        username: "[Error]",
-        avatarURL: "https://blackcatbot.tk/assets/error.png"
-      });
-      break;
-    default:
-      webhook.send(content, {
-        username: "[Info]",
-        avatarURL: "https://blackcatbot.tk/assets/info.png"
-      });
-      break;
+  case "warn":
+    webhook.send(content, {
+      username: "[Warn]",
+      avatarURL: "https://blackcatbot.tk/assets/warn.png"
+    });
+    break;
+  case "error":
+    webhook.send(content, {
+      username: "[Error]",
+      avatarURL: "https://blackcatbot.tk/assets/error.png"
+    });
+    break;
+  default:
+    webhook.send(content, {
+      username: "[Info]",
+      avatarURL: "https://blackcatbot.tk/assets/info.png"
+    });
+    break;
   }
 };
 client.getLocale = function (locale) {
@@ -262,31 +262,31 @@ client.on("menuInteraction", interaction => {
     ephemeral: true
   });
   switch (interaction.commandName) {
-    case "暫停音樂":
-      if (!player.playing) return interaction.reply({
-        content: "❌ ┃ 歌曲已經暫停了",
-        ephemeral: true
-      });
-      player.pause();
-      interaction.reply(`<:pause:827737900359745586> ┃ 歌曲被 **${Discord.Util.escapeMarkdown(interaction.user.username)}** 暫停了`).catch(console.error);
-      break;
-    case "繼續播放音樂":
-      if (player.playing) return interaction.reply({
-        content: "❌ ┃ 歌曲已經在播放了",
-        ephemeral: true
-      }).catch(console.error);
-      player.resume();
-      interaction.reply(`<:play:827734196243398668> ┃ **${Discord.Util.escapeMarkdown(interaction.user.username)}** 繼續播放目前的歌曲`).catch(console.error);
-      break;
-    case "跳過歌曲":
-      player.skip();
-      interaction.reply(`<:skip:827734282318905355> ┃ **${Discord.Util.escapeMarkdown(interaction.user.username)}** 跳過了這一首歌曲`).catch(console.error);
-      break;
-    default:
-      interaction.reply({
-        content: "❌ ┃ 未知的指令",
-        ephemeral: true
-      });
+  case "暫停音樂":
+    if (!player.playing) return interaction.reply({
+      content: "❌ ┃ 歌曲已經暫停了",
+      ephemeral: true
+    });
+    player.pause();
+    interaction.reply(`<:pause:827737900359745586> ┃ 歌曲被 **${Discord.Util.escapeMarkdown(interaction.user.username)}** 暫停了`).catch(console.error);
+    break;
+  case "繼續播放音樂":
+    if (player.playing) return interaction.reply({
+      content: "❌ ┃ 歌曲已經在播放了",
+      ephemeral: true
+    }).catch(console.error);
+    player.resume();
+    interaction.reply(`<:play:827734196243398668> ┃ **${Discord.Util.escapeMarkdown(interaction.user.username)}** 繼續播放目前的歌曲`).catch(console.error);
+    break;
+  case "跳過歌曲":
+    player.skip();
+    interaction.reply(`<:skip:827734282318905355> ┃ **${Discord.Util.escapeMarkdown(interaction.user.username)}** 跳過了這一首歌曲`).catch(console.error);
+    break;
+  default:
+    interaction.reply({
+      content: "❌ ┃ 未知的指令",
+      ephemeral: true
+    });
   }
 });
 
@@ -516,16 +516,16 @@ app.get("/api/pause", async function (req, res) {
   if (!req.userToken || !req.query.guild) return res.send({ message: "發生錯誤，請重新整理頁面", red: true });
   const premission = await checkModify(req.userToken, req.query.guild);
   switch (premission) {
-    case 1:
-      return res.send({ message: "請先加入這個伺服器!", red: true });
-    case 2:
-      return res.send({ message: "請先加入一個語音頻道!", red: true });
-    case 3:
-      return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
-    case 4:
-      return res.send({ message: "沒有找到伺服器", red: true });
-    case 5:
-      return res.send({ error: true, code: 101 });
+  case 1:
+    return res.send({ message: "請先加入這個伺服器!", red: true });
+  case 2:
+    return res.send({ message: "請先加入一個語音頻道!", red: true });
+  case 3:
+    return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
+  case 4:
+    return res.send({ message: "沒有找到伺服器", red: true });
+  case 5:
+    return res.send({ error: true, code: 101 });
   }
   try {
     const queue = client.players.get(req.query.guild);
@@ -551,16 +551,16 @@ app.get("/api/resume", async function (req, res) {
   if (!req.userToken || !req.query.guild) return res.send({ message: "發生錯誤，請重新整理頁面", red: true });
   const premission = await checkModify(req.userToken, req.query.guild);
   switch (premission) {
-    case 1:
-      return res.send({ message: "請先加入這個伺服器!", red: true });
-    case 2:
-      return res.send({ message: "請先加入一個語音頻道!", red: true });
-    case 3:
-      return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
-    case 4:
-      return res.send({ message: "沒有找到伺服器", red: true });
-    case 5:
-      return res.send({ error: true, code: 101 });
+  case 1:
+    return res.send({ message: "請先加入這個伺服器!", red: true });
+  case 2:
+    return res.send({ message: "請先加入一個語音頻道!", red: true });
+  case 3:
+    return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
+  case 4:
+    return res.send({ message: "沒有找到伺服器", red: true });
+  case 5:
+    return res.send({ error: true, code: 101 });
   }
   try {
     const queue = client.players.get(req.query.guild);
@@ -586,16 +586,16 @@ app.get("/api/skip", async function (req, res) {
   if (!req.userToken || !req.query.guild) return res.send({ message: "發生錯誤，請重新整理頁面", red: true });
   const premission = await checkModify(req.userToken, req.query.guild);
   switch (premission) {
-    case 1:
-      return res.send({ message: "請先加入這個伺服器!", red: true });
-    case 2:
-      return res.send({ message: "請先加入一個語音頻道!", red: true });
-    case 3:
-      return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
-    case 4:
-      return res.send({ message: "沒有找到伺服器", red: true });
-    case 5:
-      return res.send({ error: true, code: 101 });
+  case 1:
+    return res.send({ message: "請先加入這個伺服器!", red: true });
+  case 2:
+    return res.send({ message: "請先加入一個語音頻道!", red: true });
+  case 3:
+    return res.send({ message: "請跟機器人在同一個頻道裡!", red: true });
+  case 4:
+    return res.send({ message: "沒有找到伺服器", red: true });
+  case 5:
+    return res.send({ error: true, code: 101 });
   }
   try {
     const queue = client.players.get(req.query.guild);

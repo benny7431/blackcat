@@ -3,7 +3,7 @@ const path = require("path");
 const syntax = require("syntax-error");
 const chalk = require("chalk");
 
-console.log(chalk.blue("Brgin checking JavaScript syntax"));
+console.log(chalk.blue("Begin checking JavaScript syntax"));
 
 function check (source, file) {
   let error = syntax(source);

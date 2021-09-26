@@ -537,93 +537,57 @@ class Player {
       });
 
       switch (btn.customId) {
-        case "skip":
-          this.behavior.playing = true;
-          this.skip();
-          btn.reply(`<:skip:827734282318905355> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 跳過了這一首歌曲`).catch(console.error);
-          break;
+      case "skip":
+        this.behavior.playing = true;
+        this.skip();
+        btn.reply(`<:skip:827734282318905355> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 跳過了這一首歌曲`).catch(console.error);
+        break;
 
-        case "pause":
-          if (this.behavior.playing) {
-            pauseBtn
-              .setLabel("繼續播放")
-              .setEmoji("827734196243398668");
-            playControl = new Discord.MessageActionRow()
-              .addComponents(skipBtn)
-              .addComponents(pauseBtn)
-              .addComponents(stopBtn);
-            controller.edit({
-              embeds: [embed],
-              components: [playControl, volumeControl]
-            }).catch(console.error);
-            this.behavior.playing = !this.behavior.playing;
-            this.pause();
-            btn.reply(`<:pause:827737900359745586> ┃ 歌曲被 **${Discord.Util.escapeMarkdown(btn.user.username)}** 暫停了`).catch(console.error);
-          } else {
-            pauseBtn
-              .setLabel("暫停")
-              .setEmoji("827737900359745586");
-            playControl = new Discord.MessageActionRow()
-              .addComponents(skipBtn)
-              .addComponents(pauseBtn)
-              .addComponents(stopBtn);
-            controller.edit({
-              embeds: [embed],
-              components: [playControl, volumeControl]
-            }).catch(console.error);
-            this.behavior.playing = !this.behavior.playing;
-            this.resume();
-            btn.reply(`<:play:827734196243398668> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 繼續播放目前的歌曲`).catch(console.error);
-          }
-          break;
+      case "pause":
+        if (this.behavior.playing) {
+          pauseBtn
+            .setLabel("繼續播放")
+            .setEmoji("827734196243398668");
+          playControl = new Discord.MessageActionRow()
+            .addComponents(skipBtn)
+            .addComponents(pauseBtn)
+            .addComponents(stopBtn);
+          controller.edit({
+            embeds: [embed],
+            components: [playControl, volumeControl]
+          }).catch(console.error);
+          this.behavior.playing = !this.behavior.playing;
+          this.pause();
+          btn.reply(`<:pause:827737900359745586> ┃ 歌曲被 **${Discord.Util.escapeMarkdown(btn.user.username)}** 暫停了`).catch(console.error);
+        } else {
+          pauseBtn
+            .setLabel("暫停")
+            .setEmoji("827737900359745586");
+          playControl = new Discord.MessageActionRow()
+            .addComponents(skipBtn)
+            .addComponents(pauseBtn)
+            .addComponents(stopBtn);
+          controller.edit({
+            embeds: [embed],
+            components: [playControl, volumeControl]
+          }).catch(console.error);
+          this.behavior.playing = !this.behavior.playing;
+          this.resume();
+          btn.reply(`<:play:827734196243398668> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 繼續播放目前的歌曲`).catch(console.error);
+        }
+        break;
 
-        case "mute":
-          if (this.behavior.muted) {
-            this.behavior.volume = this.behavior.mutedVolume;
-            this.behavior.mutedVolume = null;
-            this.behavior.muted = false;
-            this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
-            if (this.behavior.volume !== 100) volupBtn.setDisabled(true);
-            else volupBtn.setDisabled(false);
-            if (this.behavior.volume !== 0) voldownBtn.setDisabled(true);
-            else voldownBtn.setDisabled(false);
-            muteBtn.setLabel("靜音");
-            volumeControl = new Discord.MessageActionRow()
-              .addComponents(voldownBtn)
-              .addComponents(muteBtn)
-              .addComponents(volupBtn);
-            controller.edit({
-              embeds: [embed],
-              components: [playControl, volumeControl]
-            }).catch(console.error);
-            btn.reply(`<:vol_up:827734772889157722> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 將音樂解除靜音`).catch(console.error);
-          } else {
-            this.behavior.muted = true;
-            this.behavior.mutedVolume = this.behavior.volume;
-            this.behavior.volume = 0;
-            this.volumeTransformer.setVolumeLogarithmic(0);
-            volupBtn.setDisabled(true);
-            voldownBtn.setDisabled(true);
-            muteBtn.setLabel("解除靜音");
-            volumeControl = new Discord.MessageActionRow()
-              .addComponents(voldownBtn)
-              .addComponents(muteBtn)
-              .addComponents(volupBtn);
-            controller.edit({
-              embeds: [embed],
-              components: [playControl, volumeControl]
-            }).catch(console.error);
-            btn.reply(`<:mute:827734384606052392> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 將音樂靜音了`).catch(console.error);
-          }
-          break;
-
-        case "vol_down":
-          if (this.behavior.volume - 10 <= 0) {
-            this.behavior.volume = 0;
-            voldownBtn.setDisabled(true);
-          }
-          else this.behavior.volume = this.behavior.volume - 10;
-          volupBtn.setDisabled(false);
+      case "mute":
+        if (this.behavior.muted) {
+          this.behavior.volume = this.behavior.mutedVolume;
+          this.behavior.mutedVolume = null;
+          this.behavior.muted = false;
+          this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
+          if (this.behavior.volume !== 100) volupBtn.setDisabled(true);
+          else volupBtn.setDisabled(false);
+          if (this.behavior.volume !== 0) voldownBtn.setDisabled(true);
+          else voldownBtn.setDisabled(false);
+          muteBtn.setLabel("靜音");
           volumeControl = new Discord.MessageActionRow()
             .addComponents(voldownBtn)
             .addComponents(muteBtn)
@@ -632,33 +596,69 @@ class Player {
             embeds: [embed],
             components: [playControl, volumeControl]
           }).catch(console.error);
-          this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
-          btn.reply(`<:vol_down:827734683340111913> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 降低了音量, 目前音量為 ${this.behavior.volume}%`).catch(console.error);
-          break;
-
-        case "vol_up":
-          if (this.behavior.volume + 10 >= 100) {
-            this.behavior.volume = 100;
-            volupBtn.setDisabled(true);
-          }
-          else this.behavior.volume = this.behavior.volume + 10;
-          voldownBtn.setDisabled(false);
+          btn.reply(`<:vol_up:827734772889157722> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 將音樂解除靜音`).catch(console.error);
+        } else {
+          this.behavior.muted = true;
+          this.behavior.mutedVolume = this.behavior.volume;
+          this.behavior.volume = 0;
+          this.volumeTransformer.setVolumeLogarithmic(0);
+          volupBtn.setDisabled(true);
+          voldownBtn.setDisabled(true);
+          muteBtn.setLabel("解除靜音");
           volumeControl = new Discord.MessageActionRow()
-              .addComponents(voldownBtn)
-              .addComponents(muteBtn)
-              .addComponents(volupBtn);
-            controller.edit({
-              embeds: [embed],
-              components: [playControl, volumeControl]
-            }).catch(console.error);
-          this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
-          btn.reply(`<:vol_up:827734772889157722> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 提高了音量, 目前音量為 ${this.behavior.volume}%`).catch(console.error);
-          break;
+            .addComponents(voldownBtn)
+            .addComponents(muteBtn)
+            .addComponents(volupBtn);
+          controller.edit({
+            embeds: [embed],
+            components: [playControl, volumeControl]
+          }).catch(console.error);
+          btn.reply(`<:mute:827734384606052392> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 將音樂靜音了`).catch(console.error);
+        }
+        break;
 
-        case "stop":
-          this.stop();
-          btn.reply(`<:stop:827734840891015189> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 將音樂停止了`).catch(console.error);
-          break;
+      case "vol_down":
+        if (this.behavior.volume - 10 <= 0) {
+          this.behavior.volume = 0;
+          voldownBtn.setDisabled(true);
+        }
+        else this.behavior.volume = this.behavior.volume - 10;
+        volupBtn.setDisabled(false);
+        volumeControl = new Discord.MessageActionRow()
+          .addComponents(voldownBtn)
+          .addComponents(muteBtn)
+          .addComponents(volupBtn);
+        controller.edit({
+          embeds: [embed],
+          components: [playControl, volumeControl]
+        }).catch(console.error);
+        this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
+        btn.reply(`<:vol_down:827734683340111913> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 降低了音量, 目前音量為 ${this.behavior.volume}%`).catch(console.error);
+        break;
+
+      case "vol_up":
+        if (this.behavior.volume + 10 >= 100) {
+          this.behavior.volume = 100;
+          volupBtn.setDisabled(true);
+        }
+        else this.behavior.volume = this.behavior.volume + 10;
+        voldownBtn.setDisabled(false);
+        volumeControl = new Discord.MessageActionRow()
+          .addComponents(voldownBtn)
+          .addComponents(muteBtn)
+          .addComponents(volupBtn);
+        controller.edit({
+          embeds: [embed],
+          components: [playControl, volumeControl]
+        }).catch(console.error);
+        this.volumeTransformer.setVolumeLogarithmic(this.behavior.volume / 100);
+        btn.reply(`<:vol_up:827734772889157722> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 提高了音量, 目前音量為 ${this.behavior.volume}%`).catch(console.error);
+        break;
+
+      case "stop":
+        this.stop();
+        btn.reply(`<:stop:827734840891015189> ┃ **${Discord.Util.escapeMarkdown(btn.user.username)}** 將音樂停止了`).catch(console.error);
+        break;
       }
     });
 

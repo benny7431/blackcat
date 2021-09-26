@@ -10,7 +10,7 @@ module.exports = {
 
     const queue = message.client.players.get(message.guild.id);
     if (!queue) {
-     message.reply("❌ ┃ 目前沒有任何歌曲正在播放!")
+      message.reply("❌ ┃ 目前沒有任何歌曲正在播放!")
         .catch(console.error);
     }
     if (!canModifyQueue(message.member)) {

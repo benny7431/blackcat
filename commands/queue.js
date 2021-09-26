@@ -70,27 +70,27 @@ module.exports = {
 
     collector.on("collect", async (interaction) => {
       switch (interaction.customId) {
-        case "right":
-          if (currentPage < embeds.length - 1) {
-            currentPage++;
-            interaction.update({
-              content: `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
-              embeds: embeds[currentPage]
-            });
-          }
-          break;
-        case "left":
-          if (currentPage !== 0) {
-            --currentPage;
-            interaction.update({
-              content: `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
-              embeds: embeds[currentPage]
-            });
-          }
-          break;
-        case "cancel" :
-          collector.end();
-          break;
+      case "right":
+        if (currentPage < embeds.length - 1) {
+          currentPage++;
+          interaction.update({
+            content: `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
+            embeds: embeds[currentPage]
+          });
+        }
+        break;
+      case "left":
+        if (currentPage !== 0) {
+          --currentPage;
+          interaction.update({
+            content: `📘 ┃ 目前頁面:${currentPage + 1}/${embeds.length}`,
+            embeds: embeds[currentPage]
+          });
+        }
+        break;
+      case "cancel" :
+        collector.end();
+        break;
       }
     });
 
