@@ -48,6 +48,8 @@ jobs:
       uses: actions/checkout@v2
     - name: Build Docker image
       run: docker build . --file Dockerfile --tag blackcat:latest
+    - name: Inspect Docker image
+      run: docker inspect blackcat:latest
     - name: Run test script
       run: docker run -t --rm --name blackcat-ci blackcat:latest yarn run test
   check-standard:

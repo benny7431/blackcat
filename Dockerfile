@@ -14,13 +14,22 @@ RUN apt-get -qqy update && \
   autoconf \
   automake \
   curl && \
-  apt-get clean && \
-  rm -rf /var/lib/apt/lists/* && \
   npm i yarn -g --force && \
   yarn install --ignore-engines && \
   yarn run build && \
   yarn global add pm2 && \
-  yarn cache clean
+  yarn cache clean && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* && \
+  apt-get purge python \
+  make \
+  g++ \
+  build-essential \
+  libtool \
+  autoconf \
+  automake \
+  curl && \
+  apt-get autoremove
 
 EXPOSE 8080
 
