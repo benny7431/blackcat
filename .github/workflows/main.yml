@@ -49,7 +49,7 @@ jobs:
     - name: Build Docker image
       run: docker build . --file Dockerfile --tag blackcat:latest
     - name: Inspect Docker image
-      run: docker inspect blackcat:latest
+      run: docker inspect -f "{{ .Size }}" blackcat:latest | numfmt --to=si
     - name: Run test script
       run: docker run -t --rm --name blackcat-ci blackcat:latest yarn run test
   check-standard:
