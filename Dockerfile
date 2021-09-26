@@ -21,7 +21,7 @@ RUN apt-get -qqy update && \
   yarn cache clean && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* && \
-  apt-get purge python \
+  apt-get purge -qqy python \
   make \
   g++ \
   build-essential \
@@ -29,7 +29,7 @@ RUN apt-get -qqy update && \
   autoconf \
   automake \
   curl && \
-  apt-get autoremove
+  apt-get -qqy autoremove
 
 EXPOSE 8080
 
