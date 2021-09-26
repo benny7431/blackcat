@@ -37,8 +37,9 @@ jobs:
       uses: EndBug/add-and-commit@v7
       with:
         add: yarn.lock
-        default_author: github_actions
-        message: "Update lockfile"
+        message: "[GitHub action] Update Yarn lockfile"
+        committer_name: GitHub Actions
+        committer_email: "41898282+github-actions[bot]@users.noreply.github.com"
   check-docker:
     name: Build Docker image
     runs-on: ubuntu-latest
