@@ -45,7 +45,7 @@
     "spotify-url-info": "^2.2.3",
     "string-progressbar": "^1.0.4",
     "tweetnacl": "^1.0.3",
-    "utf-8-validate": "^5.0.5",
+    "utf-8-validate": "^5.0.6",
     "youtube-sr": "^4.1.7",
     "ytdl-core": "^4.9.1"
   },
