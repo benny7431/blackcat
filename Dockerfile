@@ -16,7 +16,6 @@ RUN apt-get -qqy update && \
   curl && \
   npm i yarn -g --force && \
   yarn install --ignore-engines && \
-  yarn run build && \
   yarn global add pm2 && \
   yarn cache clean && \
   apt-get clean && \
