@@ -3,11 +3,11 @@ name: Black cat GitHub Workflow
 on:
   push:
     branches:
-      - main
+      - current
       - stable
   pull_request:
     branches:
-      - main
+      - current
       - stable
 
 jobs:
